@@ -1,0 +1,5 @@
+create pfile='init_CYBER_01062024.ora' from spfile;
+create pfile='/export/home/oracle19/pfile_TRZSP_20240924.ora' from spfile;
+alter system checkpoint
+alter system switch logfile
+shutdown immediate

@@ -1,0 +1,10 @@
+1.-IDENTIFICAR CURSOR MUTEX
+SELECT MUTEX_IDENTIFIER,
+MUTEX_TYPE,
+MAX (gets),
+MAX (sleeps),
+mutex_value
+FROM v$mutex_sleep_history
+WHERE mutex_type = 'Cursor Pin'
+GROUP BY MUTEX_IDENTIFIER, MUTEX_TYPE, mutex_value
+ORDER BY 4 DESC;

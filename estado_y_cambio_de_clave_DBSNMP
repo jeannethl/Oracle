@@ -1,0 +1,24 @@
+VERIFICAR CREDENCIALES AL USUARIO DBSNMP
+
+#Query for credentials verifications.
+#####################################
+
+SET LINE 2000
+SET PAGESIZE 2000
+COL PATH FORMAT A55
+COL NAME FORMAT A25
+SELECT USERNAME, ACCOUNT_STATUS, LOCK_DATE, EXPIRY_DATE FROM  DBA_USERS
+WHERE USERNAME = 'DBSNMP';
+
+
+
+2= DESBLOQUER EL USUARIO
+
+#Passwd change for user and unlock account
+##########################################
+
+
+ALTER USER DBSNMP IDENTIFIED BY "geradmon" ACCOUNT UNLOCK;
+
+
+3= HACER DE NUEVO EL PASO 1, PARA COMPROBAR EL DESBLOQUEO.

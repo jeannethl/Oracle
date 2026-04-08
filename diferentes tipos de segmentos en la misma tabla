@@ -1,0 +1,30 @@
+set lines 180 pages 999;
+col tablespace_name form a30
+select tablespace_name
+, segment_type
+--, SEGMENT_NAME
+, count(1) CANT
+from dba_segments
+where segment_type in ('TABLE','INDEX') 
+and owner not in ('SYS'
+, 'SYSTEM'
+, 'OUTLN'
+, 'DBSNMP'
+, 'WMSYS'
+, 'ORDSYS'
+, 'ORDPLUGINS'
+, 'CTXSYS'
+, 'ANONYMOUS'
+, 'OLAPSYS'
+, 'SYSAUX'
+, 'STATSPACK_DATA')
+AND TABLESPACE_NAME NOT IN ('SYSTEM','SYSAUX','USERS')
+--AND TABLESPACE_NAME = 'DATA'
+--AND SEGMENT_TYPE = 'INDEX'
+group by segment_type
+,tablespace_name
+--,segment_name
+order by tablespace_name, segment_type;
+
+
+

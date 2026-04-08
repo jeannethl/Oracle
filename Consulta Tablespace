@@ -1,0 +1,23 @@
+select a.TABLESPACE_NAME "Name"
+,round((a.BYTES/1024)/1024,2) "Size (MB)"
+,round((((a.BYTES-b.BYTES)/1024)/1024),2) "Used (MB)"
+,round((b.BYTES/1024)/1024,2) "Free (MB)"
+,round((100-((a.BYTES-b.BYTES)/a.BYTES)*100),2) "% Free"
+from 
+(
+select TABLESPACE_NAME
+,sum(BYTES) BYTES
+from dba_data_files
+group by TABLESPACE_NAME
+) a,
+(
+select  TABLESPACE_NAME
+,sum(BYTES) BYTES 
+,max(BYTES) largest
+from dba_free_space
+group by TABLESPACE_NAME
+) b
+where a.TABLESPACE_NAME=b.TABLESPACE_NAME 
+AND a.TABLESPACE_NAME=nvl('&1',a.TABLESPACE_NAME)
+order by 5 desc
+/

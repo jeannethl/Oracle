@@ -1,0 +1,19 @@
+
+
+
+set verify off
+ACCEPT inicio CHAR PROMPT 'Fecha inicio >';
+ACCEPT fin CHAR PROMPT 'Fecha fin >';
+ACCEPT sqlid CHAR PROMPT 'SQL ID >';
+compute sum of total on report
+break on report
+select TO_CHAR(sample_time,'DD-MM-YYYY HH24:MI') time
+, COUNT(1) total
+from dba_hist_active_sess_history
+where sample_time between to_date('2024/05/20 15:38:00','YYYY/MM/DD HH24:MI:SS')
+and to_date('2024/05/20 16:26:00','YYYY/MM/DD HH24:MI:SS')
+and sql_exec_start is not null
+and IS_SQLID_CURRENT='Y' 
+--and sql_id = '&sqlid'
+GROUP BY TO_CHAR(sample_time,'DD-MM-YYYY HH24:MI') 
+ORDER BY 1;

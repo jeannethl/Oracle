@@ -1,0 +1,24 @@
+set serveroutput on
+declare
+cursor sessions_for_kill is
+SELECT s.sid
+, s.serial# serial
+from gv$session s
+JOIN gv$process p ON p.addr = s.paddr 
+AND p.inst_id = s.inst_id
+WHERE s.sql_id='ffh8a7uh3bcgx'
+and p.inst_id = 1
+and s.username = 'BDVNET'
+--and s.STATUS='INACTIVE'
+--s.OSUSER ='USU_MSI'
+order by s.username, s.LOGON_TIME;
+
+BEGIN
+    FOR cur in sessions_for_kill
+    LOOP
+      BEGIN
+         EXECUTE IMMEDIATE 'ALTER SYSTEM KILL SESSION '''||cur.sid||','||cur.serial||'''';
+      END;
+    END LOOP;
+END;
+/

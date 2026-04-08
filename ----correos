@@ -1,0 +1,55 @@
+----correos
+
+archive log list
+
+/var/opt/oracle/oratab
+
+ALTER SYSTEM SET local_listener=' (ADDRESS=(PROTOCOL=TCP)(HOST=180.183.178.191)(PORT=1521))','(ADDRESS=(PROTOCOL=TCP)(HOST=180.183.178.191)(PORT=1522))' SCOPE=MEMORY SID='CCENLND2';
+
+
+
+con grid
+*no se puede acceder a la instancia
+crsctl stat res -t
+
+Correo si no hay carpeta para exp
+ crear un file system con nombre /exportdb/backup  y asignarlo al POOL llamado EXPORTDB/exportdb
+
+
+ Buenos Dias
+
+Se requiere de su valioso apoyo para que sea desahabilitado el "NOEXEC" al fs /tmp en el servidor PLINGMBD01 ya que el mismo da error al instalar oracle en el servidor.
+
+
+* Verificar que la opción nodev esté configurada en la partición /home
+
+* Verificar que la opción noexec esté configurada en la partición /home
+
+* Verificar que la opción nosuid esté configurada en la partición /home
+
+* Verificar que /tmp esté configurado – systemctl
+
+* Verificar que la opción nodev esté configurada en la partición /tmp
+
+* Verificar que la opción noexec esté configurada en la partición /tmp
+
+* Verificar que la opción nosuid esté configurada en la partición /tmp
+
+* Verificar que el sistema X Window no esté instalado
+
+* Verificar que los registros de auditoría no se eliminen automáticamente
+
+
+--------------------------------
+----------------------------
+---------------------------------
+Buenas,
+
+
+     Compañeros Unix se solicita de sus buenos oficios en agregar el disco de 50gb creado por A&R al FS llamado /exportdb del servidor sun1324p ya que el mismo posee poco espacio.
+
+
+Saludos cordiales.
+
+
+Los  procedimientos se ven bien en cuanto a sintaxis, pero realmente lo que garantizan su funcionamiento son las pruebas de certificación ejecutadas por ustedes  en los ambientes respectivos.

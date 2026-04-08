@@ -1,0 +1,49 @@
+select group_number
+, name
+, state
+, type
+, total_MB
+, free_MB
+from v$asm_diskgroup;
+
+
+
+col format a
+col format a
+col path format a30
+select group_number
+, disk_number
+, name
+,path
+--, label
+--, incarnation
+, header_status
+, mount_status
+, mode_status
+, state
+, total_MB
+, free_MB
+from v$asm_disk;
+where group_number = 7;
+
+
+
+groups with ADF label
+
+
+1asm
+2datajuri
+3Fra
+6redo3juri
+4Redo1Juri
+5Redo2Juri
+7dataCC
+8redo1CC
+9Redo2CC
+***todos***
+
+
+
+
+
+select group_number,name,DISK_NUMBER,mount_status,header_status,mode_status,state,path, OS_MB  from v$asm_disk;

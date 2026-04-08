@@ -1,0 +1,30 @@
+SET SERVEROUTPUT ON
+DECLARE 
+l_sql varchar2(2000);
+
+cursor dataf is
+SELECT FILE_NAME
+FROM DBA_DATA_FILES
+WHERE AUTOEXTENSIBLE = 'NO'
+AND TABLESPACE_NAME = 'RBS_POSTING_IDX';
+
+rows dataf%ROWTYPE;
+BEGIN
+  OPEN dataf;
+  LOOP
+    FETCH dataf INTO rows;
+    EXIT WHEN dataf%NOTFOUND;
+      l_sql := 'ALTER DATABASE DATAFILE '''|| rows.file_name||''' AUTOEXTEND ON NEXT 2047M MAXSIZE 32767M';
+      DBMS_OUTPUT.put_line(l_sql);
+      BEGIN
+        EXECUTE IMMEDIATE l_sql;
+        EXCEPTION
+          WHEN OTHERS THEN
+          dbms_output.put_line('DATAFILE: '||rows.file_name);
+          dbms_output.put_line('SQLCODE:  '||sqlcode);
+          dbms_output.put_line('SQLERRM:  '||sqlerrm);
+      END;
+  END LOOP;
+  CLOSE dataf;
+END;
+/

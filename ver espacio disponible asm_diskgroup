@@ -1,0 +1,27 @@
+set lines 400
+COLUMN name FORMAT a25
+COLUMN path FORMAT a25
+COLUMN diskgroup_name FORMAT a20
+SELECT a.group_number, b.name, a.path, a.name, a.header_status, a.state, a.total_mb, a.free_mb,a.REDUNDANCY
+FROM v$asm_disk a, v$asm_diskgroup b
+WHERE a.group_number = b.group_number
+AND b.name like '%DATA'
+--AND b.name = 'FRA'
+ORDER BY a.name, a.group_number;
+
+
+
+
+
+
+Ver espacio disponible en los diskgroups
+
+
+ set lines 300
+COLUMN name FORMAT a20
+SELECT name, total_mb, cold_used_mb "USED_MB", free_mb, usable_file_mb "USABLE_MB", state, round((cold_used_mb*100)/total_mb, 2) "%USED", round((free_mb*100)/total_mb, 2) "%FREE"
+FROM v$asm_diskgroup
+WHERE name like '%'
+--OR name like '%'
+--WHERE name = 'FRA'
+ORDER BY 1;

@@ -1,0 +1,107 @@
+Name      vieja                 Size (MB)  Used (MB)  Free (MB)     % Free
+------------------------------ ---------- ---------- ---------- ----------
+MANTENIMIENTOS_TX                   30720          1      30719        100
+UNDOTBS1                           721869     187.38  721681.63      99.97
+RESPONSECODESTADISTIC_DATA_DEC       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_MAY       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_NOV       3072          3       3069       99.9
+ACCOUNTING_DATA_JAN                  3072          3       3069       99.9
+ACCOUNTING_DATA_MAY                  3072          3       3069       99.9
+ACCOUNTING_DATA_JUN                  3072          3       3069       99.9
+ACCOUNTING_DATA_OCT                  3072          3       3069       99.9
+DATA_AUDITORIA                       3072          3       3069       99.9
+TRAN_DATA_OCT                        3072          3       3069       99.9
+CONCILIATION_DATA_SEP                3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_APR       3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_NOV       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_JUN       3072          3       3069       99.9
+ACCOUNTING_DATA_FEB                  3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_JAN       3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_FEB       3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_JUN       3072          3       3069       99.9
+RESPONSECODESTADISTIC_DATA_MAY       3072          3       3069       99.9
+RESPONSECODESTADISTIC_DATA_OCT       3072          3       3069       99.9
+RESPONSECODESTADISTIC_DATA_NOV       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_FEB       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_AUG       3072          3       3069       99.9
+ACCOUNTING_DATA_AUG                  3072          3       3069       99.9
+TRAN_DATA_MAR                        3072          3       3069       99.9
+CONCILIATION_DATA_JAN                3072          3       3069       99.9
+RESPONSECODESTADISTIC_DATA_JUN       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_APR       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_SEP       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_DEC       3072          3       3069       99.9
+CONCILIATION_DATA_FEB                3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_JUL       3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_SEP       3072          3       3069       99.9
+RESPONSECODESTADISTIC_DATA_FEB       3072          3       3069       99.9
+RESPONSECODESTADISTIC_DATA_MAR       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_JAN       3072          3       3069       99.9
+BACKOFFICE_DATA                      3072       3.06    3068.94       99.9
+TRAN_DATA_MAY                        3072          3       3069       99.9
+TRAN_DATA_NOV                        3072          3       3069       99.9
+TRAN_DATA_DEC                        3072          3       3069       99.9
+CONCILIATION_DATA_MAR                3072          3       3069       99.9
+CONCILIATION_DATA_JUN                3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_MAR       3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_OCT       3072          3       3069       99.9
+RESPONSECODESTADISTIC_DATA_JAN       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_OCT       3072          3       3069       99.9
+ACCOUNTING_DATA_JUL                  3072          3       3069       99.9
+TRAN_DATA_JAN                        3072          3       3069       99.9
+TRAN_DATA_APR                        3072          3       3069       99.9
+CONCILIATION_DATA_APR                3072          3       3069       99.9
+CONCILIATION_DATA_AUG                3072          3       3069       99.9
+RESPONSECODESTADISTIC_DATA_APR       3072          3       3069       99.9
+ACCOUNTING_DATA_MAR                  3072          3       3069       99.9
+ACCOUNTING_DATA_APR                  3072          3       3069       99.9
+TRAN_DATA_JUN                        3072          3       3069       99.9
+CONCILIATION_DATA_MAY                3072          3       3069       99.9
+CONCILIATION_DATA_JUL                3072          3       3069       99.9
+CONCILIATION_DATA_OCT                3072          3       3069       99.9
+CONCILIATION_DATA_NOV                3072          3       3069       99.9
+CONCILIATION_DATA_DEC                3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_MAY       3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_AUG       3072          3       3069       99.9
+CONCILIATIONEXCEPTION_DATA_DEC       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_MAR       3072          3       3069       99.9
+CONCILIATIONSTADISTIC_DATA_JUL       3072          3       3069       99.9
+ACCOUNTING_DATA_NOV                  3072          3       3069       99.9
+ACCOUNTING_DATA_DEC                  3072          3       3069       99.9
+TRAN_DATA_FEB                        3072          3       3069       99.9
+TRAN_DATA_JUL                        3072          3       3069       99.9
+TRAN_DATA_AUG                        3072          3       3069       99.9
+RESPONSECODESTADISTIC_DATA_JUL       3072          3       3069       99.9
+RESPONSECODESTADISTIC_DATA_AUG       3072          3       3069       99.9
+UNDOTBS3                            21654      55.31   21598.69      99.74
+UNDOTBS2                            21679      56.25   21622.75      99.74
+USERS                                 128       2.69     125.31       97.9
+SYSAUX                              94780       2337      92443      97.53
+RBS_TRANLINK_IDX                     2048     186.94    1861.06      90.87
+RADIX_EVENTLOG                     215040   26262.31  188777.69      87.79
+RBS_TRANLINK                         2048        257       1791      87.45
+		RBS                                742400   98103.69  644296.31      86.79
+SYSTEM                               8192       1164       7028      85.79
+RBS_ENTRY_IDX                       40960    6769.25   34190.75      83.47
+RESPONSECODESTADISTIC_DATA_SEP       3072        515       2557      83.24
+RBS_SUBJECT_IDX                     20480    3727.13   16752.88       81.8
+RBS_ACCOUNT_IDX                     24576    5346.56   19229.44      78.24
+RADIX                              163835   47655.06  116179.94      70.91
+			RBS_TRAN_IDX                         8192    2675.06    5516.94      67.35
+		RBS_TOKEN_IDX                       10240    3613.19    6626.81      64.71
+		RBS_POSTING_IDX                     53248   20786.56   32461.44      60.96
+		RBS_CONTRACT_IDX                    36864   16262.88   20601.13      55.88
+		RBS_IDX                            327670     148832     178838      54.58
+		ACCOUNTING_DATA_SEP                  3072       1539       1533       49.9
+		RBS_ACCOUNT                         20480   10610.19    9869.81      48.19
+AUDIT_TBS                             200     113.56      86.44      43.22
+		RBS_TOKEN                           20480   13112.38    7367.63      35.97
+		RBS_ENTRY                           40960   28979.94   11980.06      29.25
+		RBS_POSTING                         81920    61057.5    20862.5      25.47
+		RBS_SUBJECT                         10240    8252.75    1987.25      19.41
+		RBS_DOER_IDX                       294894  244975.44   49918.56      16.93
+		TRAN_DATA_SEP                       27648      24492       3156      11.41
+		BACKOFFICE_INDEX                     3072    2743.88     328.13      10.68
+		RBS_CONTRACT                        23360   22191.31    1168.69          5
+		RBS_TRAN                           819200  779175.88   40024.13       4.89		
+		RBS_DOER                           324928  309416.75   15511.25       4.77

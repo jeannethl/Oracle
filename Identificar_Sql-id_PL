@@ -1,0 +1,38 @@
+-- Como identificar un Sql-id a partir del nombre de un PL: 
+
+
+set line 380
+col SQL_TEXT format a70
+col BEGIN_INTERVAL_TIME format a25
+col END_INTERVAL_TIME format a25
+col action format a6
+col module format a16
+
+
+SELECT T.SQL_ID
+     ,S.SNAP_ID
+     ,S.INSTANCE_NUMBER
+     ,S.MODULE
+     ,S.ACTION
+     ,(SN.BEGIN_INTERVAL_TIME) BEGIN_INTERVAL_TIME 
+     ,(SN.END_INTERVAL_TIME) END_INTERVAL_TIME
+     ,(CAST (DBMS_LOB.SUBSTR (T.SQL_TEXT, 2000) AS NVARCHAR2 (2000)))   SQL_TEXT
+     ,(S.EXECUTIONS_DELTA)                                              EXECUTIONS
+     ,(S.ELAPSED_TIME_DELTA)                                            ELAPSED_TIME 
+     ,s.rows_processed_total 
+     ,s.rows_processed_delta 
+     --,dhsp.TIMESTAMP
+FROM DBA_HIST_SQLSTAT S
+    ,DBA_HIST_SQLTEXT T
+    ,DBA_HIST_SNAPSHOT SN
+    --,dba_hist_sql_plan dhsp
+WHERE T.SQL_ID = S.SQL_ID 
+ AND S.SNAP_ID = SN.SNAP_ID
+ AND S.INSTANCE_NUMBER=SN.INSTANCE_NUMBER
+ AND S.DBID=SN.DBID
+-- AND t.sql_id = 'chbvd0aq0yq0d'
+--  AND SN.BEGIN_INTERVAL_TIME >= SYSDATE  -(49/24) 
+--  AND SN.END_INTERVAL_TIME <= SYSDATE
+ and upper(t.SQL_TEXT) like '%LIST_ADVICE_NOT_FOUND%'
+ --and dhsp.sql_id= t.sql_id
+--ORDER BY ELAPSED_TIME DESC;

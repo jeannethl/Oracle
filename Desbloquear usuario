@@ -1,0 +1,10 @@
+ALTER USER GIOM ACCOUNT UNLOCK;
+
+ALTER USER GIOM IDENTIFIED BY 'giom_26' ACCOUNT UNLOCK;
+ALTER USER GIOM IDENTIFIED BY "giom_26";
+
+
+ALTER PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME UNLIMITED;
+
+alter profile default limit PASSWORD_LOCK_TIME unlimited;
+alter profile default limit Failed_login_attempts unlimited;

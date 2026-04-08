@@ -1,0 +1,86 @@
+/oracle/app/oracle/diag/rdbms/trzsp/TRZSP1/trace
+
+TRZSP1_dw0s_25536.trm
+TRZSP1_dw0s_25536.trc
+
+TRZSP1_dw0t_25537.trm
+TRZSP1_dw0t_25537.trc
+
+TRZSP1_dm15_25500.trc
+TRZSP1_dm15_25500.trm
+
+
+
+
+alert base de datos
+log datapump doerextmsg
+tkprof de cada traza
+awr en el intervalo que se estuvo corriendo.
+
+
+
+
+tkprof TRZSP1_dm15_25500.trc tkprof_TRZSP1_dm15_25500.trc.out waits=y sort=exeela
+
+tkprof TRZSP1_dw0s_25536.trc tkprof_TRZSP1_dw0s_25536.trc.out waits=y sort=exeela
+
+tkprof TRZSP1_dw0t_25537.trc tkprof_TRZSP1_dw0t_25537.trc.out waits=y sort=exeela
+
+
+
+
+% tkprof orcl_dw01_xxxx.trc tkprof_orcl_dw01_xxxx.out waits=y sort=exeela
+
+
+**********************
+*.****************************
+
+
+ALTER TABLE TX.POSTING_BK
+  MODIFY CONSTRAINT FK_POSTING_ACCOUNT_BK
+  DISABLE
+  NOVALIDATE;
+
+
+
+
+  ALTER TABLE TX.POSTING_BK
+  MODIFY CONSTRAINT PK_POSTING_BK
+  DISABLE
+  NOVALIDATE
+  DROP INDEX;
+
+
+truncate table tx.posting_bk;
+
+drop table tx.posting_bk;
+
+ORA-02273: a esta clave única/primaria hacen referencia algunas claves ajenas
+
+
+select * from all_constraints 
+where constraint_type='R' and r_constraint_name='PK_POSTING_BK';
+
+
+
+ALTER TABLE TX.ENTRYPART
+  MODIFY CONSTRAINT FK_ENTRYPART_POSTING
+  DISABLE
+  NOVALIDATE;
+
+
+
+
+******************
+*
+
+ALTER TABLE TX.ENTRYPART ADD (
+CONSTRAINT FK_ENTRYPART_POSTING 
+  FOREIGN KEY (POSTINGID) 
+  REFERENCES TX.POSTING (ID)
+  RELY
+  DISABLE NOVALIDATE
+  );
+
+
+ALTER TABLE TX.ENTRYPART DROP CONSTRAINT FK_ENTRYPART_POSTING;

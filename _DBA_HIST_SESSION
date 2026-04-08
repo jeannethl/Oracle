@@ -1,0 +1,73 @@
+col name format a40
+col value_string format a
+select s.instance_number 
+    ,t.sql_id
+    ,t.sql_text
+--,s.bind_data
+    ,s.executions_total
+    ,s.elapsed_time_total
+    ,s.executions_delta
+    ,h.name
+    ,h.value_string
+    ,s.module
+    ,s.action
+    ,s.elapsed_time_delta
+    ,s.iowait_delta
+    ,s.clwait_delta
+    ,s.apwait_delta
+from dba_hist_sqlstat s
+    ,dba_hist_sqltext t
+    ,dba_hist_sqlbind h
+where t.sql_id = '8q4hnb49srt81'
+--and s.snap_id between 45495 and 45496
+and t.sql_id=s.sql_id
+and t.sql_id= h.sql_id
+and s.snap_id = h.snap_id;
+
+
+
+SELECT 
+SQL_ID
+,SESSION_ID
+,SESSION_SERIAL#
+,MACHINE
+,MODULE
+,PROGRAM
+,TM_DELTA_TIME
+,SAMPLE_TIME
+FROM DBA_HIST_ACTIVE_SESS_HISTORY
+WHERE SQL_ID = '8q4hnb49srt81'
+AND SAMPLE_TIME 
+BETWEEN 
+TO_DATE('12-03-2024 16:10:00','DD-MM-YYYY HH24:MI:SS')
+AND 
+TO_DATE('12-03-2024 16:40:00','DD-MM-YYYY HH24:MI:SS')
+ORDER BY SAMPLE_TIME;
+
+
+
+
+///////////////////////
+//////////////////////
+**********************
+**********************
+select 
+to_char(hist.sample_time, 'DD-MON-YYYY HH24:MI:SS') EXECUTION_TIME
+,u.name
+,hist.snap_id
+,hist.SESSION_ID
+,hist.SESSION_SERIAL#
+,hist.MACHINE
+,hist.MODULE
+,hist.SESSION_TYPE
+,PROGRAM
+,hist.sql_id
+,sql.sql_text
+from dba_hist_active_sess_history hist,
+     dba_hist_sqltext sql,
+     user$ u
+where hist.sql_id = sql.sql_id
+and hist.user_id = u.user#
+and hist.sql_id='90c1qh8aqhb1m'
+and snap_id BETWEEN 40496 and 40499
+order by hist.sample_time;

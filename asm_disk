@@ -1,0 +1,6 @@
+col HEADER_STATUS format a9
+col PATH format a40
+col NAME format a25
+SET LIN 180
+SET PAGESIZE 100
+select HEADER_STATus,name, STATE,PATH,total_mb, free_mb, os_mb from v$asm_disk order by PATH;

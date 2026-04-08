@@ -1,0 +1,21 @@
+--iniciar cluster 
+    crsctl start cluster (es con root)
+
+--listar nodos de cluster
+    olsnodes -n -i -s -t    (listas nodos de cluster)
+
+--iniciar instancia de ASM (se recomiendaes el "crsctl start cluster")
+    srvctl start asm -n node_name 
+
+--subir instancia 
+    srvctl start instance -d ISTONL -i ISTONL1 
+
+
+--estado de vip en nodo
+    srvctl status vip -n rac1 
+
+--estado de las scan
+    srvctl status scan
+
+--estado del listener de scan
+    srvctl status scan_listener

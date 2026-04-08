@@ -1,0 +1,62 @@
+select owner
+      ,object_type
+   ---,object_type
+      ,count(object_type) 
+  from dba_objects 
+  where status='INVALID' 
+  group by owner, object_type order by 1,2;
+
+
+
+COLUMN object_name FORMAT A50
+column OWNER format a30
+set pagesize 1000
+SELECT owner
+      ,object_type
+      ,object_name
+      ,status
+ FROM dba_objects
+WHERE status = 'INVALID'
+ORDER BY owner, object_type, object_name;
+
+
+
+select comp_id
+      ,version
+      ,version_full
+      ,status
+      ,modified 
+  from dba_registry 
+ order by modified;
+
+
+SET SERVEROUTPUT ON SIZE 1000000
+BEGIN
+  FOR cur_rec IN (SELECT owner,
+                         object_name,
+                         object_type
+                  FROM   dba_objects
+                  WHERE  object_type IN ('PACKAGE', 'PACKAGE BODY','PROCEDURE')
+                  AND    status != 'VALID'
+                  AND    OWNER = 'TX'
+                  ORDER BY object_type)
+  LOOP
+    BEGIN
+      IF cur_rec.object_type = 'PACKAGE' THEN
+        EXECUTE IMMEDIATE 'ALTER ' || cur_rec.object_type || 
+            ' "' || cur_rec.owner || '"."' || cur_rec.object_name || '" COMPILE';
+      ElSIF cur_rec.object_type = 'PACKAGE BODY' THEN
+        EXECUTE IMMEDIATE 'ALTER PACKAGE "' || cur_rec.owner || 
+            '"."' || cur_rec.object_name || '" COMPILE BODY';
+      ELSE 
+          EXECUTE IMMEDIATE 'ALTER PROCEDURE "' || cur_rec.owner || 
+              '"."' || cur_rec.object_name || '" COMPILE';
+      END IF;
+    EXCEPTION
+      WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line(sqlerrm || ' - ERROR : ' || cur_rec.owner || 
+                             ' - ' || cur_rec.object_name || ' - '||cur_rec.object_type);
+    END;
+  END LOOP;
+END;
+/

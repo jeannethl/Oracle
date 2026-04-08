@@ -1,0 +1,13 @@
+Oracle
+srvctl stop database -d CCENLND
+srvctl status database -d CCENLND
+srvctl start database -d CCENLND
+
+Root -Grid
+
+$ORACLE_HOME/bin/crsctl stop has
+$ORACLE_HOME/bin/crsctl start has
+$ORACLE_HOME/bin/crsctl status has
+
+ /oracle/app/grid/product/12.2.0/grid/bin/crsctl stop has
+ /oracle/app/grid/product/12.2.0/grid/bin/crsctl start has

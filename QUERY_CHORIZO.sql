@@ -1,0 +1,53 @@
+///////////////////////////////////////////////////////////////
+//    QUERY PARA MONITOREO DEL AVANZADO DE PROCESOS DE ORACLE
+//                  ORACLE
+//              ADSI DBA-TEAM
+//       YOSDUAR RANGEL-ALIUSKA PEÑA
+//////////////////////////////////////////////////////////////
+
+GENERALMENTE USADO CUANDO PARA IDENTIFICAR SESIONES USAN UN OBJETO QUE CAUSAN BLOQUEO SOBRE OBJETOS
+
+set lin 4000
+set timi on 
+set time on 
+col machine format a30
+col object format a32
+col x format a80 
+col owner format a8
+col WAIT_CLASS format a15
+col USERNAME format a10
+col MODULE format a90
+col CLIENT_INFO format a30
+col action  format a70
+col type format a10
+col OSUSER format a10
+
+select distinct b.SECONDS_IN_WAIT
+, b.LOGON_TIME,WAIT_CLASS
+, 'alter system kill session '''||b.sid||','||b.serial#||''' immediate;' x
+, p.spid psid_local
+, b.process psid_remote
+, b.serial#
+, a.*
+, b.machine
+, b.osuser
+, b.username
+, b.program
+, status
+, b.process
+, b.module
+, b.CLIENT_INFO
+, b.action,b.sid
+, b.sql_id
+from gv$access a,gv$session b, gv$process p
+where a.sid=b.sid and p.addr=b.paddr
+and a.inst_id=b.inst_id and b.inst_id=p.inst_id and a.inst_id=p.inst_id
+--and b.sid in (4881)
+and (
+a.object =upper('BDVX_REGISTRO_MOVIMIENTO_N3')
+     --   a.object =upper('INSTACCTMAP')
+     -- p.spid=13713
+--or a.object =upper('BDVX_REGISTRO_MOVIMIENTO_CUENTAS_CARGO_IDX')
+)
+--and b.status = 'ACTIVE';
+/

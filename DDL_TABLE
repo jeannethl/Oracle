@@ -1,0 +1,53 @@
+SET SERVEROUTPUT ON
+DECLARE v_name_tablespace   VARCHAR2(300);
+        v_size              NUMBER;
+        v_cant_datafile     NUMBER;
+        v_sentence          VARCHAR2(1000);
+
+    CURSOR cur_datafile IS
+        SELECT TABLESPACE_NAME
+        , SUM(BYTES/1024/1024/1024) SIZE_GB
+        , CASE ROUND(SUM(BYTES/1024/1024/1024)/30, 0) 
+            WHEN 0 THEN 1
+            ELSE ROUND(SUM(BYTES/1024/1024/1024)/30, 0) END CANT_DATAFILE
+        FROM  DBA_DATA_FILES
+        WHERE TABLESPACE_NAME NOT IN ('SYSTEM',
+        'SYSAUX',
+        'UNDOTBS1',
+        'TEMP',
+        'USERS')
+        GROUP BY TABLESPACE_NAME;
+    row_cur_datafile cur_datafile%ROWTYPE;
+
+BEGIN 
+    OPEN cur_datafile;
+    FETCH cur_datafile INTO row_cur_datafile;
+    WHILE cur_datafile%FOUND
+    LOOP
+        v_name_tablespace   := row_cur_datafile.TABLESPACE_NAME;
+        v_size              := row_cur_datafile.SIZE_GB;
+        v_cant_datafile     := row_cur_datafile.CANT_DATAFILE-1;
+
+        DBMS_OUTPUT.PUT_LINE('CREATE TABLESPACE ' || v_name_tablespace || ' ');
+        DBMS_OUTPUT.PUT_LINE('DATAFILE ' || CHR(39) || '+DATA' || CHR(39) || ' SIZE 30G AUTOEXTEND OFF');
+        DBMS_OUTPUT.PUT_LINE('EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO DEFAULT NOCOMPRESS;');
+        DBMS_OUTPUT.PUT_LINE(CHR(10));
+
+        WHILE v_cant_datafile > 0
+        LOOP
+            DBMS_OUTPUT.PUT_LINE('ALTER TABLESPACE ' || v_name_tablespace ||
+                ' ADD DATAFILE ' || CHR(39) || '+DATA' || CHR(39) || ' SIZE 30G AUTOEXTEND OFF;');
+            v_cant_datafile := v_cant_datafile-1;
+        END LOOP;
+        DBMS_OUTPUT.PUT_LINE(CHR(10));
+    FETCH cur_datafile INTO row_cur_datafile;
+    END LOOP;
+    CLOSE cur_datafile;
+END;
+/
+
+
+
+
+
+

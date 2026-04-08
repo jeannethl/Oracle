@@ -1,0 +1,21 @@
+desc v$resource_limit
+
+
+set line 240
+set pages 300
+COL RESOURCE_NAME for a60       
+COL CURRENT_UTILIZATION for 999,999,999 
+COL MAX_UTILIZATION for 999,999,999    
+COL INITIAL_ALLOCATION for  a20
+COL LIMIT_VALUE for a20     
+SELECT RESOURCE_NAME      
+, CURRENT_UTILIZATION
+, MAX_UTILIZATION    
+, INITIAL_ALLOCATION 
+, LIMIT_VALUE
+from v$resource_limit;
+
+
+
+
+

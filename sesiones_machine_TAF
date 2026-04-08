@@ -1,0 +1,27 @@
+set line 240
+set time on
+set timi on
+col username format a10
+col service_name format a40
+col MACHINE format a40
+select count(1), username,service_name , inst_id, MACHINE from gv$session
+ --where username='PAGOF'
+ group by username, service_name, inst_id, machine
+ order by 2,3
+/
+
+
+
+
+
+set line 240
+set time on
+set timi on
+col username format a10
+col service_name format a40
+col MACHINE format a40
+select count(1), username,service_name , inst_id, MACHINE,failover_type, failover_method from gv$session
+ --where username='PAGOF'
+ group by username, service_name, inst_id, machine, failover_type, failover_method
+ order by 2,3
+/

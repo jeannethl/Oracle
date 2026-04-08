@@ -1,0 +1,80 @@
+
+
+
+1. Set STREAMS_POOL_SIZE=240MB ( minimum ) explicitly before the start of the datapump job.
+
+2. Gather the statistics for Dictionary and Fixed Objects as follows:
+
+SQL> connect / as sysdba
+SQL> exec dbms_stats.gather_dictionary_stats;
+SQL> exec dbms_stats.lock_table_stats (null,'X$KCCLH');
+SQL> exec dbms_stats.gather_fixed_objects_stats;
+SQL> exec dbms_stats.gather_database_stats (gather_sys=>true);
+
+
+
+exec dbms_stats.unlock_table_stats (null,'X$KCCLH');
+commit;
+
+
+
+
+exec DBMS_STATS.GATHER_SYSTEM_STATS;
+exec DBMS_STATS.GATHER_DICTIONARY_STATS(Degree=> 64);
+exec dbms_stats.lock_table_stats (null,'X$KCCLH');
+exec DBMS_STATS.GATHER_FIXED_OBJECTS_STATS;
+EXEC DBMS_STATS.gather_database_stats(Degree=> 64, cascade => TRUE,estimate_percent =>dbms_stats.auto_sample_size, gather_sys=>true);
+
+
+
+
+
+
+
+
+
+3. Generate trace
+
+++ before restarting the expdp/impdp check if there are orphan Data Pump jobs left in database. Use << Note 336014.1 >>
+++ Add the following parameters with the export/import data pump command : METRICS=Y TRACE=1ff0300
+++ Generate trace as per Doc id 813737.1
+
+Please upload the:
+- alert log,
+- expdp/impdp log file and
+- tkprof output
+- AWR report generated on an hourly basis
+
+
+Create standard tkprof output files for Data Pump Master and Worker SQL traces:
+
+Generate trace as per Doc id 813737.1
+
+********************************
+*********************************
+
+alter system set events 'sql_trace {process: pname = dw | process: pname = dm} level=12';
+
+
+alter system set events 'sql_trace {process: pname = dw | process: pname = dm} off';
+
+
+alter system set events 'sql_trace {process : ospid = 2345} level=12';
+
+
+
+
+tkprof TRZSP1_dm00_14249.trc tkprof_TRZSP1_dm00_14249.out waits=y sort=exeela
+tkprof TRZSP1_dm00_9589.trc tkprof_TRZSP1_dm00_9589.out waits=y sort=exeela
+
+
+tkprof TRZSP1_dw01_14300.trc tkprof_TRZSP1_dw01_14300.out waits=y sort=exeela
+tkprof TRZSP1_dw01_9740.trc tkprof_TRZSP1_dw01_9740.out waits=y sort=exeela
+
+
+
+
+
+
+
+

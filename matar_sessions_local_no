@@ -1,0 +1,1 @@
+ps -fea | grep "LOCAL=NO" | grep BDVNETP | awk '{printf "kill -9 %s\n",$2}' | sh

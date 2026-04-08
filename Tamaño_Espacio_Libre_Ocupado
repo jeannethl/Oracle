@@ -1,0 +1,44 @@
+
+-- Tamaño de la base de datos, espacio usado y espacio libre 
+
+
+SELECT ROUND(SUM(USED.BYTES) / 1024 / 1024 / 1024 ) "DATABASE SIZE IN GB",
+        ROUND(SUM(USED.BYTES) / 1024 / 1024 / 1024 ) - ROUND(FREE.P / 1024 / 1024 / 1024) "USED SPACE IN GB",
+        ROUND(FREE.P / 1024 / 1024 / 1024) "FREE SPACE IN GB"
+FROM (SELECT BYTES FROM V$DATAFILE
+      UNION ALL
+      SELECT BYTES
+      FROM V$TEMPFILE
+      UNION ALL
+      SELECT BYTES
+      FROM V$LOG) USED, (SELECT SUM(BYTES) AS P
+      FROM DBA_FREE_SPACE) FREE GROUP BY FREE.P;
+
+
+
+
+
+       SET SERVEROUTPUT ON
+        SET PAGESIZE 1000
+        SET LINESIZE 255
+        SET FEEDBACK OFF
+
+        PROMPT Tablespaces nearing 0% free 
+        PROMPT ***************************
+
+        SELECT b.tablespace_name,
+               nvl(b.size_kb,0),
+               nvl(a.free_kb,0),
+               Trunc((nvl(a.free_kb,0)/b.size_kb) * 100) "FREE_%"
+        FROM   (SELECT tablespace_name,
+                       Trunc(Sum(bytes)/1024/1024) free_kb
+                FROM   dba_free_space
+        WHERE TABLESPACE_NAME = nvl('&1',TABLESPACE_NAME)
+                GROUP BY tablespace_name) a,
+               (SELECT tablespace_name,
+                       Trunc(Sum(nvl(bytes,0))/1024/1024) size_kb
+                FROM   dba_data_files
+        WHERE TABLESPACE_NAME = nvl('&1',TABLESPACE_NAME)
+                GROUP BY tablespace_name) b
+        WHERE  a.tablespace_name(+) = b.tablespace_name
+        order by 4 desc;

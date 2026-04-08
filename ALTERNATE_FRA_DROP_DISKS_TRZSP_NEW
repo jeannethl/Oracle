@@ -1,0 +1,91 @@
+
+log_archive_dest_1                   string LOCATION=USE_DB_RECOVERY_FILE_DEST valid_for=(ALL_LOGFILES,ALL_ROLES) MAX_FAILURE=1 REOPEN=5 DB_UNIQUE_NAME=TRZSP ALTERNATE=LOG_ARCHIVE_DEST_10
+log_archive_dest_10                  string  location=+FRA02_TRZSP valid_for=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME=TRZSP ALTERNATE=LOG_ARCHIVE_DEST_1
+
+alter system set log_archive_dest_10='location=+FRA02_TRZSP valid_for=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME=TRZSP ALTERNATE=LOG_ARCHIVE_DEST_1';
+
+
+
+****************************
+
+
+------     ---------------------------------     ------
+FORMER     /dev/oracleasm/disks/DISK_ASM0027     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0028     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0029     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0030     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0031     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0032     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0033     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0034     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0035     511999
+
+
+
+FORMER     /dev/oracleasm/disks/DISK_ASM0036     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0037     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0038     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0039     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0040     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0041     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0042     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0043     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0044     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0045     511999
+FORMER     /dev/oracleasm/disks/DISK_ASM0046     511999
+-------------------------------------------------------
+
+sdahh                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_36                                                                                                              500G root  disk  brw-rw----
+  └─asm_36p1                        oracleasm    DISK_ASM0036                                                         500G root  disk  brw-rw----
+sdahi                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_37                                                                                                              500G root  disk  brw-rw----
+  └─asm_37p1                        oracleasm    DISK_ASM0037                                                         500G root  disk  brw-rw----
+sdahj                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_38                                                                                                              500G root  disk  brw-rw----
+  └─asm_38p1                        oracleasm    DISK_ASM0038                                                         500G root  disk  brw-rw----
+sdahk                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_39                                                                                                              500G root  disk  brw-rw----
+  └─asm_39p1                        oracleasm    DISK_ASM0039                                                         500G root  disk  brw-rw----
+sdahl                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_40                                                                                                              500G root  disk  brw-rw----
+  └─asm_40p1                        oracleasm    DISK_ASM0040                                                         500G root  disk  brw-rw----
+sdahm                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_41                                                                                                              500G root  disk  brw-rw----
+  └─asm_41p1                        oracleasm    DISK_ASM0041                                                         500G root  disk  brw-rw----
+sdahn                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_42                                                                                                              500G root  disk  brw-rw----
+  └─asm_42p1                        oracleasm    DISK_ASM0042                                                         500G root  disk  brw-rw----
+sdaho                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_43                                                                                                              500G root  disk  brw-rw----
+  └─asm_43p1                        oracleasm    DISK_ASM0043                                                         500G root  disk  brw-rw----
+sdahp                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_44                                                                                                              500G root  disk  brw-rw----
+  └─asm_44p1                        oracleasm    DISK_ASM0044                                                         500G root  disk  brw-rw----
+sdahq                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_45                                                                                                              500G root  disk  brw-rw----
+  └─asm_45p1                        oracleasm    DISK_ASM0045                                                         500G root  disk  brw-rw----
+sdahr                               mpath_member                                                                      500G root  disk  brw-rw----
+└─asm_46                                                                                                              500G root  disk  brw-rw----
+  └─asm_46p1                        oracleasm    DISK_ASM0046                             
+
+  /usr/sbin/oracleasm 
+  /usr/sbin/oracleasm listdisks
+  /usr/sbin/oracleasm deletedisk
+
+
+/usr/sbin/oracleasm deletedisk DISK_ASM0036
+/usr/sbin/oracleasm deletedisk DISK_ASM0037
+/usr/sbin/oracleasm deletedisk DISK_ASM0038
+/usr/sbin/oracleasm deletedisk DISK_ASM0039
+/usr/sbin/oracleasm deletedisk DISK_ASM0040
+/usr/sbin/oracleasm deletedisk DISK_ASM0041
+/usr/sbin/oracleasm deletedisk DISK_ASM0042
+/usr/sbin/oracleasm deletedisk DISK_ASM0043
+/usr/sbin/oracleasm deletedisk DISK_ASM0044
+/usr/sbin/oracleasm deletedisk DISK_ASM0045
+/usr/sbin/oracleasm deletedisk DISK_ASM0046
+
+
+lsblk -fms 
+multipath -ll
