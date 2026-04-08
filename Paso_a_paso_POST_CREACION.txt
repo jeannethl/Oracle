@@ -1,0 +1,133 @@
+﻿*********************************************PostCreate Database*****************************
+PREVIOS
+
+-- INCLUSIÓN DE DE LA NUEVA BASE DE DATOS EN EL INVENTARIO (SE DEBE TENER PERMISO A LA RUTA COMPARTIDA)
+
+Ruta Z:\Archivos\ORACLE\Inventarios bd Serv Apli\Inv. Base de Datos\Inventario_base de datos_2015.xls
+
+--  INCLUIR LA BASE DE DATOS NUEVA EN EL ARCHIVO ORATAB (validar que este adicionada, normalmente deberia ser agregada por el dbca)
+
+En unix
+
+$ vi /var/opt/oracle/oratab -- agregar la nueva base de datos y su ORACLE_HOME
+
+-- CREAR DIRECTORIOS UTIL EN EL SERVIDOR
+
+mkdir -p $ORACLE_HOME/util
+cd $ORACLE_HOME/util
+mkdir -p scripts
+SID=`echo $ORACLE_SID| tr [:upper:] [:lower:]`
+mkdir -p $SID
+cd $SID
+mkdir -p backup
+mkdir -p restore
+
+--CREAR DIRECTORIOS EN EL SERVIDOR PARA REALIZAR EXPORT (si es un server nuevo validar que exista el zpool de /exportdb, sino pedir discos para su creación)
+
+cd /exportdb
+mkdir -p $ORACLE_SID
+cd $ORACLE_SID
+mkdir -p backup_temp
+
+***********************************************
+*****************************************
+***********************************
+-- CREAR LOS DIRECTORIOS PARA REALIZAR LOS EXPORT E IMPORT EN LA BD
+
+SQL> CREATE OR REPLACE DIRECTORY EXPORT AS '/exportdb/SIGMED/backup_temp';
+
+	/exportdb/SIGMED/backup_temp
+
+Directory Path	/oracle
+
+SQL>GRANT READ, WRITE ON DIRECTORY EXPORT TO SYSTEM; --- Se considera otro usuario para el export, dicho usuario debe recibir el permiso
+
+SQL> CREATE OR REPLACE DIRECTORY IMPORT AS '/exportdb/$ORACLE_SID/backup_temp';
+
+SQL>GRANT READ, WRITE ON DIRECTORY IMPORT TO SYSTEM; --- Se considera otro usuario para el import, dicho usuario debe recibir el permiso
+
+-- INCLUSIÓN DE ALIAS DENTRO DE .PROFILE UBICADO EN /export/home/oracle
+
+$ vi .profile
+
+export ORACLE_BASE=/oracle/app/oracle
+export ORACLE_HOME=/oracle/app/oracle/product/11.2.0/db_1
+export PATH=$ORACLE_HOME/bin:$PATH
+export PS1=${LOGNAME}@`uname -n`':/${PWD##*/}\$ '
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+INICIO DE PASOS CREACIÓN DE UNA BASE DE DATOS
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+1- Creación de politicas de backup con RMAN
+
+-- Las politicas van depender si es una base de datos de desarrollo, calidad o producción.
+-- Los nombres de TAG no deben exceder los 32 caracteres
+-- El nombre de politica asignado en el .cmd debe ser creado de igual forma en VERITAS
+-- Antes de crear un backup es necesario que este instalado el cliente VERITAS en el hostname a respaldar
+-- Hay que validar que la librería de VERITAS sea visible por los binarios de ORACLE\Inventarios
+
+**. Para iniciar el detalle de los backup ingresar a la siguiente ruta:
+
+Z:\Archivos\ORACLE\PostCreacion_Database\BACKUP
+
+2- Creación de export full de la base de datos
+
+-- Es necesario que ya haya sido creado en sistema operativo el /exportdb
+-- Es necesario haber creado los directorios en sistema operativo y en BD, descrito en pasos previos
+-- El usuario a utilizar para el backup debe tener privilegios FULL BACKUP DATABASE
+
+**. Para realizar el export ubicar los detalles en:
+
+Z:\Archivos\ORACLE\PostCreacion_Database\EXPORT
+
+3- Depuración de logs de las bases de datos
+
+**. Para realizar la depuración de los logs ubicar los detalles en:
+
+Z:\Archivos\ORACLE\PostCreacion_Database\DEPURACION
+
+
+4- Ejecución de estadisticas con dbms_stat.gather
+
+**. Para realizar el analize de las tablas de un esquema principal ubicar los detalles en:
+
+Z:\Archivos\ORACLE\PostCreacion_Database\ANALIZE
+
+5- Creación de usuarios de seguridad
+
+**. Para crear los usuario de seguridad ubicar los detalles en:
+
+Z:\Archivos\ORACLE\PostCreacion_Database\SEGURIDAD
+
+6- Inclusión de la nueva base de datos al monitoreo
+
+**. Para incluir la base de datos al monitoreo ubicar los detalles en:
+
+Z:\Archivos\ORACLE\PostCreacion_Database\MONITOREO
+
+6.- Creación de script bajar/subir todas las BD creadas en el server
+
+**. Se deben crear dos archivos, uno de script llamado "script_BD.sh", que se encarga de subir y bajar BD y sus listener y otro llamado
+    "sid_<versión del oracle>" que contiene el listado de las BD creadas en el server, ubicar los detalles en:
+
+Z:\Archivos\ORACLE\PostCreacion_Database\SUBIR_BAJAR_BD
+
+7.- Crear los tablespaces  mover el AUDIT$
+
+Z:\Archivos\ORACLE\PostCreacion_Database\Mover AUD$
+
+
+
+
+
+
+Alter system set local_listener='LISTENER19' scope=spfile;
+
+alter system set service_names='SIGMED.BANVENDES.CORP' scope=both;
+alter system register;
+

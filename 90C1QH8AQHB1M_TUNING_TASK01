@@ -1,0 +1,165 @@
+DBMS_SQLTUNE.REPORT_TUNING_TASK('90C1QH8AQHB1M_TUNING_TASK01')
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+GENERAL INFORMATION SECTION
+-------------------------------------------------------------------------------
+Tuning Task Name   : 90c1qh8aqhb1m_tuning_task01
+Tuning Task Owner  : SYS
+Workload Type      : Single SQL Statement
+Scope              : COMPREHENSIVE
+Time Limit(seconds): 20000
+Completion Status  : COMPLETED
+Started at         : 03/08/2024 11:04:39
+Completed at       : 03/08/2024 11:05:16
+
+-------------------------------------------------------------------------------
+Schema Name: USU_REPAS
+SQL ID     : 90c1qh8aqhb1m
+SQL Text   : SELECT TIPO_MOVIMIENTO,
+                       NUMERO_COMPROBANTE,
+                       AUTENTICACION,
+                       CEDULA_DESTINO,
+                       CEDULA_ORIGEN,
+                       CODIGO_TRANSACCION,
+                       CONCEPTO,
+                       CUENTA_ABONO,
+                       CUENTAS_CARGO,
+                       ESTADO,
+                       FECHA_CREACION,
+                       IMPORTE,
+                       IMPORTE_COMISION,
+                       LOG_ID,
+                       MONEDA,
+                       CODIGO,
+                       DESCRIPCION,
+                       ID,
+                       NACION_DESTINO,
+                       NACION_ORIGEN,
+                       PRODUCTO,
+                       RESULTADO,
+                       TASA,
+                       TITULAR_TERCERO
+                       FROM PAGOF.BDVX_REGISTRO_MOVIMIENTO_DIVISAS
+                       WHERE CEDULA_ORIGEN = :"SYS_B_0"
+                       AND (FECHA_CREACION BETWEEN TO_TIMESTAMP_TZ(:"SYS_B_1"
+             , :"SYS_B_2")
+                       AND TO_TIMESTAMP_TZ(:"SYS_B_3" , :"SYS_B_4"))
+Bind Variables :
+ 1 -  (NUMBER):13053640
+ 2 -  (VARCHAR2(32)):2024-02-01T04:00:00.000Z
+ 3 -  (VARCHAR2(32)):YYYY-MM-DD"T"HH24:MI:SS.ff3"Z"
+ 4 -  (VARCHAR2(32)):2024-03-09T03:59:59.999Z
+ 5 -  (VARCHAR2(32)):YYYY-MM-DD"T"HH24:MI:SS.ff3"Z"
+
+-------------------------------------------------------------------------------
+FINDINGS SECTION (4 findings)
+-------------------------------------------------------------------------------
+
+1- Index Finding (see explain plans section below)
+--------------------------------------------------
+  The execution plan of this statement can be improved by creating one or more
+  indices.
+
+  Recommendation (estimated benefit: 99.67%)
+  ------------------------------------------
+  - Consider running the Access Advisor to improve the physical schema design
+    or creating the recommended index.
+    create index PAGOF.IDX$$_F59C0001 on PAGOF.BDVX_REGISTRO_MOVIMIENTO_DIVISAS
+    (TO_NUMBER("CEDULA_ORIGEN"));
+
+  Rationale
+  ---------
+    Creating the recommended indices significantly improves the execution plan
+    of this statement. However, it might be preferable to run "Access Advisor"
+    using a representative SQL workload as opposed to a single statement. This
+    will allow to get comprehensive index recommendations which takes into
+    account index maintenance overhead and additional space consumption.
+
+2- Restructure SQL finding (see plan 1 in explain plans section)
+----------------------------------------------------------------
+  The predicate SYS_EXTRACT_UTC("BDVX_REGISTRO_MOVIMIENTO_DIVISAS"."FECHA_CREAC
+  ION")>=SYS_EXTRACT_UTC(TO_TIMESTAMP_TZ(:B1,:B2)) used at line ID 2 of the
+  execution plan contains an expression on indexed column "FECHA_CREACION".
+  This expression prevents the optimizer from selecting indices on table
+  "PAGOF"."BDVX_REGISTRO_MOVIMIENTO_DIVISAS".
+
+  Recommendation
+  --------------
+  - Rewrite the predicate into an equivalent form to take advantage of
+    indices. Alternatively, create a function-based index on the expression.
+
+3- Restructure SQL finding (see plan 1 in explain plans section)
+----------------------------------------------------------------
+  The predicate SYS_EXTRACT_UTC("BDVX_REGISTRO_MOVIMIENTO_DIVISAS"."FECHA_CREAC
+  ION")<=SYS_EXTRACT_UTC(TO_TIMESTAMP_TZ(:B1,:B2)) used at line ID 2 of the
+  execution plan contains an expression on indexed column "FECHA_CREACION".
+  This expression prevents the optimizer from selecting indices on table
+  "PAGOF"."BDVX_REGISTRO_MOVIMIENTO_DIVISAS".
+
+  Recommendation
+  --------------
+  - Rewrite the predicate into an equivalent form to take advantage of
+    indices. Alternatively, create a function-based index on the expression.
+
+4- Restructure SQL finding (see plan 1 in explain plans section)
+----------------------------------------------------------------
+  The predicate TO_NUMBER("BDVX_REGISTRO_MOVIMIENTO_DIVISAS"."CEDULA_ORIGEN")=:
+  B1 used at line ID 2 of the execution plan contains an implicit data type
+  conversion on indexed column "CEDULA_ORIGEN". This implicit data type
+  conversion prevents the optimizer from efficiently using indices on table
+  "PAGOF"."BDVX_REGISTRO_MOVIMIENTO_DIVISAS".
+
+  Recommendation
+  --------------
+  - Rewrite the predicate into an equivalent form to take advantage of
+    indices.
+
+-------------------------------------------------------------------------------
+EXPLAIN PLANS SECTION
+-------------------------------------------------------------------------------
+
+1- Original
+-----------
+Plan hash value: 2877782815
+
+-------------------------------------------------------------------------------------------------------
+| Id  | Operation          | Name                             | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |                                  |     1 |   191 | 28917   (4)| 00:00:02 |
+|*  1 |  FILTER            |                                  |       |       |            |          |
+|*  2 |   TABLE ACCESS FULL| BDVX_REGISTRO_MOVIMIENTO_DIVISAS |     1 |   191 | 28917   (4)| 00:00:02 |
+-------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter(SYS_EXTRACT_UTC(TO_TIMESTAMP_TZ(:SYS_B_3,:SYS_B_4))>=SYS_EXTRACT_UTC(TO_TIMESTAMP
+              _TZ(:SYS_B_1,:SYS_B_2)))
+   2 - filter(TO_NUMBER("CEDULA_ORIGEN")=:SYS_B_0 AND
+              SYS_EXTRACT_UTC(INTERNAL_FUNCTION("FECHA_CREACION"))>=SYS_EXTRACT_UTC(TO_TIMESTAMP_TZ(:SYS_B_1,
+              :SYS_B_2)) AND SYS_EXTRACT_UTC(INTERNAL_FUNCTION("FECHA_CREACION"))<=SYS_EXTRACT_UTC(TO_TIMESTA
+              MP_TZ(:SYS_B_3,:SYS_B_4)))
+
+2- Using New Indices
+--------------------
+Plan hash value: 2436273085
+
+-------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                            | Name                             | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                     |                                  |     1 |   191 |    95   (0)| 00:00:01 |
+|*  1 |  FILTER                              |                                  |       |       |            |          |
+|*  2 |   TABLE ACCESS BY INDEX ROWID BATCHED| BDVX_REGISTRO_MOVIMIENTO_DIVISAS |     1 |   191 |    95   (0)| 00:00:01 |
+|*  3 |    INDEX RANGE SCAN                  | IDX$$_F59C0001                   |   214 |       |     3   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter(SYS_EXTRACT_UTC(TO_TIMESTAMP_TZ(:SYS_B_3,:SYS_B_4))>=SYS_EXTRACT_UTC(TO_TIMESTAMP_TZ(:SYS_B_1,:SYS_
+              B_2)))
+   2 - filter(SYS_EXTRACT_UTC(INTERNAL_FUNCTION("FECHA_CREACION"))>=SYS_EXTRACT_UTC(TO_TIMESTAMP_TZ(:SYS_B_1,:SYS
+              _B_2)) AND SYS_EXTRACT_UTC(INTERNAL_FUNCTION("FECHA_CREACION"))<=SYS_EXTRACT_UTC(TO_TIMESTAMP_TZ(:SYS_B_3,:SYS_B_
+              4)))
+   3 - access("BDVX_REGISTRO_MOVIMIENTO_DIVISAS"."SYS_QSMMIX_VCOL_5001"=:SYS_B_0)
+
+-------------------------------------------------------------------------------

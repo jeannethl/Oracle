@@ -1,0 +1,182 @@
+
+GROUP_NUMBER DISK_NUMBER NAME                           PATH                           HEADER_STATU MOUNT_S MODE_ST STATE      TOTAL_MB    FREE_MB
+------------ ----------- ------------------------------ ------------------------------ ------------ ------- ------- -------- ---------- ----------
+           0           0                                /dev/rdsk/c1d55s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0           1                                /dev/rdsk/c1d61s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0           2                                /dev/rdsk/c1d82s6              CANDIDATE    CLOSED  ONLINE  NORMAL            0          0
+           0           3                                /dev/rdsk/c1d3s6               MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0           4                                /dev/rdsk/c1d65s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0           5                                /dev/rdsk/c1d7s6               MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0           6                                /dev/rdsk/c1d26s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0           7                                /dev/rdsk/c1d58s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0           8                                /dev/rdsk/c1d10s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0           9                                /dev/rdsk/c1d4s6               MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          10                                /dev/rdsk/c1d6s6               MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          11                                /dev/rdsk/c1d86s6              CANDIDATE    CLOSED  ONLINE  NORMAL            0          0
+           0          12                                /dev/rdsk/c1d19s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          13                                /dev/rdsk/c1d84s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          14                                /dev/rdsk/c1d8s6               MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          15                                /dev/rdsk/c1d45s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          16                                /dev/rdsk/c1d81s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          17                                /dev/rdsk/c1d73s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          18                                /dev/rdsk/c1d67s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          19                                /dev/rdsk/c1d63s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          20                                /dev/rdsk/c1d31s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          21                                /dev/rdsk/c1d72s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          22                                /dev/rdsk/c1d14s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          23                                /dev/rdsk/c1d38s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          24                                /dev/rdsk/c1d24s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          25                                /dev/rdsk/c1d57s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          26                                /dev/rdsk/c1d40s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          27                                /dev/rdsk/c1d54s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          28                                /dev/rdsk/c1d60s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          29                                /dev/rdsk/c1d78s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          30                                /dev/rdsk/c1d75s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          31                                /dev/rdsk/c1d23s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          32                                /dev/rdsk/c1d83s6              CANDIDATE    CLOSED  ONLINE  NORMAL            0          0
+           0          33                                /dev/rdsk/c1d64s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          34                                /dev/rdsk/c1d37s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          35                                /dev/rdsk/c1d47s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          36                                /dev/rdsk/c1d56s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          37                                /dev/rdsk/c1d71s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          38                                /dev/rdsk/c1d52s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          39                                /dev/rdsk/c1d87s6              CANDIDATE    CLOSED  ONLINE  NORMAL            0          0
+           0          40                                /dev/rdsk/c1d41s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          41                                /dev/rdsk/c1d85s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          42                                /dev/rdsk/c1d44s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          43                                /dev/rdsk/c1d35s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          44                                /dev/rdsk/c1d51s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          45                                /dev/rdsk/c1d20s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          46                                /dev/rdsk/c1d12s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          47                                /dev/rdsk/c1d59s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          48                                /dev/rdsk/c1d25s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          49                                /dev/rdsk/c1d16s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          50                                /dev/rdsk/c1d13s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          51                                /dev/rdsk/c1d66s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          52                                /dev/rdsk/c1d69s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          53                                /dev/rdsk/c1d79s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          54                                /dev/rdsk/c1d50s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          55                                /dev/rdsk/c1d80s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          56                                /dev/rdsk/c1d48s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          57                                /dev/rdsk/c1d42s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          58                                /dev/rdsk/c1d49s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          59                                /dev/rdsk/c1d11s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          60                                /dev/rdsk/c1d76s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          61                                /dev/rdsk/c1d68s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          62                                /dev/rdsk/c1d27s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          63                                /dev/rdsk/c1d15s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          64                                /dev/rdsk/c1d17s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          65                                /dev/rdsk/c1d29s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          66                                /dev/rdsk/c1d70s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          67                                /dev/rdsk/c1d28s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          68                                /dev/rdsk/c1d33s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          69                                /dev/rdsk/c1d36s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          70                                /dev/rdsk/c1d77s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          71                                /dev/rdsk/c1d32s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          72                                /dev/rdsk/c1d43s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          73                                /dev/rdsk/c1d62s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          74                                /dev/rdsk/c1d88s6              CANDIDATE    CLOSED  ONLINE  NORMAL            0          0
+           0          75                                /dev/rdsk/c1d30s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          76                                /dev/rdsk/c1d18s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          77                                /dev/rdsk/c1d9s6               MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          78                                /dev/rdsk/c1d89s6              CANDIDATE    CLOSED  ONLINE  NORMAL            0          0
+           0          79                                /dev/rdsk/c1d22s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          80                                /dev/rdsk/c1d39s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          81                                /dev/rdsk/c1d74s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          82                                /dev/rdsk/c1d34s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          83                                /dev/rdsk/c1d46s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          84                                /dev/rdsk/c1d53s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          85                                /dev/rdsk/c1d5s6               MEMBER       IGNORED ONLINE  NORMAL            0          0
+           0          86                                /dev/rdsk/c1d21s6              MEMBER       IGNORED ONLINE  NORMAL            0          0
+           1           0 DG_ASM1                        AFD:DG_ASM1                    MEMBER       CACHED  ONLINE  NORMAL         1016        916
+           2           0 DG_DATA_JURI0001               AFD:DG_DATA_JURI0001           MEMBER       CACHED  ONLINE  NORMAL       102392      16208
+           2           1 DG_DATA_JURI0002               AFD:DG_DATA_JURI0002           MEMBER       CACHED  ONLINE  NORMAL       102392      16252
+           2           2 DG_DATA_JURI0003               AFD:DG_DATA_JURI0003           MEMBER       CACHED  ONLINE  NORMAL       102392      16268
+           2           3 DG_DATA_JURI0004               AFD:DG_DATA_JURI0004           MEMBER       CACHED  ONLINE  NORMAL       102392      16272
+           2           4 DG_DATA_JURI0005               AFD:DG_DATA_JURI0005           MEMBER       CACHED  ONLINE  NORMAL       102392      16280
+           2           5 DG_DATA_JURI0006               AFD:DG_DATA_JURI0006           MEMBER       CACHED  ONLINE  NORMAL       102392      16288
+           2           6 DG_DATA_JURI0007               AFD:DG_DATA_JURI0007           MEMBER       CACHED  ONLINE  NORMAL       102392      16240
+           2           7 DG_DATA_JURI0008               AFD:DG_DATA_JURI0008           MEMBER       CACHED  ONLINE  NORMAL       102392      16228
+           2           8 DG_DATA_JURI0009               AFD:DG_DATA_JURI0009           MEMBER       CACHED  ONLINE  NORMAL       102392      16192
+           2           9 DG_DATA_JURI0010               AFD:DG_DATA_JURI0010           MEMBER       CACHED  ONLINE  NORMAL       102392      16276
+           2          10 DG_DATA_JURI0011               AFD:DG_DATA_JURI0011           MEMBER       CACHED  ONLINE  NORMAL       102392      16244
+           2          11 DG_DATA_JURI0012               AFD:DG_DATA_JURI0012           MEMBER       CACHED  ONLINE  NORMAL       102392      16220
+           2          12 DG_DATA_JURI0013               AFD:DG_DATA_JURI0013           MEMBER       CACHED  ONLINE  NORMAL       102392      16256
+           2          13 DG_DATA_JURI0014               AFD:DG_DATA_JURI0014           MEMBER       CACHED  ONLINE  NORMAL       102392      16248
+           2          14 DG_DATA_JURI0015               AFD:DG_DATA_JURI0015           MEMBER       CACHED  ONLINE  NORMAL       102392      16248
+           2          15 DG_DATA_JURI0016               AFD:DG_DATA_JURI0016           MEMBER       CACHED  ONLINE  NORMAL       102392      16236
+           2          16 DG_DATA_JURI0017               AFD:DG_DATA_JURI0017           MEMBER       CACHED  ONLINE  NORMAL       102392      16244
+           2          17 DG_DATA_JURI0018               AFD:DG_DATA_JURI0018           MEMBER       CACHED  ONLINE  NORMAL       102392      16284
+           2          18 DG_DATA_JURI0019               AFD:DG_DATA_JURI0019           MEMBER       CACHED  ONLINE  NORMAL       102392      16240
+           2          19 DG_DATA_JURI0020               AFD:DG_DATA_JURI0020           MEMBER       CACHED  ONLINE  NORMAL       102392      16248
+           2          20 DG_DATA_JURI0021               AFD:DG_DATA_JURI0021           MEMBER       CACHED  ONLINE  NORMAL       102392      16236
+           2          21 DG_DATA_JURI0022               AFD:DG_DATA_JURI0022           MEMBER       CACHED  ONLINE  NORMAL       102392      16232
+           2          22 DG_DATA_JURI0023               AFD:DG_DATA_JURI0023           MEMBER       CACHED  ONLINE  NORMAL       102392      16276
+           2          23 DG_DATA_JURI0024               AFD:DG_DATA_JURI0024           MEMBER       CACHED  ONLINE  NORMAL       102392      16248
+           2          24 DG_DATA_JURI0025               AFD:DG_DATA_JURI0025           MEMBER       CACHED  ONLINE  NORMAL       102392      16244
+           2          25 DG_DATA_JURI0026               AFD:DG_DATA_JURI0026           MEMBER       CACHED  ONLINE  NORMAL       102392      16264
+           2          26 DG_DATA_JURI0027               AFD:DG_DATA_JURI0027           MEMBER       CACHED  ONLINE  NORMAL       102392      16240
+           2          27 DG_DATA_JURI0028               AFD:DG_DATA_JURI0028           MEMBER       CACHED  ONLINE  NORMAL       102392      16296
+           2          28 DG_DATA_JURI0029               AFD:DG_DATA_JURI0029           MEMBER       CACHED  ONLINE  NORMAL       102392      16252
+           2          29 DG_DATA_JURI0030               AFD:DG_DATA_JURI0030           MEMBER       CACHED  ONLINE  NORMAL       102392      16244
+           2          30 DG_DATA_JURI0031               AFD:DG_DATA_JURI0031           MEMBER       CACHED  ONLINE  NORMAL       102392      16264
+           2          31 DG_DATA_JURI0032               AFD:DG_DATA_JURI0032           MEMBER       CACHED  ONLINE  NORMAL       102392      16240
+           2          32 DG_DATA_JURI0033               AFD:DG_DATA_JURI0033           MEMBER       CACHED  ONLINE  NORMAL       102392      16212
+           2          33 DG_DATA_JURI0034               AFD:DG_DATA_JURI0034           MEMBER       CACHED  ONLINE  NORMAL       102392      16248
+           2          34 DG_DATA_JURI0035               AFD:DG_DATA_JURI0035           MEMBER       CACHED  ONLINE  NORMAL       102392      16240
+           2          35 DG_DATA_JURI0036               AFD:DG_DATA_JURI0036           MEMBER       CACHED  ONLINE  NORMAL       102392      16220
+           2          36 DG_DATA_JURI0037               AFD:DG_DATA_JURI0037           MEMBER       CACHED  ONLINE  NORMAL       102392      16240
+           2          37 DG_DATA_JURI0038               AFD:DG_DATA_JURI0038           MEMBER       CACHED  ONLINE  NORMAL       102392      16224
+           2          38 DG_DATA_JURI0039               AFD:DG_DATA_JURI0039           MEMBER       CACHED  ONLINE  NORMAL       102392      16272
+           2          39 DG_DATA_JURI0040               AFD:DG_DATA_JURI0040           MEMBER       CACHED  ONLINE  NORMAL       102392      16272
+           2          40 DG_DATA_JURI0041               AFD:DG_DATA_JURI0041           MEMBER       CACHED  ONLINE  NORMAL       102392      16272
+           2          41 DG_DATA_JURI0042               AFD:DG_DATA_JURI0042           MEMBER       CACHED  ONLINE  NORMAL       102392      16236
+           2          42 DG_DATA_JURI0043               AFD:DG_DATA_JURI0043           MEMBER       CACHED  ONLINE  NORMAL       102392      16244
+           2          43 DG_DATA_JURI0044               AFD:DG_DATA_JURI0044           MEMBER       CACHED  ONLINE  NORMAL       102392      16244
+           2          44 DG_DATA_JURI0045               AFD:DG_DATA_JURI0045           MEMBER       CACHED  ONLINE  NORMAL       102392      16252
+           3           0 DG_FRA0001                     AFD:DG_FRA0001                 MEMBER       CACHED  ONLINE  NORMAL       102392     102308
+           3           1 DG_FRA0002                     AFD:DG_FRA0002                 MEMBER       CACHED  ONLINE  NORMAL       102392     102320
+           3           2 DG_FRA0003                     AFD:DG_FRA0003                 MEMBER       CACHED  ONLINE  NORMAL       102392     102316
+           3           3 DG_FRA0004                     AFD:DG_FRA0004                 MEMBER       CACHED  ONLINE  NORMAL       102392     102316
+           3           4 DG_FRA0005                     AFD:DG_FRA0005                 MEMBER       CACHED  ONLINE  NORMAL       102392     102312
+           6           0 DG_REDO3_JURI0001              AFD:DG_REDO3_JURI0001          MEMBER       CACHED  ONLINE  NORMAL         5112       1604
+           4           0 DD_REDO1_JURI0001              AFD:DD_REDO1_JURI0001          MEMBER       CACHED  ONLINE  NORMAL         5112       1860
+           5           0 DG_REDO2_JURI0001              AFD:DG_REDO2_JURI0001          MEMBER       CACHED  ONLINE  NORMAL         5112       1668
+           7           0 DG_DATA_CCENLNH1               AFD:DG_DATA_CCENLNH1           MEMBER       CACHED  ONLINE  NORMAL       102392      25268
+           7           1 DG_DATA_CCENLNH2               AFD:DG_DATA_CCENLNH2           MEMBER       CACHED  ONLINE  NORMAL       102392      25276
+           7           2 DG_DATA_CCENLNH3               AFD:DG_DATA_CCENLNH3           MEMBER       CACHED  ONLINE  NORMAL       102392      25264
+           7           3 DG_DATA_CCENLNH4               AFD:DG_DATA_CCENLNH4           MEMBER       CACHED  ONLINE  NORMAL       102392      25264
+           7           4 DG_DATA_CCENLNH5               AFD:DG_DATA_CCENLNH5           MEMBER       CACHED  ONLINE  NORMAL       102392      25256
+           7           5 DG_DATA_CCENLNH6               AFD:DG_DATA_CCENLNH6           MEMBER       CACHED  ONLINE  NORMAL       102392      25272
+           7           6 DG_DATA_CCENLNH7               AFD:DG_DATA_CCENLNH7           MEMBER       CACHED  ONLINE  NORMAL       102392      25272
+           7           7 DG_DATA_CCENLNH8               AFD:DG_DATA_CCENLNH8           MEMBER       CACHED  ONLINE  NORMAL       102392      25248
+           7           8 DG_DATA_CCENLNH9               AFD:DG_DATA_CCENLNH9           MEMBER       CACHED  ONLINE  NORMAL       102392      25264
+           7           9 DG_DATA_CCENLNH10              AFD:DG_DATA_CCENLNH10          MEMBER       CACHED  ONLINE  NORMAL       102392      25268
+           7          10 DG_DATA_CCENLNH11              AFD:DG_DATA_CCENLNH11          MEMBER       CACHED  ONLINE  NORMAL       102392      25264
+           7          11 DG_DATA_CCENLNH12              AFD:DG_DATA_CCENLNH12          MEMBER       CACHED  ONLINE  NORMAL       102392      25268
+           7          12 DG_DATA_CCENLNH13              AFD:DG_DATA_CCENLNH13          MEMBER       CACHED  ONLINE  NORMAL       102392      25276
+           7          13 DG_DATA_CCENLNH14              AFD:DG_DATA_CCENLNH14          MEMBER       CACHED  ONLINE  NORMAL       102392      25272
+           7          14 DG_DATA_CCENLNH15              AFD:DG_DATA_CCENLNH15          MEMBER       CACHED  ONLINE  NORMAL       102392      25268
+           7          15 DG_DATA_CCENLNH16              AFD:DG_DATA_CCENLNH16          MEMBER       CACHED  ONLINE  NORMAL       102392      25252
+           7          16 DG_DATA_CCENLNH17              AFD:DG_DATA_CCENLNH17          MEMBER       CACHED  ONLINE  NORMAL       102392      25256
+           7          17 DG_DATA_CCENLNH18              AFD:DG_DATA_CCENLNH18          MEMBER       CACHED  ONLINE  NORMAL       102392      25264
+           7          18 DG_DATA_CCENLNH19              AFD:DG_DATA_CCENLNH19          MEMBER       CACHED  ONLINE  NORMAL       102392      25272
+           7          19 DG_DATA_CCENLNH20              AFD:DG_DATA_CCENLNH20          MEMBER       CACHED  ONLINE  NORMAL       102392      25272
+           7          20 DG_DATA_CCENLNH21              AFD:DG_DATA_CCENLNH21          MEMBER       CACHED  ONLINE  NORMAL       102392      25272
+           7          21 DG_DATA_CCENLNH22              AFD:DG_DATA_CCENLNH22          MEMBER       CACHED  ONLINE  NORMAL       102392      25272
+           7          22 DG_DATA_CCENLNH23              AFD:DG_DATA_CCENLNH23          MEMBER       CACHED  ONLINE  NORMAL       102392      25272
+           7          23 DG_DATA_CCENLNH24              AFD:DG_DATA_CCENLNH24          MEMBER       CACHED  ONLINE  NORMAL       102392      25268
+           7          24 DG_DATA_CCENLNH25              AFD:DG_DATA_CCENLNH25          MEMBER       CACHED  ONLINE  NORMAL       102392      25264
+           7          25 DG_DATA_CCENLNH26              /dev/rdsk/c1d90s6              MEMBER       CACHED  ONLINE  NORMAL       102392      25280
+           7          26 DG_DATA_CCENLNH27              /dev/rdsk/c1d91s6              MEMBER       CACHED  ONLINE  NORMAL       102392      25284
+           7          27 DG_DATA_CCENLNH28              /dev/rdsk/c1d92s6              MEMBER       CACHED  ONLINE  NORMAL       102392      25268
+           7          28 DG_DATA_CCENLNH29              /dev/rdsk/c1d93s6              MEMBER       CACHED  ONLINE  NORMAL       102392      25280
+           7          29 DG_DATA_CCENLNH30              /dev/rdsk/c1d94s6              MEMBER       CACHED  ONLINE  NORMAL       102392      25284
+           7          30 DG_DATA_CCENLNH31              /dev/rdsk/c1d95s6              MEMBER       CACHED  ONLINE  NORMAL       102392      25280
+           7          31 DG_DATA_CCENLNH32              /dev/rdsk/c1d96s6              MEMBER       CACHED  ONLINE  NORMAL       102392      25268
+           7          32 DG_DATA_CCENLNH33              /dev/rdsk/c1d97s6              MEMBER       CACHED  ONLINE  NORMAL       102392      25280
+           7          33 DG_DATA_CCENLNH34              /dev/rdsk/c1d98s6              MEMBER       CACHED  ONLINE  NORMAL       102392      25272
+           7          34 DG_DATA_CCENLNH35              /dev/rdsk/c1d99s6              MEMBER       CACHED  ONLINE  NORMAL       102392      25268
+           8           0 DG_REDO1_CCENLNH1              AFD:DG_REDO1_CCENLNH1          MEMBER       CACHED  ONLINE  NORMAL        51192      49844
+           9           0 DG_REDO2_CCENLNH1              AFD:DG_REDO2_CCENLNH1          MEMBER       CACHED  ONLINE  NORMAL        51192      49844
+

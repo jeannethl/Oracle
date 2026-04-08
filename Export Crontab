@@ -1,0 +1,137 @@
+*** *** *** *** ***Crontab - Export / Import Tabla particionada*** *** *** *** 
+///  
+***  export RUTA=/exportdb/BDVNETP/backup_temp
+///  export ORACLE_BASE=/oracle/app/oracle11
+***  export ORACLE_HOME=/oracle/app/oracle11/product/11.2.0/dbhome_1
+***  export PATH=/usr/bin:/usr/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/openwin/bin:/usr/ucb:/oracle/app/oracle11/product/11.2.0/dbhome_1/bin:/oracle/app/grid/product/11.2.0/bin
+///  export ORACLE_SID=BDVNETP1
+***  
+///  
+***  expdp system/k3r3p4kup41 tables=BDVNET.BNET_REG_OPER:FEBRERO directory=EXPORT dumpfile=BNET_REG_OPER_FEBRERO24_C.dmp LOGFILE=BNET_REG_OPER_FEBRERO24_C.log CONTENT=DATA_ONLY compression=ALL
+***  
+///  
+***  
+///  
+***  
+***  export_bdvrelp.sh
+///  export RUTA=/exportdb/BDVRELP/backup_temp
+***  export ORACLE_BASE=/oracle/app/oracle11
+///  export ORACLE_HOME=/oracle/app/oracle11/product/11.2.0/dbhome_1
+***  export PATH=/usr/bin:/usr/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/openwin/bin:/usr/ucb:/oracle/app/oracle11/product/11.2.0/dbhome_1/bin:/oracle/app/grid/product/11.2.0/bin
+***  
+///  export ORACLE_SID=BDVRELP1
+***  
+///  expdp system/k3r3p4kup41 tables=RELBDV.PAGOS_1:OCTUBRE directory=EXPORT dumpfile=PAGOS_1_OCTUBRE23_C.dmp LOGFILE=PAGOS_1_OCTUBRE23_C.log CONTENT=DATA_ONLY compression=ALL
+///  
+***      
+///  
+***  
+///  
+***  ***   ***   REVISAR PARTICIONES   ***   ***   ***
+///  set line 240
+***  col TABLE_NAME format a40
+///  col COLUMN_NAME format a40
+***  break on t.table_NAME on t.partitioning_type on t.partition_count on t.status
+///  select t.table_NAME, t.partitioning_type tipo, t.partition_count particiones, t.status, c.COLUMN_NAME, c.COLUMN_POSITION
+***  from DBA_PART_KEY_COLUMNS c, dbA_part_tables t
+///  where t.table_name = c.name
+***  and c.owner = t.owner
+///  and t.table_name like 'CCL_PAY_TRANSACTION_2024'
+***  --and c.owner like 'CCENLNP'
+///  order by c.name, c.COLUMN_POSITION;
+***
+///
+***  
+///  ///   ///   REVISAR PARTICIONES _ LOS NOMBRES   ///   ///   ///
+***  SELECT 
+///  TABLE_OWNER
+***  ,TABLE_NAME
+///  ,PARTITION_NAME
+***  FROM DBA_TAB_PARTITIONS
+///  WHERE TABLE_NAME='CCL_PAY_TRANSACTION_2024';
+
+
+
+
+
+
+
+
+
+
+
+
+**********************************************************************************************************************************************************************************************
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+**********************************************************************************************************************************************************************************************
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+**********************************************************************************************************************************************************************************************
+
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES1 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES1_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES1.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES2 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES2_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES2.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES3 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES3_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES3.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES4 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES4_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES4.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES5 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES5_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES5.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES6 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES6_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES6.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES7 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES7_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES7.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES8 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES8_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES8.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES9 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES9_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES9.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES10 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES10_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES10.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES11 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES11_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES11.log EXCLUDE=STATISTICS
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES12 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_PMES12_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_PMES12.log EXCLUDE=STATISTICS
+
+
+**********************************************************************************************************************************************************************************************
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+**********************************************************************************************************************************************************************************************
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+**********************************************************************************************************************************************************************************************
+
+
+
+
+
+
+
+export_CCL_PAY_TRANSACTION_2024
+
+export RUTA=/exportdb/CCENLNP/backup_temp
+export ORACLE_BASE=/oracle/app/oracle12
+export ORACLE_HOME=/oracle/app/oracle12/product/12.2.0/db_1
+export PATH=/oracle/app/oracle12/product/12.2.0/db_1/bin:/oracle/app/grid/product/12.2.0/grid/bin:/usr/bin:/usr/sbin
+
+export ORACLE_SID=BDVRELP1
+
+expdp system/k3r3p4kup41 tables=RELBDV.PAGOS_1:OCTUBRE directory=EXPORT dumpfile=PAGOS_1_OCTUBRE23_C.dmp LOGFILE=PAGOS_1_OCTUBRE23_C.log CONTENT=DATA_ONLY compression=ALL
+
+
+#!/bin/bash
+
+export ORACLE_BASE=/oracle/app/oracle12
+export ORACLE_HOME=/oracle/app/oracle12/product/12.2.0/db_1
+export GRID_HOME=/oracle/app/grid/product/12.2.0/grid
+export ORACLE_SID=CCENLNP1
+export ORACLE_PATH=$HOME/scripts
+export PATH=$ORACLE_HOME/bin:$GRID_HOME/bin:$PATH
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib
+export CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib
+
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES2 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_P_MES2_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_P_MES2.log EXCLUDE=STATISTICS PARALLEL=4 CLUSTER=N COMPRESSION=ALL
+
+bash /export/home/oracle12/exportdump/increment.sh

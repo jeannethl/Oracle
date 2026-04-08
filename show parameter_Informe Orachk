@@ -1,0 +1,30 @@
+show parameter file;
+
+CONTROLFILE
+
++DATA_STOKEN/STOKENQ/CONTROLFILE/current.269.1176295797, +FRA_STOKEN/STOKENQ/CONTROLFILE/current.260.1176295797
+
++DATA_PENTH/PENTAHOQ/CONTROLFILE/current.261.1175869929, +FRA_PENTH/PENTAHOQ/CONTROLFILE/current.256.1175869929
+
+SPFILE
+
++DATA_STOKEN/STOKENQ/PARAMETERFILE/spfile.275.1176310369
+
++DATA_PENTH/PENTAHOQ/PARAMETERFILE/spfile.265.1175871685
+
+show parameter DB_WRITER
+
+show parameter OPEN
+
+set line 380
+col REDOLOG_FILE_NAME format a60
+select a.group#,
+a.thread#,
+a.sequence#,
+a.archived,
+a.status,
+b.member as redolog_file_name,
+(a.bytes/1024/1024) as size_mb
+from v$log a
+JOIN v$logfile b on a.group#=b.group#
+order by a.group# asc;

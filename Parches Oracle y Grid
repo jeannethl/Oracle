@@ -1,0 +1,136 @@
+Aplicacion de parches - Grid y Oracle (G/O)
+
+1. Verificar la versión de parches existentes (G/O)
+	$ORACLE_HOME/OPatch/opatch version
+
+
+-----Respaldar  el directorio raiz de los productos de oracle.
+
+2. Actualizar OPatch en caso de ser necesario.
+
+	2.1 Realizar el respaldo del Opatch anterior antes de descomprimir el nuevo (G/O)
+		$ cd $ORACLE_HOME
+		$ ls -ld OP*
+		$ mv OPatch OPatch_YB_08072024
+
+		2.2 Descomprimir el OPatch actualizado
+	
+			2.2.1 Para Grid.	Verificar el owner de la carpeta grid/
+				# cd /oracle/app/product/19c
+				# ls -ltr
+				# chown grid grid/ ----> chown usuario directorio
+	
+			2.2.2 Desde Grid.
+				Ubicar la ruta donde esta ubicado el OPatch 
+				$ pwd -> /exportdb/parches
+				$ cd $ORACLE_HOME
+				$ unzip -q /exportdb/parches/p6880880_190000_Linux-x86-64.zip  ----> /ruta/nombre_OPatch
+				
+			2.2.3 Para Grid (Devolver el paso del owner)
+				# chown root grid/
+
+			2.2.4 Para Oracle.
+				Ubicar la ruta donde esta ubicado el OPatch 
+				$ pwd -> /exportdb/parches
+				$ cd $ORACLE_HOME
+				$ unzip -q /exportdb/parches/p6880880_190000_Linux-x86-64.zip
+
+3. Validar PreReq para instalación de parches (G/O)
+
+	3.1 Grid
+		$ echo $UNZIPPED_PATCH_LOCATION
+		$ export UNZIPPED_PATCH_LOCATION=/exportdb/parches/35742441
+		$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35643107
+		$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35655527
+		$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35652062
+		$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35553096
+		$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/33575402
+
+	3.2 Oracle
+		$ echo $UNZIPPED_PATCH_LOCATION
+		$ export UNZIPPED_PATCH_LOCATION=/exportdb/parches/35742441
+		$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35643107
+		$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35655527
+
+	3.3 Grid
+		3.3.1	$ cat <<EOF >> /tmp/patch_list_gihome.txt
+		 		$UNZIPPED_PATCH_LOCATION/35642822/35643107
+		 		$UNZIPPED_PATCH_LOCATION/35642822/35655527
+		 		$UNZIPPED_PATCH_LOCATION/35642822/35652062
+		 		$UNZIPPED_PATCH_LOCATION/35642822/35553096
+		 		$UNZIPPED_PATCH_LOCATION/35642822/33575402
+		 		EOF
+
+		3.3.2   Verificar espacio disponible en el home para aplicar parche.
+				$ $ORACLE_HOME/OPatch/opatch prereq CheckSystemSpace -phBaseFile /tmp/patch_list_gihome.txt
+		
+	3.4 Oracle
+		3.4.1   $cat <<EOF >> /tmp/patch_list_dbhome.txt
+				$UNZIPPED_PATCH_LOCATION/35642822/35643107
+				$UNZIPPED_PATCH_LOCATION/35642822/35655527
+				EOF
+
+		3.4.2	Verificar espacio disponible en el home para aplicar parche.
+				$ $ORACLE_HOME/OPatch/opatch prereq CheckSystemSpace -phBaseFile /tmp/patch_list_dbhome.txt
+
+4. Instalación del RU
+
+	4.1 Para Grid
+		$ORACLE_HOME =
+		# export CV_ASSUME_DISTID=OL7 ## Para oracle linux 8
+		# export UNZIPPED_PATCH_LOCATION=/exportdb/parches/35742441
+		# export PATH=$PATH:ORACLE_HOME/OPatch
+
+		# cd /tmp
+		# opatchauto apply $UNZIPPED_PATCH_LOCATION/35642822
+
+	4.2 Para Oracle
+		$ORACLE_HOME =
+		 //// No hacerlo en la misma ventana que se realizo el de grid***
+		# export CV_ASSUME_DISTID=OL7 ## Para oracle linux 8
+		# export UNZIPPED_PATCH_LOCATION=/exportdb/parches/35742441
+		# export PATH=$PATH:/oracle/app/oracle19/product/19c/db1/OPatch
+
+		# cd /tmp
+		# opatchauto apply $UNZIPPED_PATCH_LOCATION/35642822 -oh /oracle/app/oracle19/product/19c/db1
+
+
+5. Instalacion del OJVM (Database Embedded JVM Java)
+
+	5.1 Oracle
+		$ $ORACLE_HOME/OPatch/opatch lspatches
+		$ $ORACLE_HOME /oracle/app/oracle19/product/19c/db1
+
+
+	5.2 Grid
+		$ $ORACLE_HOME /oracle/app/product/19c/grid
+		$ crsctl stop has
+		$ (/oracle/app/product/19c/grid/bin/crsctl stop has)
+
+	5.3 Oracle
+		$ ls -ld
+		$ export PATCH_TOP_DIR=/exportdb/parches
+		$ cd $PATCH_TOP_DIR
+		$ mv PatchSearch.xml PatchSearch.xml_35742441
+		$ unzip -q p36155925_1921000DBRU_Linux-x86-64.zip
+		$ cd $PATCH_TOP_DIR/
+		$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -ph ./36155925
+		$ $ORACLE_HOME/OPatch/opatch napply ./36155925 -verbose
+
+	5.4 Grid
+		$ ls -ld
+		$ export PATCH_TOP_DIR=/exportdb/parches
+		$ cd $PATCH_TOP_DIR
+		$ mv PatchSearch.xml PatchSearch.xml_36155925
+		$ unzip -q p36155938_1921000DBRU_Linux-x86-64.zip
+
+	5.5 Root
+		$ $ORACLE_HOME /oracle/app/product/19c/grid
+		$ export PATCH_TOP_DIR=/exportdb/parches
+		$ export PATH=$PATH:/oracle/app/product/19c/grid/OPatch
+		$ cd $PATCH_TOP_DIR/
+		$ opatchauto apply ./36155938 -analyze
+		$ opatchauto apply ./36155938
+		$ $ORACLE_HOME/OPatch/opatch lsinventory > $HOME/opatch_lsinventory.txt
+
+

@@ -1,0 +1,108 @@
+Prereq Grid
+
+
+Oracle Interim Patch Installer version 12.2.0.1.40
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+PREREQ session
+
+Oracle Home       : /oracle/app/product/19c/grid
+Central Inventory : /oracle/app/oraInventory
+   from           : /oracle/app/product/19c/grid/oraInst.loc
+OPatch version    : 12.2.0.1.40
+OUI version       : 12.2.0.7.0
+Log file location : /oracle/app/product/19c/grid/cfgtoollogs/opatch/opatch2024-03-07_09-02-34AM_1.log
+
+Invoking prereq "checkconflictagainstohwithdetail"
+
+Prereq "checkConflictAgainstOHWithDetail" passed.
+
+OPatch succeeded.
+[grid@dlingmbd01 parches]$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35655527
+Oracle Interim Patch Installer version 12.2.0.1.40
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+PREREQ session
+
+Oracle Home       : /oracle/app/product/19c/grid
+Central Inventory : /oracle/app/oraInventory
+   from           : /oracle/app/product/19c/grid/oraInst.loc
+OPatch version    : 12.2.0.1.40
+OUI version       : 12.2.0.7.0
+Log file location : /oracle/app/product/19c/grid/cfgtoollogs/opatch/opatch2024-03-07_09-02-46AM_1.log
+
+Invoking prereq "checkconflictagainstohwithdetail"
+
+Prereq "checkConflictAgainstOHWithDetail" passed.
+
+OPatch succeeded.
+[grid@dlingmbd01 parches]$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35652062
+Oracle Interim Patch Installer version 12.2.0.1.40
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+PREREQ session
+
+Oracle Home       : /oracle/app/product/19c/grid
+Central Inventory : /oracle/app/oraInventory
+   from           : /oracle/app/product/19c/grid/oraInst.loc
+OPatch version    : 12.2.0.1.40
+OUI version       : 12.2.0.7.0
+Log file location : /oracle/app/product/19c/grid/cfgtoollogs/opatch/opatch2024-03-07_09-02-48AM_1.log
+
+Invoking prereq "checkconflictagainstohwithdetail"
+
+Prereq "checkConflictAgainstOHWithDetail" passed.
+
+OPatch succeeded.
+[grid@dlingmbd01 parches]$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35553096
+Oracle Interim Patch Installer version 12.2.0.1.40
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+PREREQ session
+
+Oracle Home       : /oracle/app/product/19c/grid
+Central Inventory : /oracle/app/oraInventory
+   from           : /oracle/app/product/19c/grid/oraInst.loc
+OPatch version    : 12.2.0.1.40
+OUI version       : 12.2.0.7.0
+Log file location : /oracle/app/product/19c/grid/cfgtoollogs/opatch/opatch2024-03-07_09-02-51AM_1.log
+
+Invoking prereq "checkconflictagainstohwithdetail"
+
+Prereq "checkConflictAgainstOHWithDetail" passed.
+
+OPatch succeeded.
+[grid@dlingmbd01 parches]$ $ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/33575402
+Oracle Interim Patch Installer version 12.2.0.1.40
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+PREREQ session
+
+Oracle Home       : /oracle/app/product/19c/grid
+Central Inventory : /oracle/app/oraInventory
+   from           : /oracle/app/product/19c/grid/oraInst.loc
+OPatch version    : 12.2.0.1.40
+OUI version       : 12.2.0.7.0
+Log file location : /oracle/app/product/19c/grid/cfgtoollogs/opatch/opatch2024-03-07_09-02-57AM_1.log
+
+Invoking prereq "checkconflictagainstohwithdetail"
+
+Prereq "checkConflictAgainstOHWithDetail" passed.
+
+
+--
+Oracle Interim Patch Installer version 12.2.0.1.40
+Copyright (c) 2024, Oracle Corporation.  All rights reserved.
+
+PREREQ session
+
+Oracle Home       : /oracle/app/product/19c/grid
+Central Inventory : /oracle/app/oraInventory
+   from           : /oracle/app/product/19c/grid/oraInst.loc
+OPatch version    : 12.2.0.1.40
+OUI version       : 12.2.0.7.0
+Log file location : /oracle/app/product/19c/grid/cfgtoollogs/opatch/opatch2024-03-07_09-13-12AM_1.log
+
+Invoking prereq "checksystemspace"
+
+Prereq "checkSystemSpace" passed.

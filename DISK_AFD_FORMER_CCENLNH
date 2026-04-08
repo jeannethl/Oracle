@@ -1,0 +1,73 @@
+HEADER_STATUS             NAME                 PATH                           STATE      TOTAL_MB    FREE_MB      OS_MB
+------------------------- -------------------- ------------------------------ -------- ---------- ---------- ----------
+FORMER                                         /dev/rdsk/c1d57s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d58s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d59s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d60s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d61s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d62s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d63s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d64s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d65s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d66s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d67s6              NORMAL            0          0     102394
+
+HEADER_STATUS             NAME                 PATH                           STATE      TOTAL_MB    FREE_MB      OS_MB
+------------------------- -------------------- ------------------------------ -------- ---------- ---------- ----------
+FORMER                                         /dev/rdsk/c1d68s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d69s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d70s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d71s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d72s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d73s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d74s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d75s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d76s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d77s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d78s6              NORMAL            0          0     102394
+
+HEADER_STATUS             NAME                 PATH                           STATE      TOTAL_MB    FREE_MB      OS_MB
+------------------------- -------------------- ------------------------------ -------- ---------- ---------- ----------
+FORMER                                         /dev/rdsk/c1d79s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d80s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d81s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d82s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d83s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d86s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d87s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d88s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d89s6              NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH1           NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH10          NORMAL            0          0     102394
+
+HEADER_STATUS             NAME                 PATH                           STATE      TOTAL_MB    FREE_MB      OS_MB
+------------------------- -------------------- ------------------------------ -------- ---------- ---------- ----------
+FORMER                                         AFD:DG_DATA_CCENLNH11          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH12          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH13          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH14          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH15          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH16          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH17          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH18          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH19          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH2           NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH20          NORMAL            0          0     102394
+
+HEADER_STATUS             NAME                 PATH                           STATE      TOTAL_MB    FREE_MB      OS_MB
+------------------------- -------------------- ------------------------------ -------- ---------- ---------- ----------
+FORMER                                         AFD:DG_DATA_CCENLNH21          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH22          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH23          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH24          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH25          NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH3           NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH4           NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH5           NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH6           NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH7           NORMAL            0          0     102394
+FORMER                                         AFD:DG_DATA_CCENLNH8           NORMAL            0          0     102394
+
+HEADER_STATUS             NAME                 PATH                           STATE      TOTAL_MB    FREE_MB      OS_MB
+------------------------- -------------------- ------------------------------ -------- ---------- ---------- ----------
+FORMER                                         AFD:DG_DATA_CCENLNH9           NORMAL            0          0     102394

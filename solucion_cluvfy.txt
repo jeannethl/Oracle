@@ -1,0 +1,53 @@
+chmod 755 /oracle/app/product/19c/grid/bin/acfsload
+chmod 755 /oracle/app/product/19c/grid/bin/acfsload 
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_dupd
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_dupd
+chmod 755 /oracle/app/product/19c/grid/bin/acfssinglefsmount
+chmod 755 /oracle/app/product/19c/grid/bin/acfssinglefsmount
+chmod 755 /oracle/app/product/19c/grid/bin/acfsregistrymount
+chmod 755 /oracle/app/product/19c/grid/bin/acfsregistrymount 
+chmod 755 /oracle/app/product/19c/grid/bin/acfsdriverstate
+chmod 755 /oracle/app/product/19c/grid/bin/acfsdriverstate
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_dupd.bin
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_dupd.bin 
+chmod 755 /oracle/app/product/19c/grid/bin/okaload
+chmod 755 /oracle/app/product/19c/grid/bin/okaload
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_initializer
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_initializer
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_preapply
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_preapply 
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_apply
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_apply
+chmod 755 /oracle/app/product/19c/grid/bin/okacmd.bin
+chmod 755 /oracle/app/product/19c/grid/bin/okacmd.bin 
+chmod 755 /oracle/app/product/19c/grid/bin/okacmd
+chmod 755 /oracle/app/product/19c/grid/bin/okacmd
+chmod 755 /oracle/app/product/19c/grid/bin/acfsreplcrs
+chmod 755 /oracle/app/product/19c/grid/bin/acfsreplcrs
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_apply.bin
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_apply.bin 
+chmod 755 /oracle/app/product/19c/grid/bin/afdload
+chmod 755 /oracle/app/product/19c/grid/bin/afdload
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_monitor
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_monitor 
+chmod 755 /oracle/app/product/19c/grid/bin/okadriverstate
+chmod 755 /oracle/app/product/19c/grid/bin/okadriverstate
+chmod 755 /oracle/app/product/19c/grid/lib/acfsreplcrs.pl
+chmod 755 /oracle/app/product/19c/grid/bin/acfsroot
+chmod 755 /oracle/app/product/19c/grid/bin/acfsroot
+chmod 755 /oracle/app/product/19c/grid/lib/afdtoolsdriver.sh
+chmod 755 /oracle/app/product/19c/grid/lib/afdtoolsdriver.sh
+chmod 755 /oracle/app/product/19c/grid/lib/okatoolsdriver.sh
+chmod 755 /oracle/app/product/19c/grid/lib/okatoolsdriver.sh 
+chmod 755 /oracle/app/product/19c/grid/bin/afddriverstate
+chmod 755 /oracle/app/product/19c/grid/bin/afddriverstate
+chmod 755 /oracle/app/product/19c/grid/bin/afdroot
+chmod 755 /oracle/app/product/19c/grid/bin/afdroot 
+chmod 755 /oracle/app/product/19c/grid/bin/okaroot
+chmod 755 /oracle/app/product/19c/grid/bin/okaroot
+
+
+
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_transport
+chmod 755 /oracle/app/product/19c/grid/bin/acfsrepl_transport
+chmod 755

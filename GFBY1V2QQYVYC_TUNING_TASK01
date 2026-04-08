@@ -1,0 +1,182 @@
+DBMS_SQLTUNE.REPORT_TUNING_TASK('GFBY1V2QQYVYC_TUNING_TASK01')
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+GENERAL INFORMATION SECTION
+-------------------------------------------------------------------------------
+Tuning Task Name   : gfby1v2qqyvyc_tuning_task01
+Tuning Task Owner  : SYS
+Workload Type      : Single SQL Statement
+Execution Count    : 2
+Current Execution  : EXEC_67604
+Execution Type     : TUNE SQL
+Scope              : COMPREHENSIVE
+Time Limit(seconds): 20000
+Completion Status  : COMPLETED
+Started at         : 03/08/2024 08:52:22
+Completed at       : 03/08/2024 10:15:38
+
+-------------------------------------------------------------------------------
+Schema Name: PAGOF
+SQL ID     : gfby1v2qqyvyc
+SQL Text   : SELECT TIPO_MOVIMIENTO,NUMERO_COMPROBANTE,CEDULA_ORIGEN,CONCEPTO,
+             CUENTA_ABONO,CUENTAS_CARGO,ESTADO,FECHA_CREACION,
+             IMPORTE,IMPORTE_COMISION,LOG_ID,MONEDA,NACION_ORIGEN,PRODUCTO,RES
+             ULTADO,CODIGO_PROMOCION,ESTADO_CREDITO,
+             MONTO_ABONADO,MONTO_APROBADO,NUMERO_CONTRATO,DIVISA_DESTINO,DIVIS
+             A_ORIGEN,MONTO,MONTO_COMISION,TRANSACTION_ID, AUTENTICACION,
+             CEDULA_DESTINO, COD_TRANSACCION,CODIGO,DESCRIPCION,ID,NACION_DEST
+             INO,TASA,TIPO_TRANSACCION, TITULAR_TERCERO,CODIGO_BANCO,
+             NUMERO_DESTINO,NUMERO_ORIGEN, TIPO, CODIGO_CONVENIO,
+             REFERENCIA_PRINCIPAL,AMOUNT, BANK_ID,DOCUMENTO_DESTINO,
+             DOCUMENTO_ORIGEN,TIPO_OPERACION FROM (SELECT TIPO_MOVIMIENTO,
+             NUMERO_COMPROBANTE, CEDULA_ORIGEN, CONCEPTO, CUENTA_ABONO,
+             CUENTAS_CARGO, ESTADO, TO_CHAR(FECHA_CREACION,'yyyy-mm-dd"T"hh24:
+             mi:ss.ff3"Z"') FECHA_CREACION, TO_CHAR(IMPORTE) IMPORTE,
+             TO_CHAR(IMPORTE_COMISION) IMPORTE_COMISION, LOG_ID, MONEDA,
+             NACION_ORIGEN, PRODUCTO, RESULTADO, CODIGO_PROMOCION,
+             ESTADO_CREDITO, MONTO_ABONADO, MONTO_APROBADO, NUMERO_CONTRATO,
+             DIVISA_DESTINO, DIVISA_ORIGEN, MONTO, MONTO_COMISION,
+             TRANSACTION_ID, AUTENTICACION, CEDULA_DESTINO, COD_TRANSACCION,
+             CODIGO, DESCRIPCION, ID, NACION_DESTINO, TASA, TIPO_TRANSACCION,
+             TITULAR_TERCERO, CODIGO_BANCO, NUMERO_DESTINO, NUMERO_ORIGEN,
+             TIPO, CODIGO_CONVENIO, REFERENCIA_PRINCIPAL, AMOUNT, BANK_ID,
+             DOCUMENTO_DESTINO, DOCUMENTO_ORIGEN, TIPO_OPERACION FROM
+             BDVX_REGISTRO_MOVIMIENTO BM WHERE ( (BM.NACION_ORIGEN = :B3 OR
+             BM.NACION_DESTINO = :B3 ) AND (BM.CEDULA_ORIGEN = :B2 OR
+             BM.CEDULA_DESTINO = :B2 ) AND (:B1 = BM.CUENTAS_CARGO OR :B1 =
+             BM.CUENTA_ABONO)) ORDER BY BM.FECHA_CREACION DESC) WHERE ROWNUM
+             < 16
+Bind Variables :
+ 1 -  (VARCHAR2(32)):V
+ 2 -  (VARCHAR2(32)):V
+ 3 -  (VARCHAR2(32)):09616554
+ 4 -  (VARCHAR2(32)):09616554
+ 5 -  (VARCHAR2(128)):01020874200000061816
+ 6 -  (VARCHAR2(128)):01020874200000061816
+
+-------------------------------------------------------------------------------
+FINDINGS SECTION (1 finding)
+-------------------------------------------------------------------------------
+
+1- SQL Profile Finding (see explain plans section below)
+--------------------------------------------------------
+  A potentially better execution plan was found for this statement.
+
+  Recommendation (estimated benefit: 98.34%)
+  ------------------------------------------
+  - Consider accepting the recommended SQL profile.
+    execute dbms_sqltune.accept_sql_profile(task_name =>
+            'gfby1v2qqyvyc_tuning_task01', task_owner => 'SYS', replace =>
+            TRUE);
+
+  Validation results
+  ------------------
+  The SQL profile was tested by executing both its plan and the original plan
+  and measuring their respective execution statistics. A plan may have been
+  only partially executed if the other could be run to completion in less time.
+
+                           Original Plan  With SQL Profile  % Improved
+                           -------------  ----------------  ----------
+  Completion Status:            COMPLETE          COMPLETE
+  Elapsed Time (s):             4.52397           .001246      99.97 %
+  CPU Time (s):                 4.52397           .001246      99.97 %
+  User I/O Time (s):                  0                 0
+  Buffer Gets:                     4445                81      98.17 %
+  Physical Read Requests:             0                 0
+  Physical Write Requests:            0                 0
+  Physical Read Bytes:                0                 0
+  Physical Write Bytes:               0                 0
+  Rows Processed:                    15                15
+  Fetches:                           15                15
+  Executions:                         1                 1
+
+  Notes
+  -----
+  1. Statistics for the original plan were averaged over 1 executions.
+  2. Statistics for the SQL profile plan were averaged over 10 executions.
+
+-------------------------------------------------------------------------------
+ADDITIONAL INFORMATION SECTION
+-------------------------------------------------------------------------------
+- The optimizer could not merge the view at line ID 2 of the execution plan.
+  The optimizer cannot merge a view that contains an "ORDER BY" clause unless
+  the statement is a "DELETE" or an "UPDATE" and the parent query is the top
+  most query in the statement.
+- SQL Profile "SYS_SQLPROF_018961e518b80000" exists for this statement and
+  was ignored during the tuning process.
+
+-------------------------------------------------------------------------------
+EXPLAIN PLANS SECTION
+-------------------------------------------------------------------------------
+
+1- Original With Adjusted Cost
+------------------------------
+Plan hash value: 2213446920
+
+-----------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                               | Name                        | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                        |                             |    15 | 65010 |    22   (5)| 00:00:01 |
+|*  1 |  COUNT STOPKEY                          |                             |       |       |            |          |
+|   2 |   VIEW                                  |                             |    75 |   317K|    22   (5)| 00:00:01 |
+|*  3 |    SORT ORDER BY STOPKEY                |                             |    75 | 15600 |    22   (5)| 00:00:01 |
+|   4 |     CONCATENATION                       |                             |       |       |            |          |
+|*  5 |      TABLE ACCESS BY INDEX ROWID BATCHED| BDVX_REGISTRO_MOVIMIENTO    |     3 |   624 |     5   (0)| 00:00:01 |
+|*  6 |       INDEX RANGE SCAN                  | BDVX_REGISTRO_MOVIMIENTO_N1 |     1 |       |     4   (0)| 00:00:01 |
+|*  7 |      TABLE ACCESS BY INDEX ROWID BATCHED| BDVX_REGISTRO_MOVIMIENTO    |    11 |  2288 |     5   (0)| 00:00:01 |
+|*  8 |       INDEX RANGE SCAN                  | BDVX_REGISTRO_MOVIMIENTO_N2 |     1 |       |     4   (0)| 00:00:01 |
+|*  9 |      TABLE ACCESS BY INDEX ROWID BATCHED| BDVX_REGISTRO_MOVIMIENTO    |    12 |  2496 |     5   (0)| 00:00:01 |
+|* 10 |       INDEX RANGE SCAN                  | BDVX_REGISTRO_MOVIMIENTO_N3 |     1 |       |     4   (0)| 00:00:01 |
+|* 11 |      TABLE ACCESS BY INDEX ROWID BATCHED| BDVX_REGISTRO_MOVIMIENTO    |    49 | 10192 |     6   (0)| 00:00:01 |
+|* 12 |       INDEX RANGE SCAN                  | BDVX_REGISTRO_MOVIMIENTO_N5 |     1 |       |     5   (0)| 00:00:01 |
+-----------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter(ROWNUM<16)
+   3 - filter(ROWNUM<16)
+   5 - filter("BM"."NACION_ORIGEN"=:B3 OR "BM"."NACION_DESTINO"=:B3)
+   6 - access("BM"."CUENTA_ABONO"=:B1 AND "BM"."CEDULA_DESTINO"=:B2)
+   7 - filter(("BM"."NACION_ORIGEN"=:B3 OR "BM"."NACION_DESTINO"=:B3) AND LNNVL("BM"."CUENTA_ABONO"=:B1))
+   8 - access("BM"."CUENTAS_CARGO"=:B1 AND "BM"."CEDULA_DESTINO"=:B2)
+   9 - filter(("BM"."NACION_ORIGEN"=:B3 OR "BM"."NACION_DESTINO"=:B3) AND LNNVL("BM"."CEDULA_DESTINO"=:B2))
+  10 - access("BM"."CEDULA_ORIGEN"=:B2 AND "BM"."CUENTA_ABONO"=:B1)
+  11 - filter(("BM"."NACION_ORIGEN"=:B3 OR "BM"."NACION_DESTINO"=:B3) AND LNNVL("BM"."CUENTA_ABONO"=:B1) AND
+              LNNVL("BM"."CEDULA_DESTINO"=:B2))
+  12 - access("BM"."CEDULA_ORIGEN"=:B2 AND "BM"."CUENTAS_CARGO"=:B1)
+
+2- Using SQL Profile
+--------------------
+Plan hash value: 640141032
+
+----------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                              | Name                        | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                       |                             |    15 | 65010 |    65   (5)| 00:00:01 |
+|*  1 |  COUNT STOPKEY                         |                             |       |       |            |          |
+|   2 |   VIEW                                 |                             |    75 |   317K|    65   (5)| 00:00:01 |
+|*  3 |    SORT ORDER BY STOPKEY               |                             |    75 | 15600 |    65   (5)| 00:00:01 |
+|*  4 |     TABLE ACCESS BY INDEX ROWID BATCHED| BDVX_REGISTRO_MOVIMIENTO    |    75 | 15600 |    64   (4)| 00:00:01 |
+|   5 |      BITMAP CONVERSION TO ROWIDS       |                             |       |       |            |          |
+|   6 |       BITMAP OR                        |                             |       |       |            |          |
+|   7 |        BITMAP CONVERSION FROM ROWIDS   |                             |       |       |            |          |
+|   8 |         SORT ORDER BY                  |                             |       |       |            |          |
+|*  9 |          INDEX RANGE SCAN              | BDVX_REGISTRO_MOVIMIENTO_N2 |       |       |     5   (0)| 00:00:01 |
+|  10 |        BITMAP CONVERSION FROM ROWIDS   |                             |       |       |            |          |
+|  11 |         SORT ORDER BY                  |                             |       |       |            |          |
+|* 12 |          INDEX RANGE SCAN              | BDVX_REGISTRO_MOVIMIENTO_N1 |       |       |     4   (0)| 00:00:01 |
+----------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   1 - filter(ROWNUM<16)
+   3 - filter(ROWNUM<16)
+   4 - filter(("BM"."CEDULA_ORIGEN"=:B2 OR "BM"."CEDULA_DESTINO"=:B2) AND ("BM"."NACION_ORIGEN"=:B3 OR
+              "BM"."NACION_DESTINO"=:B3))
+   9 - access("BM"."CUENTAS_CARGO"=:B1)
+       filter("BM"."CUENTAS_CARGO"=:B1)
+  12 - access("BM"."CUENTA_ABONO"=:B1)
+       filter("BM"."CUENTA_ABONO"=:B1)
+
+-------------------------------------------------------------------------------

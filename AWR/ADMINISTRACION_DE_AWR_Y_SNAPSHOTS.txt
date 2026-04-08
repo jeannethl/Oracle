@@ -1,0 +1,158 @@
+////////////////////////////////////////////
+//  ADMINISTRACION DE AWR Y SNAPSHOTS
+//         PROBADO EN ORACLE 11G
+//           ADSI DBA-TEAM
+//     YOSDUAR RANGEL-ALIUSKA PEÑA
+////////////////////////////////////////////
+
+
+
+
+********* GENERAR UN SNAPSHOTS MANUAL *********
+
+1.1- Verificar el snapshots current 
+
+col BEGIN_INTERVAL_TIME format a40
+col END_INTERVAL_TIME format a30
+select snap_id,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME 
+  from dba_hist_snapshot 
+ where BEGIN_INTERVAL_TIME > systimestamp -1 
+ order by BEGIN_INTERVAL_TIME desc;
+
+
+1.1-Verificar el snapshots current de varios dias
+
+set lines 100 pages 999
+select DBID,snap_id,
+  snap_level,
+  to_char(begin_interval_time, 'dd/mm/yy hh24:mi:ss') begin
+from dba_hist_snapshot
+order by 3,4;
+
+
+2.- Ejecutar snapshots manual
+
+EXEC DBMS_WORKLOAD_REPOSITORY.create_snapshot;
+
+
+3.- Workload Repository Reports creados 
+
+col NAME format a20
+SELECT name,
+  detected_usages,
+  currently_used,
+  TO_CHAR(last_sample_date,'DD-MON-YYYY:HH24:MI') last_sample
+FROM dba_feature_usage_statistics
+WHERE name = 'AWR Report';
+
+
+Ref: AWR Reporting - Licensing Requirements Clarification (Doc ID 1490798.1)
+
+
+
+********* GENERAR REPORTE AWR *********
+
+Para el nodo actual: 
+SQL> @$ORACLE_HOME/rdbms/admin/awrrpt.sql
+
+
+Para consultar otros nodos:
+SQL> @$ORACLE_HOME/rdbms/admin/awrrpti.sql
+
+
+********* GENERAR REPORTE AWR Diff Report *********
+
+@?/rdbms/admin/awrddrpt.sql
+
+
+********* GENERAR REPORTE AWR PARA CONSULTAR SQL *********
+
+Para el nodo actual:
+@$ORACLE_HOME/rdbms/admin/awrsqrpt.sql
+
+Para consultar otros nodos:
+@$ORACLE_HOME/rdbms/admin/awrsqrpi.sql
+
+
+********* GENERAR REPORTE AWR RAC O GLOBAL *********
+
+SQL> @?/rdbms/admin/awrgrpt.sql
+
+88173
+88174
+
+********* OBTENER LAS ESTADISTICAS DE CONSUMO DEL AWR *********
+
+SQL> @$ORACLE_HOME/rdbms/admin/awrinfo.sql
+
+
+
+********* CONFIGURAR EL STATISTICS_LEVEL PARA LA RECOLECCION DE MÉTRICAS *********
+
+Puede ser cualquiera de estos, dependiendo de las necesidades. Se recomienda que esté en ALL para que recolecte métricas de S.O.
+
+1.- Consultar parametro
+
+show parameter statistics_level
+show parameter statis
+
+3.-Modificar parametro (recomendacion ALL)
+
+ALTER SYSTEM SET statistics_level=basic;
+ALTER SYSTEM SET statistics_level=typical;
+ALTER SYSTEM SET statistics_level=all;
+
+
+********** Consultar el intervalo de retención en Minutos **********
+
+select
+   extract( day from snap_interval) *24*60+
+   extract( hour from snap_interval) *60+
+   extract( minute from snap_interval ) "Snapshot Interval",
+   extract( day from retention) *24*60+
+   extract( hour from retention) *60+
+   extract( minute from retention ) "Retention Interval"
+from
+   dba_hist_wr_control;
+
+
+********** Consultar el intervalo de retención dias **********
+
+col RETENTION format a30
+col SNAP_INTERVAL format a30
+select DBID,snap_interval
+    ,retention 
+  from dba_hist_wr_control;
+
+
+
+********** Configurar el intervalo de métricas (minutos) y el tiempo de retención de snapshots (minutos) **********
+
+Default: execute dbms_workload_repository.modify_snapshot_settings (interval => 60,retention => 11520);
+
+
+
+Ejemplo: intervalo de capturas cada 60 minutos y la retención de 525600 minutos o 1 año
+
+execute dbms_workload_repository.modify_snapshot_settings (interval => 60,retention => 525600);
+
+Ejemplo: intervalo de capturas cada 15 minutos y la retención de 15 dias
+
+## execute dbms_workload_repository.modify_snapshot_settings (interval => 15,retention => 21600);
+
+Ejemplo: intervalo de capturas cada 15 minutos y la retención de 30 dias
+
+execute dbms_workload_repository.modify_snapshot_settings (interval => 15,retention => 43200);
+
+
+
+
+execute dbms_workload_repository.modify_snapshot_settings (interval => 15);
+
+
+---------------------------------------------------------------------------------------------------
+FUENTES:    
+    https://mikedietrichde.com/hol-19c-awr-diff/
+
+
+---------------------------------------------------------------------------------------------------

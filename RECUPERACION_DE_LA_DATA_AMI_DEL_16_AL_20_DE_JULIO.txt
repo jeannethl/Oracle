@@ -1,0 +1,310 @@
+///////////////////////////////////////////////////////////////////////
+/// RECUPERACIÓN DE LA DATA AMI DEL 16 AL 20 DE JULIO
+//    			ORACLE
+//        ADSI DBA-TEAM
+//  YOSDUAR RANGEL-ALIUSKA PEÑA-ADRIAN AGUILERA
+//////////////////////////////////////////////////////////////////////                   
+
+
+
+.-SE IDENTIFICÓ CUANTA DATA SE BORRÓ PARA LOS DIAS 16,17,18,19 Y 20 CON EL SIGUIENTE QUERY
+
+-PRIMERO SE COMENTÓ LA LINEA DEL  AND t.sql_id = 'xxxxxxxx' y se descomentó la linea and upper(t.SQL_TEXT) like '%DELETE%E2CPDESE%'; el cual corresponde a la busqueda del delete  
+SE EXTRAE EL SQLID DE INTERES Y SE DESCOMENTA LA LINEA, ESTABLECIENDO EL SQLI OBTENIDO, para este caso chbvd0aq0yq0d
+
+
+set line 380
+col SQL_TEXT format a70
+col BEGIN_INTERVAL_TIME format a25
+col END_INTERVAL_TIME format a25
+col action format a6
+col module format a16
+
+
+SELECT T.SQL_ID
+     ,S.SNAP_ID
+     ,S.INSTANCE_NUMBER
+     ,S.MODULE
+     ,S.ACTION   
+     ,(SN.BEGIN_INTERVAL_TIME) BEGIN_INTERVAL_TIME 
+     ,(SN.END_INTERVAL_TIME) END_INTERVAL_TIME
+     ,(CAST (DBMS_LOB.SUBSTR (T.SQL_TEXT, 2000) AS NVARCHAR2 (2000)))   SQL_TEXT
+     ,(S.EXECUTIONS_DELTA)                                              EXECUTIONS
+     ,(S.ELAPSED_TIME_DELTA)                                            ELAPSED_TIME 
+     ,s.rows_processed_total 
+     ,s.rows_processed_delta 
+     --,dhsp.TIMESTAMP
+FROM DBA_HIST_SQLSTAT S
+    ,DBA_HIST_SQLTEXT T
+    ,DBA_HIST_SNAPSHOT SN
+    --,dba_hist_sql_plan dhsp
+WHERE T.SQL_ID = S.SQL_ID 
+ AND S.SNAP_ID = SN.SNAP_ID
+ AND S.INSTANCE_NUMBER=SN.INSTANCE_NUMBER
+ AND S.DBID=SN.DBID
+ AND t.sql_id = 'chbvd0aq0yq0d'
+--  AND SN.BEGIN_INTERVAL_TIME >= SYSDATE  -(49/24) 
+--  AND SN.END_INTERVAL_TIME <= SYSDATE
+ --and upper(t.SQL_TEXT) like '%DELETE%E2CPDESE%';
+ --and dhsp.sql_id= t.sql_id
+--ORDER BY ELAPSED_TIME DESC;
+
+
+
+
+Resultado:
+
+SQL_ID           SNAP_ID INSTANCE_NUMBER MODULE           ACTION BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SQL_TEXT                                                               EXECUTIONS ELAPSED_TIME ROWS_PROCESSED_TOTAL ROWS_PROCESSED_DELTA
+------------- ---------- --------------- ---------------- ------ ------------------------- ------------------------- ---------------------------------------------------------------------- ---------- ------------ -------------------- --------------------
+chbvd0aq0yq0d      38943               1 JDBC Thin Client        15-JUL-23 03.00.03.626 AM 15-JUL-23 03.15.04.907 AM DELETE EICDATOSBASE.E2CPDESE WHERE E2STATE = 'I'                                1     14418329                    0                    0
+chbvd0aq0yq0d      38942               1 JDBC Thin Client        15-JUL-23 02.45.02.346 AM 15-JUL-23 03.00.03.626 AM DELETE EICDATOSBASE.E2CPDESE WHERE E2STATE = 'I'                                0    670106084                    0                    0
+chbvd0aq0yq0d      39036               2 JDBC Thin Client        16-JUL-23 02.15.04.950 AM 16-JUL-23 02.30.06.277 AM DELETE EICDATOSBASE.E2CPDESE WHERE E2STATE = 'I'                                0    641247472                    0                    0
+chbvd0aq0yq0d      39037               2 JDBC Thin Client        16-JUL-23 02.30.06.277 AM 16-JUL-23 02.45.07.515 AM DELETE EICDATOSBASE.E2CPDESE WHERE E2STATE = 'I'                                1    152388394              3394140              3394140
+chbvd0aq0yq0d      39131               2 JDBC Thin Client        17-JUL-23 02.00.11.346 AM 17-JUL-23 02.15.12.745 AM DELETE EICDATOSBASE.E2CPDESE WHERE E2STATE = 'I'                                1      5770110                 8390                 8390
+chbvd0aq0yq0d      39227               2 JDBC Thin Client        18-JUL-23 02.00.21.185 AM 18-JUL-23 02.15.22.638 AM DELETE EICDATOSBASE.E2CPDESE WHERE E2STATE = 'I'                                1      8127069                17061                17061
+chbvd0aq0yq0d      39323               1 JDBC Thin Client        19-JUL-23 02.00.18.398 AM 19-JUL-23 02.15.20.867 AM DELETE EICDATOSBASE.E2CPDESE WHERE E2STATE = 'I'                                1      5874327                16566                16566
+chbvd0aq0yq0d      39419               1 JDBC Thin Client        20-JUL-23 02.00.01.057 AM 20-JUL-23 02.15.03.301 AM DELETE EICDATOSBASE.E2CPDESE WHERE E2STATE = 'I'                                1      5553070                15816                15816
+
+
+En la columna ROWS_PROCESSED_TOTAL se identifican los registros que se borraron al ejecutar el delete
+
+
+
+
+
+
+.-SE CONSULTÓ EL LOG HISTORY CORRESPONDIENTE A LA PRIMERA FECHA DEL BORRADO
+
+select * 
+from V$log_history 
+where FIRST_TIME >= '16-jul-23 01:00:00'
+
+
+Resultado:
+
+     RECID      STAMP    THREAD#  SEQUENCE# FIRST_CHANGE# FIRST_TIME           NEXT_CHANGE# RESETLOGS_CHANGE# RESETLOGS_TIME           CON_ID
+---------- ---------- ---------- ---------- ------------- -------------------- ------------ ----------------- -------------------- ----------
+      6480 1142303205          2       3288    2034780935 16-JUL-2023 02:22:24   2034789796           1955227 22-MAY-2022 11:16:50          0
+      6481 1142303448          2       3289    2034789796 16-JUL-2023 02:26:45   2034797449           1955227 22-MAY-2022 11:16:50          0
+      6483 1142303940          2       3290    2034797449 16-JUL-2023 02:30:48   2034803480           1955227 22-MAY-2022 11:16:50          0
+      6484 1142303941          1       3194    2034797465 16-JUL-2023 02:30:49   2034803484           1955227 22-MAY-2022 11:16:50          0
+      6485 1142318425          2       3291    2034803480 16-JUL-2023 02:39:00   2035105493           1955227 22-MAY-2022 11:16:50          0
+      6486 1142318425          1       3195    2034803484 16-JUL-2023 02:39:01   2035105527           1955227 22-MAY-2022 11:16:50          0
+      6487 1142332832          2       3292    2035105493 16-JUL-2023 06:40:25   2036871833           1955227 22-MAY-2022 11:16:50          0
+      6488 1142332832          1       3196    2035105527 16-JUL-2023 06:40:25   2036871857           1955227 22-MAY-2022 11:16:50          0
+      6489 1142347236          2       3293    2036871833 16-JUL-2023 10:40:32   2038176381           1955227 22-MAY-2022 11:16:50          0
+      6490 1142347236          1       3197    2036871857 16-JUL-2023 10:40:32   2038176433           1955227 22-MAY-2022 11:16:50          0
+      6491 1142361634          1       3198    2038176433 16-JUL-2023 14:40:36   2039320691           1955227 22-MAY-2022 11:16:50          0
+      6492 1142361636          2       3294    2038176381 16-JUL-2023 14:40:36   2039320762           1955227 22-MAY-2022 11:16:50          0
+      6493 1142376051          2       3295    2039320762 16-JUL-2023 18:40:36   2039975748           1955227 22-MAY-2022 11:16:50          0
+      6494 1142376053          1       3199    2039320691 16-JUL-2023 18:40:34   2039975754           1955227 22-MAY-2022 11:16:50          0
+      6495 1142390442          1       3200    2039975754 16-JUL-2023 22:40:53   2040342663           1955227 22-MAY-2022 11:16:50          0
+      6496 1142390444          2       3296    2039975748 16-JUL-2023 22:40:51   2040342666           1955227 22-MAY-2022 11:16:50          0
+      6497 1142404825          2       3297    2040342666 17-JUL-2023 02:40:44   2040681190           1955227 22-MAY-2022 11:16:50          0
+      6498 1142404828          1       3201    2040342663 17-JUL-2023 02:40:42   2040681231           1955227 22-MAY-2022 11:16:50          0
+      6499 1142419235          1       3202    2040681231 17-JUL-2023 06:40:28   2043868269           1955227 22-MAY-2022 11:16:50          0
+      6500 1142419237          2       3298    2040681190 17-JUL-2023 06:40:25   2043868647           1955227 22-MAY-2022 11:16:50          0
+      6501 1142419238          1       3203    2043868269 17-JUL-2023 10:40:35   2043868763           1955227 22-MAY-2022 11:16:50          0
+      6502 1142426462          2       3299    2043868647 17-JUL-2023 10:40:37   2046643034           1955227 22-MAY-2022 11:16:50          0
+      6503 1142432228          1       3204    2043868763 17-JUL-2023 10:40:38   2047948610           1955227 22-MAY-2022 11:16:50          0
+      6504 1142433653          2       3300    2046643034 17-JUL-2023 12:41:02   2048300342           1955227 22-MAY-2022 11:16:50          0
+      6505 1142433653          1       3205    2047948610 17-JUL-2023 14:17:08   2048300371           1955227 22-MAY-2022 11:16:50          0
+      6506 1142448035          1       3206    2048300371 17-JUL-2023 14:40:53   2051170476           1955227 22-MAY-2022 11:16:50          0
+      6507 1142448036          2       3301    2048300342 17-JUL-2023 14:40:53   2051170519           1955227 22-MAY-2022 11:16:50          0
+      6508 1142453390          1       3207    2051170476 17-JUL-2023 18:40:35   2052379876           1955227 22-MAY-2022 11:16:50          0
+      6509 1142454582          2       3302    2051170519 17-JUL-2023 18:40:36   2054823330           1955227 22-MAY-2022 11:16:50          0
+      6510 1142462428          2       3303    2054823330 17-JUL-2023 20:29:42   2055937733           1955227 22-MAY-2022 11:16:50          0
+      6511 1142462428          1       3208    2052379876 17-JUL-2023 20:09:50   2055937736           1955227 22-MAY-2022 11:16:50          0
+      6512 1142476859          1       3209    2055937736 17-JUL-2023 22:40:28   2056335250           1955227 22-MAY-2022 11:16:50          0
+      6513 1142476860          2       3304    2055937733 17-JUL-2023 22:40:28   2056335293           1955227 22-MAY-2022 11:16:50          0
+      6514 1142491229          2       3305    2056335293 18-JUL-2023 02:41:00   2056982042           1955227 22-MAY-2022 11:16:50          0
+      6515 1142491230          1       3210    2056335250 18-JUL-2023 02:40:59   2056982045           1955227 22-MAY-2022 11:16:50          0
+      6516 1142501010          1       3211    2056982045 18-JUL-2023 06:40:30   2060161291           1955227 22-MAY-2022 11:16:50          0
+      6517 1142505643          2       3306    2056982042 18-JUL-2023 06:40:29   2061494579           1955227 22-MAY-2022 11:16:50          0
+      6518 1142505643          1       3212    2060161291 18-JUL-2023 09:23:30   2061494588           1955227 22-MAY-2022 11:16:50          0
+      6519 1142520052          1       3213    2061494588 18-JUL-2023 10:40:43   2064632964           1955227 22-MAY-2022 11:16:50          0
+      6520 1142520053          2       3307    2061494579 18-JUL-2023 10:40:43   2064633019           1955227 22-MAY-2022 11:16:50          0
+      6521 1142534430          2       3308    2064633019 18-JUL-2023 14:40:53   2066913479           1955227 22-MAY-2022 11:16:50          0
+      6522 1142534431          1       3214    2064632964 18-JUL-2023 14:40:52   2066913578           1955227 22-MAY-2022 11:16:50          0
+      6523 1142538894          2       3309    2066913479 18-JUL-2023 18:40:30   2069634988           1955227 22-MAY-2022 11:16:50          0
+      6524 1142539743          1       3215    2066913578 18-JUL-2023 18:40:31   2070324215           1955227 22-MAY-2022 11:16:50          0
+      6525 1142546207          2       3310    2069634988 18-JUL-2023 19:54:54   2072248255           1955227 22-MAY-2022 11:16:50          0
+      6526 1142546207          2       3311    2072248255 18-JUL-2023 21:56:47   2072248368           1955227 22-MAY-2022 11:16:50          0
+      6527 1142546209          2       3312    2072248368 18-JUL-2023 21:56:47   2072248705           1955227 22-MAY-2022 11:16:50          0
+      6528 1142546211          1       3216    2070324215 18-JUL-2023 20:09:03   2072248846           1955227 22-MAY-2022 11:16:50          0
+      6529 1142547231          1       3217    2072248846 18-JUL-2023 21:56:51   2072336498           1955227 22-MAY-2022 11:16:50          0
+      6530 1142547232          2       3313    2072248705 18-JUL-2023 21:56:49   2072336501           1955227 22-MAY-2022 11:16:50          0
+      6531 1142547287          2       3314    2072336501 18-JUL-2023 22:13:52   2072339298           1955227 22-MAY-2022 11:16:50          0
+      6532 1142547288          1       3218    2072336498 18-JUL-2023 22:13:51   2072339311           1955227 22-MAY-2022 11:16:50          0
+      6533 1142547291          1       3219    2072339311 18-JUL-2023 22:14:48   2072339396           1955227 22-MAY-2022 11:16:50          0
+      6534 1142547292          2       3315    2072339298 18-JUL-2023 22:14:47   2072339434           1955227 22-MAY-2022 11:16:50          0
+      6535 1142548828          2       3316    2072339434 18-JUL-2023 22:14:52   2072438351           1955227 22-MAY-2022 11:16:50          0
+      6536 1142548831          1       3220    2072339396 18-JUL-2023 22:14:51   2072438542           1955227 22-MAY-2022 11:16:50          0
+      6537 1142561146          1       3221    2072438542 18-JUL-2023 22:40:31   2072825092           1955227 22-MAY-2022 11:16:50          0
+      6538 1142563229          1       3222    2072825092 19-JUL-2023 02:05:46   2072874283           1955227 22-MAY-2022 11:16:50          0
+      6539 1142563229          2       3317    2072438351 18-JUL-2023 22:40:28   2072874287           1955227 22-MAY-2022 11:16:50          0
+      6540 1142577632          2       3318    2072874287 19-JUL-2023 02:40:29   2073296467           1955227 22-MAY-2022 11:16:50          0
+      6541 1142577632          1       3223    2072874283 19-JUL-2023 02:40:28   2073296475           1955227 22-MAY-2022 11:16:50          0
+      6542 1142592033          1       3224    2073296475 19-JUL-2023 06:40:32   2076363930           1955227 22-MAY-2022 11:16:50          0
+      6543 1142592034          2       3319    2073296467 19-JUL-2023 06:40:32   2076363979           1955227 22-MAY-2022 11:16:50          0
+      6544 1142606433          2       3320    2076363979 19-JUL-2023 10:40:34   2079525644           1955227 22-MAY-2022 11:16:50          0
+      6545 1142606434          1       3225    2076363930 19-JUL-2023 10:40:33   2079525706           1955227 22-MAY-2022 11:16:50          0
+      6546 1142620835          2       3321    2079525644 19-JUL-2023 14:40:33   2082120462           1955227 22-MAY-2022 11:16:50          0
+      6547 1142620836          1       3226    2079525706 19-JUL-2023 14:40:34   2082120496           1955227 22-MAY-2022 11:16:50          0
+      6548 1142626344          1       3227    2082120496 19-JUL-2023 18:40:36   2082598158           1955227 22-MAY-2022 11:16:50          0
+      6549 1142635237          1       3228    2082598158 19-JUL-2023 20:12:24   2083263228           1955227 22-MAY-2022 11:16:50          0
+      6550 1142635238          2       3322    2082120462 19-JUL-2023 18:40:35   2083263276           1955227 22-MAY-2022 11:16:50          0
+      6551 1142649635          2       3323    2083263276 19-JUL-2023 22:40:38   2083667558           1955227 22-MAY-2022 11:16:50          0
+      6552 1142649638          1       3229    2083263228 19-JUL-2023 22:40:37   2083667564           1955227 22-MAY-2022 11:16:50          0
+      6553 1142664062          1       3230    2083667564 20-JUL-2023 02:40:38   2084075119           1955227 22-MAY-2022 11:16:50          0
+      6554 1142664064          2       3324    2083667558 20-JUL-2023 02:40:35   2084075170           1955227 22-MAY-2022 11:16:50          0
+      6555 1142678457          2       3325    2084075170 20-JUL-2023 06:41:04   2086779832           1955227 22-MAY-2022 11:16:50          0
+      6556 1142678457          1       3231    2084075119 20-JUL-2023 06:41:02   2086779928           1955227 22-MAY-2022 11:16:50          0
+      6557 1142692862          2       3326    2086779832 20-JUL-2023 10:40:57   2089443347           1955227 22-MAY-2022 11:16:50          0
+      6558 1142692864          1       3232    2086779928 20-JUL-2023 10:40:57   2089443576           1955227 22-MAY-2022 11:16:50          0
+      6559 1142707263          2       3327    2089443347 20-JUL-2023 14:41:02   2091664412           1955227 22-MAY-2022 11:16:50          0
+      6560 1142707265          1       3233    2089443576 20-JUL-2023 14:41:04   2091664444           1955227 22-MAY-2022 11:16:50          0
+
+80 rows selected.
+
+
+
+.-SE INTENTA HACER EL RECOVER PERO DA UN ERROR DE MEMORIA AL LEVANTAR LA INSTANCIA AUXILIAR, POR LO CUAL SE CREA EL ARCHIVO PARA PARÁMETROS DE LA INSTANCIA AUXILIAR
+
+vi /restauracion/init_aux.ora
+
+SGA_target=15G
+SGA_MAX_SIZE=15G
+log_archive_max_processes=30
+recovery_parallelism=12
+parallel_execution_message_size=32680
+db_writer_processes=6
+
+
+
+
+.-SE INTENTA HACER EL RECOVER DE LA TABLA DEL DÍA 16, SIN EXITO DEBIDO A QUE LOS BACKUPS SE REALIZAN POR EL NODO 2 Y EL RECOVER SE ESTABA HACIENDO POR EL NODO 1, POR LO CUAL SE TUVO QUE HACER LAS SIGUIENTES MODIFICACIONES AL RMAN
+
+CONFIGURE DEVICE TYPE 'SBT_TAPE' PARALLELISM 8 BACKUP TYPE TO BACKUPSET; ---Para setear el paralelismo en cinta de RMAN
+CONFIGURE DEVICE TYPE DISK PARALLELISM 6 BACKUP TYPE TO BACKUPSET; ---Para setear el paralelismo en disco de RMAN
+CONFIGURE CHANNEL DEVICE TYPE 'SBT_TAPE' PARMS 'ENV=(NSR_SERVER=cpprwnetworkerp,NSR_CLIENT=sun2111p)'; ---Al estar en el nodo 1 y los respaldos fueron por el nodo 2, hay que setear el nombre del nodo 2
+
+
+
+
+.-SE EJECUTA EL RECOVER DE LA TABLA DEL DÍA 16 
+
+
+RUN {
+  # Paralelismo a nivel de media layer
+  # Para el caso de networker se debe eliminar los parametros
+
+  SET COMMAND ID TO 'RESTORE_E2CPDESE';
+  SET AUXILIARY INSTANCE PARAMETER FILE TO '/restauracion/init_aux.ora';
+
+  RECOVER TABLE 'EICDATOSBASE'.'E2CPDESE'
+  UNTIL TIME  "to_date('16-JUL-2023 02:10:00','dd-mon-rrrr hh24:mi:ss')"
+  AUXILIARY DESTINATION '/restauracion' 
+  REMAP TABLE 'EICDATOSBASE'.'E2CPDESE':'E2CPDESE_20230716';
+}
+
+select count(1) from EICDATOSBASE.E2CPDESE_20230716 WHERE E2STATE = 'I';
+
+
+
+.-SE INTENTA HACER EL RECOVER DEL DÍA 17 PERO DA EL ERROR DE QUE NO SE CONSIGUE LA PIEZA BACKUP, POR LO CUAL HAY QUE CONECTARSE AL CATÁLOGO DE RMAN PARA BUSCAR EL BACKUP
+
+connect catalog rman/rmanexport@RMAN19;
+
+RUN {
+  # Paralelismo a nivel de media layer
+  # Para el caso de networker se debe eliminar los parametros
+
+  SET COMMAND ID TO 'RESTORE_E2CPDESE';
+  SET AUXILIARY INSTANCE PARAMETER FILE TO '/restauracion/init_aux.ora';
+
+  RECOVER TABLE 'EICDATOSBASE'.'E2CPDESE'
+  UNTIL TIME  "to_date('17-JUL-2023 01:55:00','dd-mon-rrrr hh24:mi:ss')"
+  AUXILIARY DESTINATION '/restauracion' keep auxiliary
+  REMAP TABLE 'EICDATOSBASE'.'E2CPDESE':'E2CPDESE_20230717';
+}
+
+
+select count(1) from EICDATOSBASE.E2CPDESE_20230717 WHERE E2STATE = 'I';
+
+
+
+
+.-SE EJECUTAN LOS RESTORES DE LOS DIAS 18,19 Y 20
+
+EL RESTORE DEL DÍA 18 SE TARDÓ BASTANTE YA QUE RMAN BUSCÓ HASTA EL ÚLTIMO BACKUP CERCANO, EL CUAL SE REALIZÓ EL 9 DE JULIO 2023 MIENTRAS QUE EL BACKUP MÁS RECIENTE ERA DEL 18:07/2023 A LAS 20 HORAS POR LO CUAL QUEDABA FUERA DEL RANGO DE RECUPERACIÓN 18/07/2023 A LAS 01:58 HORAS
+LOS RESTORES DEL DIA 19 Y 20 SE EJECUTARON RÁPIDO PORQUE TENÍAN EL BACKUP DEL DÍA 18
+
+
+Día 18
+
+connect catalog rman/rmanexport@RMAN19;
+RUN {
+  # Paralelismo a nivel de media layer
+  # Para el caso de networker se debe eliminar los parametros
+
+  SET COMMAND ID TO 'RESTORE_E2CPDESE';
+  SET AUXILIARY INSTANCE PARAMETER FILE TO '/restauracion/init_aux.ora';
+
+  RECOVER TABLE 'EICDATOSBASE'.'E2CPDESE'
+  UNTIL TIME  "to_date('18-JUL-2023 01:58:00','dd-mon-rrrr hh24:mi:ss')"
+  AUXILIARY DESTINATION '/restauracion'
+  REMAP TABLE 'EICDATOSBASE'.'E2CPDESE':'E2CPDESE_20230718'
+  keep auxiliary;
+}
+
+
+select count(1) from EICDATOSBASE.E2CPDESE_20230718 WHERE E2STATE = 'I';
+--------------------------------------------------------------------
+Día 19
+
+connect catalog rman/rmanexport@RMAN19;
+RUN {
+  # Paralelismo a nivel de media layer
+  # Para el caso de networker se debe eliminar los parametros
+
+  SET COMMAND ID TO 'RESTORE_E2CPDESE';
+  SET AUXILIARY INSTANCE PARAMETER FILE TO '/restauracion/swap/init_aux.ora';
+
+  RECOVER TABLE 'EICDATOSBASE'.'E2CPDESE'
+  UNTIL TIME  "to_date('19-JUL-2023 01:58:00','dd-mon-rrrr hh24:mi:ss')"
+  AUXILIARY DESTINATION '/restauracion/swap'  
+  REMAP TABLE 'EICDATOSBASE'.'E2CPDESE':'E2CPDESE_20230719'
+  keep auxiliary;
+}
+
+select count(1) from EICDATOSBASE.E2CPDESE_20230719 WHERE E2STATE = 'I';
+--------------------------------------------------------------------
+Día 20
+
+connect catalog rman/rmanexport@RMAN19;
+RUN {
+  # Paralelismo a nivel de media layer
+  # Para el caso de networker se debe eliminar los parametros
+
+  SET COMMAND ID TO 'RESTORE_E2CPDESE';
+  SET AUXILIARY INSTANCE PARAMETER FILE TO '/restauracion/swap/init_aux.ora';
+
+  RECOVER TABLE 'EICDATOSBASE'.'E2CPDESE'
+  UNTIL TIME  "to_date('20-JUL-2023 01:59:00','dd-mon-rrrr hh24:mi:ss')"
+  AUXILIARY DESTINATION '/restauracion/swap'  
+  REMAP TABLE 'EICDATOSBASE'.'E2CPDESE':'E2CPDESE_20230720'
+  keep auxiliary;
+}
+
+select count(1) from EICDATOSBASE.E2CPDESE_20230720 WHERE E2STATE = 'I';
+
+
+
+-----DURANTE LA EJECUCIÓN DE LOS RESTORES, SE COMPROBABA LA SINCRONÍA DEL RESTORE, PARA ELLO SE CONECTABA A LA INSTANCIA AUXILIAR Y SE EJECUTABA LO SIGUIENTE
+
+A. BUSCAR LA INSTANCIA AUXILIAR: ps -fea | grep smon
+B. export ORACLE_SID=<INSTANCIA_AUXILIAR>
+C. sqlplus / as sysdba
+D. ALTER SESSION SET NLS_DATE_FORMAT="DD-MON-RRRR HH24:MI:SS";
+E. select count(1), time from v$recover_file group by time;

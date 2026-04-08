@@ -23,11 +23,11 @@ DECLARE
 l_sql_tune_task_id VARCHAR2(100);
 BEGIN
 l_sql_tune_task_id := DBMS_SQLTUNE.create_tuning_task (
-sql_id => '18xwy0r4uj4t3',
+sql_id => 'gmdwfq494qq4s',
 scope => DBMS_SQLTUNE.scope_comprehensive,
 time_limit => 20000,
-task_name => '18xwy0r4uj4t3_tuning_task01',
-description => 'Tuning task1 for statement 18xwy0r4uj4t3');
+task_name => 'gmdwfq494qq4s_tuning_task01',
+description => 'Tuning task1 for statement gmdwfq494qq4s');
 DBMS_OUTPUT.put_line('l_sql_tune_task_id: ' || l_sql_tune_task_id);
 END;
 /
@@ -36,7 +36,7 @@ END;
 
 2. EJECUTAR EL TUNING TASK
 
-EXEC DBMS_SQLTUNE.execute_tuning_task(task_name => '18xwy0r4uj4t3_tuning_task01');
+EXEC DBMS_SQLTUNE.execute_tuning_task(task_name => 'gmdwfq494qq4s_tuning_task01');
 
 
 3. OBTENER EL REPORTE DEL TUNING ADVISOR
@@ -45,7 +45,7 @@ set long 65536
 set longchunksize 65536
 set linesize 240
 set pagesize 500
-select dbms_sqltune.report_tuning_task('18xwy0r4uj4t3_tuning_task01') from dual;
+select dbms_sqltune.report_tuning_task('gmdwfq494qq4s_tuning_task01') from dual;
 
 
 
@@ -58,34 +58,20 @@ DECLARE
  my_task_name VARCHAR2(30);
  my_sqltext   CLOB;
 BEGIN
- my_sqltext :=  'SELECT (TO_CHAR (FECHA_HORA_MOVIMIENTO, ''DD/MM/YYYY'')) AS FECHA' ||
-', REFERENCIA AS REFERENCIA' ||
-', CONCEPTO AS CONCEPTO' ||
-', FC_BEMP_PUNTOCOMA ( TO_CHAR (MONTO, ''fm999G999G999G999G999G999G990D00'')) AS MONTO' ||
-', FC_BEMP_PUNTOCOMA ( TO_CHAR (SALDO, ''fm999G999G999G999G999G999G990D00'')) AS SALDO' ||
-', NVL (DESCRIPCION_MOVIMIENTO, ''MOVNC'') AS DESCRIPCION_MOVIMIENTO' ||
-', a.IDENTIFICACION_EMPRESA as IDENTIFICACION_EMPRESA' ||
-', t.NOMBRE_EMPRESA as NOMBRE_EMPRESA' ||
-'FROM LOC_MOVIMIENTO_CUENTA b' ||
-'LEFT JOIN LOC_TIPO_MOVIMIENTO USING (codigo_movimiento)' ||
-'INNER JOIN EMPRESA_INSTRUMENTO a on a.NUMERO_INSTRUMENTO = b.NUMERO_CUENTA' ||
-'INNER JOIN EMP_EMPRESAS t on t.IDENTIFICACION_EMPRESA = a.IDENTIFICACION_EMPRESA' ||
-'WHERE    TRUNC (FECHA_HORA_MOVIMIENTO) >=' ||
-'TRUNC (TO_DATE (''01-10-2024'', ''dd/mm/yyyy''))' ||
-'AND TRUNC (FECHA_HORA_MOVIMIENTO) <=' ||
-'TRUNC (TO_DATE (''31-10-2024'', ''dd/mm/yyyy''))' ||
-'AND NUMERO_CUENTA = ''01020634130000321815''' ||
-'ORDER BY FECHA_HORA_MOVIMIENTO DESC'; 
+ my_sqltext := 'SELECT /*+ ORDERED USE_NL(C) FULL(C) FULL(S)*/ COUNT(*) '  ||
+               'FROM SH.SALES S, SH.CUSTOMERS C  '                         ||
+               'WHERE C.CUST_ID = S.CUST_ID AND CUST_FIRST_NAME=''Sarah'' '  ||
+               'ORDER BY TIME_ID';
  my_task_name := DBMS_SQLTUNE.CREATE_TUNING_TASK(
          sql_text    => my_sqltext,
-         user_name   => 'BDVEMPP',
+         user_name   => 'SH',
          scope       => 'COMPREHENSIVE',
-         time_limit  => 200,
-         task_name   => 'TASK_01',
-         description => 'query_broderick');
+         time_limit  => 30,
+         task_name   => 'TASK_TEST',
+         description => 'Exercise for OCM Exam');
 END;
 /
-
+ 
 
 -- Ejecutamos SQL Tuning Advisor
 BEGIN
@@ -220,59 +206,3 @@ WHERE T.SQL_ID = S.SQL_ID
 
 
 show parameter cpu
-
-*****************************-
-**************************************************-
-
-
-
-
-explain plan for 
- select  component, bytes/1024/1024 as MB,
-        rpad( segment_name || (case when partition_name is null then ''
-                                    else '.' || partition_name
-                               end), 61 )
-        || ' -'
-        || to_char(awrinfo_util.get_perc_usage( owner, segment_name,
-                                                segment_type, partition_name),
-                   '990')
-        || '%'
-        as segnm_pct_spc_used,
-        segment_type
-from    (select owner, segment_name, partition_name, segment_type,
-                awrinfo_util.get_type(segment_name) as component, bytes,
-                rank() over (partition by awrinfo_util.get_type(segment_name)
-                             order by bytes desc, segment_name asc, partition_name asc) as rnk,
-                sum(bytes) over
-                 (partition by awrinfo_util.get_type(segment_name)) as grp_bytes
-          from   dba_segments
-          where  (segment_name like 'WRH%' or segment_name like 'WRM%')
-            and  tablespace_name = 'SYSAUX'
-            and  owner = 'SYS')
-where   rnk <= 30
-  and   bytes > 500000
-order   by grp_bytes desc, component asc, bytes desc;
-
-------
-select * from table(dbms_xplan.display());
-
-----
-select sql_id from v$sql where PLAN_HASH_VALUE = '590510081';
-
-
-select SQL_TEXT from v$sql where sql_id = '2r4h3a9jk0buz';
-
-
-SQL_TEXT
-2r4h3a9jk0buz
-
-select sql_id
-from gv$active_session_history
-where sql_full_plan_hash_value = 'XYZ';
-
-select sql_id
-from dba_hist_active_sess_history
-where sql_full_plan_hash_value = 'XYZ';
-
-
-

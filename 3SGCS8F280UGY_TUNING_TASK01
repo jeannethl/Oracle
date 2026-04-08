@@ -1,0 +1,708 @@
+DBMS_SQLTUNE.REPORT_TUNING_TASK('3SGCS8F280UGY_TUNING_TASK01')
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+GENERAL INFORMATION SECTION
+-------------------------------------------------------------------------------
+Tuning Task Name   : 3sgcs8f280ugy_tuning_task01
+Tuning Task Owner  : SYS
+Workload Type      : Single SQL Statement
+Scope              : COMPREHENSIVE
+Time Limit(seconds): 20000
+Completion Status  : COMPLETED
+Started at         : 03/08/2024 10:51:05
+Completed at       : 03/08/2024 10:51:34
+
+-------------------------------------------------------------------------------
+Schema Name: PAGOF
+SQL ID     : 3sgcs8f280ugy
+SQL Text   : SELECT arg.package_name AS procedure_cat,
+                    arg.owner AS procedure_schem,
+                    arg.object_name AS procedure_name,
+                    arg.argument_name AS column_name,
+                    DECODE(arg.position, :"SYS_B_000", :"SYS_B_001",
+                                     DECODE(arg.in_out, :"SYS_B_002",
+             :"SYS_B_003",
+                                                    :"SYS_B_004",
+             :"SYS_B_005",
+                                                    :"SYS_B_006",
+             :"SYS_B_007",
+                                                    :"SYS_B_008")) AS
+             column_type,
+               DECODE(substr(arg.data_type, :"SYS_B_009", :"SYS_B_010"),
+                 :"SYS_B_011",
+                   DECODE(substr(arg.data_type, :"SYS_B_012", :"SYS_B_013"),
+                     :"SYS_B_014",
+                       DECODE(substr(arg.data_type, :"SYS_B_015",
+             :"SYS_B_016"),
+                         :"SYS_B_017", -:"SYS_B_018", :"SYS_B_019",
+             -:"SYS_B_020", :"SYS_B_021"),
+                     DECODE(substr(arg.data_type, :"SYS_B_022",
+             :"SYS_B_023"),
+                       :"SYS_B_024", -:"SYS_B_025", :"SYS_B_026",
+             -:"SYS_B_027", :"SYS_B_028")),
+                 :"SYS_B_029",
+                   DECODE(substr(arg.data_type, :"SYS_B_030", :"SYS_B_031"),
+                    :"SYS_B_032", -:"SYS_B_033", :"SYS_B_034",
+             -:"SYS_B_035"),
+                 DECODE(arg.data_type,
+                   :"SYS_B_036", :"SYS_B_037",
+                   :"SYS_B_038", :"SYS_B_039",
+                   :"SYS_B_040", -:"SYS_B_041",
+                   :"SYS_B_042", :"SYS_B_043",
+                   :"SYS_B_044", :"SYS_B_045",
+                   :"SYS_B_046", :"SYS_B_047",
+                   :"SYS_B_048", :"SYS_B_049",
+                   :"SYS_B_050", :"SYS_B_051",
+                   :"SYS_B_052", :"SYS_B_053",
+                   :"SYS_B_054", -:"SYS_B_055",
+                   :"SYS_B_056", -:"SYS_B_057",
+                   :"SYS_B_058", -:"SYS_B_059",
+                   :"SYS_B_060", :"SYS_B_061",
+                   :"SYS_B_062", :"SYS_B_063",
+                   :"SYS_B_064", -:"SYS_B_065",
+                   :"SYS_B_066", -:"SYS_B_067",
+                   :"SYS_B_068", :"SYS_B_069",
+                   :"SYS_B_070", :"SYS_B_071",
+                   :"SYS_B_072", -:"SYS_B_073",
+                   :"SYS_B_074", :"SYS_B_075",
+                   :"SYS_B_076", -:"SYS_B_077",
+                   :"SYS_B_078", :"SYS_B_079",
+                   :"SYS_B_080", -:"SYS_B_081",
+                   :"SYS_B_082", :"SYS_B_083",
+                   :"SYS_B_084", :"SYS_B_085",
+                   :"SYS_B_086", :"SYS_B_087",
+                   DECODE((SELECT a.typecode
+                     FROM ALL_TYPES a
+                     WHERE a.type_name = arg.data_type
+                     ),
+                     :"SYS_B_088", :"SYS_B_089",
+                     :"SYS_B_090", :"SYS_B_091", :"SYS_B_092")))
+              AS data_type,
+                    DECODE(arg.data_type, :"SYS_B_093", arg.type_owner ||
+             :"SYS_B_094" || arg.type_name,               arg.data_type) AS
+             type_name,
+                    DECODE (arg.data_precision, NULL, arg.data_length,
+                                            arg.data_precision) AS precision,
+                    arg.data_length AS length,
+                    arg.data_scale AS scale,
+                    :"SYS_B_095" AS radix,
+                    :"SYS_B_096" AS nullable,
+                    NULL AS remarks,
+                    arg.default_value AS column_def,
+                    NULL as sql_data_type,
+                    NULL AS sql_datetime_sub,
+                    DECODE(arg.data_type,
+                                      :"SYS_B_097", :"SYS_B_098",
+                                      :"SYS_B_099", :"SYS_B_100",
+                                      :"SYS_B_101", :"SYS_B_102",
+                                      :"SYS_B_103", :"SYS_B_104",
+                                      :"SYS_B_105", :"SYS_B_106",
+                                      NULL) AS char_octet_length,
+                    (arg.sequence - :"SYS_B_107") AS ordinal_position,
+                    :"SYS_B_108" AS is_nullable,
+                    NULL AS specific_name,
+                    arg.sequence,
+                    arg.overload,
+                    arg.default_value
+              FROM all_arguments arg, all_procedures proc
+              WHERE arg.owner LIKE :1 ESCAPE :"SYS_B_109"
+              AND arg.object_name LIKE :2 ESCAPE :"SYS_B_110" AND
+             arg.data_level = :"SYS_B_111"
+              AND arg.owner = proc.owner
+              AND arg.object_id = proc.object_id
+              AND arg.subprogram_id = proc.subprogram_id
+               AND arg.package_name IS NULL
+               AND (arg.argument_name LIKE :5 ESCAPE :"SYS_B_112"
+                    OR (arg.argument_name IS NULL
+                        AND arg.data_type IS NOT NULL))
+             ORDER BY procedure_schem, procedure_name, overload, sequence
+Bind Variables :
+ 110 -  (NVARCHAR2(32)):PAGOF
+ 111 -  (VARCHAR2(32)):/
+ 112 -  (NVARCHAR2(128)):BDVX_PR_OBTENER_ULTIMOS_MOVIMIENTOS
+ 113 -  (VARCHAR2(32)):/
+ 114 -  (NUMBER):0
+ 115 -  (NVARCHAR2(32)):%
+ 116 -  (VARCHAR2(32)):/
+
+-------------------------------------------------------------------------------
+FINDINGS SECTION (1 finding)
+-------------------------------------------------------------------------------
+
+1- SQL Profile Finding (see explain plans section below)
+--------------------------------------------------------
+  A potentially better execution plan was found for this statement.
+
+  Recommendation (estimated benefit: 95.38%)
+  ------------------------------------------
+  - Consider accepting the recommended SQL profile.
+    execute dbms_sqltune.accept_sql_profile(task_name =>
+            '3sgcs8f280ugy_tuning_task01', task_owner => 'SYS', replace =>
+            TRUE);
+
+-------------------------------------------------------------------------------
+EXPLAIN PLANS SECTION
+-------------------------------------------------------------------------------
+
+1- Original With Adjusted Cost
+------------------------------
+
+-------------------------------------------------------------------------------
+Error: cannot fetch explain plan for object: 1
+-------------------------------------------------------------------------------
+
+2- Original With Adjusted Cost
+------------------------------
+Plan hash value: 2455339845
+
+------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                                       | Name                 | Rows  | Bytes | Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                                |                      |     1 |   272 | 21213   (1)| 00:00:01 |
+|   1 |  VIEW                                           | ALL_TYPES            |     2 |   264 |   583   (1)| 00:00:01 |
+|   2 |   SORT UNIQUE                                   |                      |     2 |  1012 |   583   (1)| 00:00:01 |
+|   3 |    UNION-ALL                                    |                      |       |       |            |          |
+|*  4 |     FILTER                                      |                      |       |       |            |          |
+|   5 |      NESTED LOOPS OUTER                         |                      |     1 |   262 |   291   (1)| 00:00:01 |
+|   6 |       NESTED LOOPS OUTER                        |                      |     1 |   244 |   290   (1)| 00:00:01 |
+|   7 |        NESTED LOOPS                             |                      |     1 |   163 |   287   (1)| 00:00:01 |
+|   8 |         NESTED LOOPS                            |                      |     1 |   103 |   286   (1)| 00:00:01 |
+|   9 |          NESTED LOOPS                           |                      |     1 |    85 |   285   (1)| 00:00:01 |
+|  10 |           INDEX FULL SCAN                       | I_USER2              |   141 |  3384 |     1   (0)| 00:00:01 |
+|* 11 |           TABLE ACCESS BY INDEX ROWID BATCHED   | OBJ$                 |     1 |    61 |     3   (0)| 00:00:01 |
+|* 12 |            INDEX RANGE SCAN                     | I_OBJ2               |     1 |       |     2   (0)| 00:00:01 |
+|  13 |          TABLE ACCESS CLUSTER                   | USER$                |     1 |    18 |     1   (0)| 00:00:01 |
+|* 14 |           INDEX UNIQUE SCAN                     | I_USER#              |     1 |       |     0   (0)| 00:00:01 |
+|* 15 |         TABLE ACCESS BY INDEX ROWID             | TYPE$                |     1 |    60 |     1   (0)| 00:00:01 |
+|* 16 |          INDEX UNIQUE SCAN                      | I_TYPE2              |     1 |       |     0   (0)| 00:00:01 |
+|  17 |        VIEW PUSHED PREDICATE                    | _CURRENT_EDITION_OBJ |     1 |    81 |     3   (0)| 00:00:01 |
+|* 18 |         FILTER                                  |                      |       |       |            |          |
+|* 19 |          HASH JOIN                              |                      |    22 |  1804 |     3   (0)| 00:00:01 |
+|  20 |           TABLE ACCESS BY INDEX ROWID BATCHED   | OBJ$                 |    22 |  1276 |     2   (0)| 00:00:01 |
+|* 21 |            INDEX RANGE SCAN                     | I_OBJ3               |     1 |       |     1   (0)| 00:00:01 |
+|  22 |           INDEX FULL SCAN                       | I_USER2              |   141 |  3384 |     1   (0)| 00:00:01 |
+|* 23 |          TABLE ACCESS FULL                      | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|* 24 |          TABLE ACCESS FULL                      | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|  25 |          NESTED LOOPS SEMI                      |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|* 26 |           INDEX SKIP SCAN                       | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|* 27 |           INDEX RANGE SCAN                      | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|  28 |       TABLE ACCESS CLUSTER                      | USER$                |     1 |    18 |     1   (0)| 00:00:01 |
+|* 29 |        INDEX UNIQUE SCAN                        | I_USER#              |     1 |       |     0   (0)| 00:00:01 |
+|  30 |      NESTED LOOPS SEMI                          |                      |     1 |    12 |     2   (0)| 00:00:01 |
+|  31 |       FIXED TABLE FULL                          | X$KZSRO              |     2 |     6 |     0   (0)| 00:00:01 |
+|* 32 |       INDEX RANGE SCAN                          | I_OBJAUTH2           |     1 |     9 |     1   (0)| 00:00:01 |
+|* 33 |      TABLE ACCESS FULL                          | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|* 34 |      TABLE ACCESS FULL                          | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|  35 |      NESTED LOOPS SEMI                          |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|* 36 |       INDEX SKIP SCAN                           | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|* 37 |       INDEX RANGE SCAN                          | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|* 38 |     FILTER                                      |                      |       |       |            |          |
+|  39 |      NESTED LOOPS OUTER                         |                      |     1 |   244 |   290   (1)| 00:00:01 |
+|  40 |       NESTED LOOPS OUTER                        |                      |     1 |   226 |   289   (1)| 00:00:01 |
+|  41 |        NESTED LOOPS                             |                      |     1 |   145 |   286   (1)| 00:00:01 |
+|  42 |         NESTED LOOPS                            |                      |     1 |    85 |   285   (1)| 00:00:01 |
+|  43 |          INDEX FULL SCAN                        | I_USER2              |   141 |  3384 |     1   (0)| 00:00:01 |
+|* 44 |          TABLE ACCESS BY INDEX ROWID BATCHED    | OBJ$                 |     1 |    61 |     3   (0)| 00:00:01 |
+|* 45 |           INDEX RANGE SCAN                      | I_OBJ2               |     1 |       |     2   (0)| 00:00:01 |
+|* 46 |         TABLE ACCESS BY INDEX ROWID             | TYPE$                |     1 |    60 |     1   (0)| 00:00:01 |
+|* 47 |          INDEX UNIQUE SCAN                      | I_TYPE2              |     1 |       |     0   (0)| 00:00:01 |
+|  48 |        VIEW PUSHED PREDICATE                    | _CURRENT_EDITION_OBJ |     1 |    81 |     3   (0)| 00:00:01 |
+|* 49 |         FILTER                                  |                      |       |       |            |          |
+|* 50 |          HASH JOIN                              |                      |    22 |  1804 |     3   (0)| 00:00:01 |
+|  51 |           TABLE ACCESS BY INDEX ROWID BATCHED   | OBJ$                 |    22 |  1276 |     2   (0)| 00:00:01 |
+|* 52 |            INDEX RANGE SCAN                     | I_OBJ3               |     1 |       |     1   (0)| 00:00:01 |
+|  53 |           INDEX FULL SCAN                       | I_USER2              |   141 |  3384 |     1   (0)| 00:00:01 |
+|* 54 |          TABLE ACCESS FULL                      | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|* 55 |          TABLE ACCESS FULL                      | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|  56 |          NESTED LOOPS SEMI                      |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|* 57 |           INDEX SKIP SCAN                       | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|* 58 |           INDEX RANGE SCAN                      | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|  59 |       TABLE ACCESS CLUSTER                      | USER$                |     1 |    18 |     1   (0)| 00:00:01 |
+|* 60 |        INDEX UNIQUE SCAN                        | I_USER#              |     1 |       |     0   (0)| 00:00:01 |
+|  61 |      NESTED LOOPS SEMI                          |                      |     1 |    12 |     2   (0)| 00:00:01 |
+|  62 |       FIXED TABLE FULL                          | X$KZSRO              |     2 |     6 |     0   (0)| 00:00:01 |
+|* 63 |       INDEX RANGE SCAN                          | I_OBJAUTH2           |     1 |     9 |     1   (0)| 00:00:01 |
+|* 64 |      TABLE ACCESS FULL                          | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|* 65 |      TABLE ACCESS FULL                          | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|  66 |      NESTED LOOPS SEMI                          |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|* 67 |       INDEX SKIP SCAN                           | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|* 68 |       INDEX RANGE SCAN                          | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|  69 |  SORT ORDER BY                                  |                      |     1 |   272 | 21213   (1)| 00:00:01 |
+|* 70 |   FILTER                                        |                      |       |       |            |          |
+|  71 |    NESTED LOOPS                                 |                      |     1 |   272 | 20629   (1)| 00:00:01 |
+|  72 |     NESTED LOOPS                                |                      |    13 |  2210 |   156   (1)| 00:00:01 |
+|  73 |      NESTED LOOPS                               |                      |    13 |  1898 |   143   (1)| 00:00:01 |
+|  74 |       NESTED LOOPS                              |                      |    40 |  3080 |    62   (2)| 00:00:01 |
+|  75 |        TABLE ACCESS BY INDEX ROWID BATCHED      | USER$                |     1 |    18 |     2   (0)| 00:00:01 |
+|* 76 |         INDEX RANGE SCAN                        | I_USER1              |     1 |       |     1   (0)| 00:00:01 |
+|  77 |        TABLE ACCESS BY INDEX ROWID BATCHED      | OBJ$                 |    40 |  2360 |    60   (2)| 00:00:01 |
+|* 78 |         INDEX RANGE SCAN                        | I_OBJ5               |    52 |       |    39   (3)| 00:00:01 |
+|* 79 |       TABLE ACCESS BY INDEX ROWID BATCHED       | ARGUMENT$            |     1 |    69 |     3   (0)| 00:00:01 |
+|* 80 |        INDEX RANGE SCAN                         | I_ARGUMENT1          |     1 |       |     2   (0)| 00:00:01 |
+|* 81 |      INDEX RANGE SCAN                           | I_USER2              |     1 |    24 |     1   (0)| 00:00:01 |
+|* 82 |     VIEW                                        | INT$DBA_PROCEDURES   |     1 |   102 |  1575   (1)| 00:00:01 |
+|  83 |      UNION ALL PUSHED PREDICATE                 |                      |       |       |            |          |
+|* 84 |       FILTER                                    |                      |       |       |            |          |
+|* 85 |        FILTER                                   |                      |       |       |            |          |
+|  86 |         NESTED LOOPS OUTER                      |                      |   297 | 38907 |  1569   (1)| 00:00:01 |
+|  87 |          NESTED LOOPS OUTER                     |                      |   297 | 37719 |  1271   (1)| 00:00:01 |
+|  88 |           NESTED LOOPS                          |                      |   297 | 33264 |    80   (0)| 00:00:01 |
+|  89 |            NESTED LOOPS                         |                      |    31 |  3131 |    48   (0)| 00:00:01 |
+|  90 |             NESTED LOOPS                        |                      |    45 |  3465 |     3   (0)| 00:00:01 |
+|  91 |              TABLE ACCESS BY INDEX ROWID        | USER$                |     1 |    18 |     1   (0)| 00:00:01 |
+|* 92 |               INDEX UNIQUE SCAN                 | I_USER1              |     1 |       |     0   (0)| 00:00:01 |
+|* 93 |              TABLE ACCESS BY INDEX ROWID BATCHED| OBJ$                 |    45 |  2655 |     2   (0)| 00:00:01 |
+|* 94 |               INDEX RANGE SCAN                  | I_OBJ1               |     1 |       |     1   (0)| 00:00:01 |
+|* 95 |             INDEX RANGE SCAN                    | I_USER2              |     1 |    24 |     1   (0)| 00:00:01 |
+|  96 |            TABLE ACCESS BY INDEX ROWID BATCHED  | PROCEDUREINFO$       |     9 |    99 |     2   (0)| 00:00:01 |
+|* 97 |             INDEX RANGE SCAN                    | I_PROCEDUREINFO1     |     1 |       |     1   (0)| 00:00:01 |
+|  98 |           VIEW PUSHED PREDICATE                 | _CURRENT_EDITION_OBJ |     1 |    15 |     4   (0)| 00:00:01 |
+|* 99 |            FILTER                               |                      |       |       |            |          |
+| 100 |             NESTED LOOPS                        |                      |     1 |    45 |     4   (0)| 00:00:01 |
+| 101 |              TABLE ACCESS BY INDEX ROWID BATCHED| OBJ$                 |     1 |    21 |     3   (0)| 00:00:01 |
+|*102 |               INDEX RANGE SCAN                  | I_OBJ1               |     1 |       |     2   (0)| 00:00:01 |
+|*103 |              INDEX RANGE SCAN                   | I_USER2              |     1 |    24 |     1   (0)| 00:00:01 |
+|*104 |             TABLE ACCESS FULL                   | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|*105 |             TABLE ACCESS FULL                   | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+| 106 |             NESTED LOOPS SEMI                   |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|*107 |              INDEX SKIP SCAN                    | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|*108 |              INDEX RANGE SCAN                   | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|*109 |          INDEX RANGE SCAN                       | I_USER2              |     1 |     4 |     1   (0)| 00:00:01 |
+|*110 |        TABLE ACCESS FULL                        | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|*111 |        TABLE ACCESS FULL                        | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+| 112 |        NESTED LOOPS SEMI                        |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|*113 |         INDEX SKIP SCAN                         | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|*114 |         INDEX RANGE SCAN                        | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|*115 |       FILTER                                    |                      |       |       |            |          |
+|*116 |        FILTER                                   |                      |       |       |            |          |
+|*117 |         FILTER                                  |                      |       |       |            |          |
+| 118 |          NESTED LOOPS OUTER                     |                      |     1 |   107 |     6   (0)| 00:00:01 |
+| 119 |           NESTED LOOPS                          |                      |     1 |    98 |     4   (0)| 00:00:01 |
+| 120 |            NESTED LOOPS                         |                      |     1 |    74 |     3   (0)| 00:00:01 |
+| 121 |             TABLE ACCESS BY INDEX ROWID         | USER$                |     1 |    18 |     1   (0)| 00:00:01 |
+|*122 |              INDEX UNIQUE SCAN                  | I_USER1              |     1 |       |     0   (0)| 00:00:01 |
+|*123 |             TABLE ACCESS BY INDEX ROWID BATCHED | OBJ$                 |     1 |    56 |     2   (0)| 00:00:01 |
+|*124 |              INDEX RANGE SCAN                   | I_OBJ1               |     1 |       |     1   (0)| 00:00:01 |
+|*125 |            INDEX RANGE SCAN                     | I_USER2              |     1 |    24 |     1   (0)| 00:00:01 |
+| 126 |           TABLE ACCESS BY INDEX ROWID BATCHED   | PROCEDUREINFO$       |     9 |    81 |     2   (0)| 00:00:01 |
+|*127 |            INDEX RANGE SCAN                     | I_PROCEDUREINFO1     |     1 |       |     1   (0)| 00:00:01 |
+|*128 |        TABLE ACCESS FULL                        | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|*129 |        TABLE ACCESS FULL                        | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+| 130 |        NESTED LOOPS SEMI                        |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|*131 |         INDEX SKIP SCAN                         | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|*132 |         INDEX RANGE SCAN                        | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|*133 |    FIXED TABLE FULL                             | X$KZSPR              |     1 |     7 |     0   (0)| 00:00:01 |
+| 134 |    NESTED LOOPS SEMI                            |                      |     1 |    15 |     2   (0)| 00:00:01 |
+| 135 |     FIXED TABLE FULL                            | X$KZSRO              |     2 |     6 |     0   (0)| 00:00:01 |
+|*136 |     INDEX RANGE SCAN                            | I_OBJAUTH1           |     1 |    12 |     1   (0)| 00:00:01 |
+|*137 |    FIXED TABLE FULL                             | X$KZSPR              |     1 |     7 |     0   (0)| 00:00:01 |
+| 138 |    NESTED LOOPS SEMI                            |                      |     1 |    15 |     2   (0)| 00:00:01 |
+| 139 |     FIXED TABLE FULL                            | X$KZSRO              |     2 |     6 |     0   (0)| 00:00:01 |
+|*140 |     INDEX RANGE SCAN                            | I_OBJAUTH1           |     1 |    12 |     1   (0)| 00:00:01 |
+|*141 |    TABLE ACCESS FULL                            | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|*142 |    TABLE ACCESS FULL                            | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+| 143 |    NESTED LOOPS SEMI                            |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|*144 |     INDEX SKIP SCAN                             | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|*145 |     INDEX RANGE SCAN                            | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - filter(("O"."SPARE3"=USERENV('SCHEMAID') OR  EXISTS (SELECT /*+ LEADING ("X$KZSRO" "OA") PARTIAL_JOIN
+              ("OA") USE_NL ("OA") INDEX ("OA" "I_OBJAUTH2") FULL ("X$KZSRO") */ 0 FROM "SYS"."OBJAUTH$" "OA","SYS"."X$KZSRO"
+              "X$KZSRO" WHERE "OA"."OBJ#"=:B1 AND "GRANTEE#"="KZSROROL") OR
+              ORA_CHECK_SYS_PRIVILEGE("O"."SPARE3","O"."TYPE#")=1) AND ( NOT EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM
+              "SYS"."USER_EDITIONING$" "UE" WHERE "TYPE#"=:B2 AND "UE"."USER#"=:B3) AND "O"."TYPE#"<>88 OR
+              BITAND("O"."FLAGS",1048576)=1048576 OR BITAND("U"."SPARE1",16)=0 OR  EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM
+              "SYS"."USER_EDITIONING$" "UE" WHERE "UE"."TYPE#"=:B4 AND "UE"."USER#"=:B5) AND ("U"."TYPE#"<>2 AND
+              SYS_CONTEXT('userenv','current_edition_name')='ORA$BASE' OR "U"."TYPE#"=2 AND
+              "U"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')) OR  EXISTS (SELECT /*+ LEADING ("U2" "O2")
+              INDEX_SS ("U2" "I_USER2") PARTIAL_JOIN ("O2") USE_NL ("O2") INDEX ("O2" "I_OBJ4") */ 0 FROM "SYS"."USER$"
+              "U2","SYS"."OBJ$" "O2" WHERE "O2"."OWNER#"="U2"."USER#" AND "O2"."TYPE#"=88 AND "O2"."DATAOBJ#"=:B6 AND
+              "U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id'))))))
+  11 - filter("O"."OID$" IS NOT NULL)
+  12 - access("O"."OWNER#"="U"."USER#" AND "O"."NAME"=DECODE(:B1,0,NULL,1,DECODE(:B2,2,'NVARCHAR2','VARCHAR2'),2
+              ,DECODE(:B3,(-127),'FLOAT','NUMBER'),3,'NATIVE INTEGER',8,'LONG',9,DECODE(:B2,2,'NCHAR
+              VARYING','VARCHAR'),11,'ROWID',12,'DATE',23,'RAW',24,'LONG
+              RAW',29,'BINARY_INTEGER',58,'OPAQUE/XMLTYPE',69,'ROWID',96,DECODE(:B2,2,'NCHAR','CHAR'),100,'BINARY_FLOAT',101,'
+              BINARY_DOUBLE',102,'REF CURSOR',104,'UROWID',105,'MLSLABEL',106,'MLSLABEL',110,'REF',111,'REF',112,DECODE(:B2,2,
+              'NCLOB','CLOB'),113,'BLOB',114,'BFILE',115,'CFILE',121,'OBJECT',122,'TABLE',123,'VARRAY',178,'TIME',179,'TIME
+              WITH TIME ZONE',180,'TIMESTAMP',181,'TIMESTAMP WITH TIME ZONE',231,'TIMESTAMP WITH LOCAL TIME
+              ZONE',182,'INTERVAL YEAR TO MONTH',183,'INTERVAL DAY TO SECOND',250,'PL/SQL RECORD',251,'PL/SQL
+              TABLE',252,'PL/SQL BOOLEAN','UNDEFINED') AND "O"."SUBNAME" IS NULL)
+       filter("O"."SUBNAME" IS NULL AND "O"."TYPE#"<>10)
+  14 - access("O"."SPARE3"="U"."USER#")
+  15 - filter(BITAND("T"."PROPERTIES",64)<>64 AND BITAND("T"."PROPERTIES",2048)=0 AND "T"."PACKAGE_OBJ#" IS
+              NULL)
+  16 - access("O"."OID$"="T"."TVOID")
+  18 - filter( NOT EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "TYPE#"=:B1 AND
+              "UE"."USER#"=:B2) AND "O"."TYPE#"<>88 OR BITAND("O"."FLAGS",1048576)=1048576 OR BITAND("U"."SPARE1",16)=0 OR
+              EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "UE"."TYPE#"=:B3 AND
+              "UE"."USER#"=:B4) AND ("U"."TYPE#"<>2 AND SYS_CONTEXT('userenv','current_edition_name')='ORA$BASE' OR
+              "U"."TYPE#"=2 AND "U"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')) OR  EXISTS (SELECT /*+
+              LEADING ("U2" "O2") INDEX_SS ("U2" "I_USER2") PARTIAL_JOIN ("O2") USE_NL ("O2") INDEX ("O2" "I_OBJ4") */ 0 FROM
+              "SYS"."USER$" "U2","SYS"."OBJ$" "O2" WHERE "O2"."OWNER#"="U2"."USER#" AND "O2"."TYPE#"=88 AND
+              "O2"."DATAOBJ#"=:B5 AND "U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+              ))
+  19 - access("O"."OWNER#"="U"."USER#")
+  21 - access("O"."OID$"="T"."SUPERTOID")
+  23 - filter("TYPE#"=:B1 AND "UE"."USER#"=:B2)
+  24 - filter("UE"."TYPE#"=:B1 AND "UE"."USER#"=:B2)
+  26 - access("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+       filter("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+  27 - access("O2"."DATAOBJ#"=:B1 AND "O2"."TYPE#"=88 AND "O2"."OWNER#"="U2"."USER#")
+  29 - access("SO"."OWNER#"="SU"."USER#"(+))
+  32 - access("GRANTEE#"="KZSROROL" AND "OA"."OBJ#"=:B1)
+  33 - filter("TYPE#"=:B1 AND "UE"."USER#"=:B2)
+  34 - filter("UE"."TYPE#"=:B1 AND "UE"."USER#"=:B2)
+  36 - access("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+       filter("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+  37 - access("O2"."DATAOBJ#"=:B1 AND "O2"."TYPE#"=88 AND "O2"."OWNER#"="U2"."USER#")
+  38 - filter(("O"."SPARE3"=USERENV('SCHEMAID') OR  EXISTS (SELECT /*+ LEADING ("X$KZSRO" "OA") PARTIAL_JOIN
+              ("OA") USE_NL ("OA") INDEX ("OA" "I_OBJAUTH2") FULL ("X$KZSRO") */ 0 FROM "SYS"."OBJAUTH$" "OA","SYS"."X$KZSRO"
+              "X$KZSRO" WHERE "OA"."OBJ#"=:B1 AND "GRANTEE#"="KZSROROL") OR
+              ORA_CHECK_SYS_PRIVILEGE("O"."SPARE3","O"."TYPE#")=1) AND ( NOT EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM
+              "SYS"."USER_EDITIONING$" "UE" WHERE "TYPE#"=:B2 AND "UE"."USER#"=:B3) AND "O"."TYPE#"<>88 OR
+              BITAND("O"."FLAGS",1048576)=1048576 OR BITAND("U"."SPARE1",16)=0 OR  EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM
+              "SYS"."USER_EDITIONING$" "UE" WHERE "UE"."TYPE#"=:B4 AND "UE"."USER#"=:B5) AND ("U"."TYPE#"<>2 AND
+              SYS_CONTEXT('userenv','current_edition_name')='ORA$BASE' OR "U"."TYPE#"=2 AND
+              "U"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')) OR  EXISTS (SELECT /*+ LEADING ("U2" "O2")
+              INDEX_SS ("U2" "I_USER2") PARTIAL_JOIN ("O2") USE_NL ("O2") INDEX ("O2" "I_OBJ4") */ 0 FROM "SYS"."USER$"
+              "U2","SYS"."OBJ$" "O2" WHERE "O2"."OWNER#"="U2"."USER#" AND "O2"."TYPE#"=88 AND "O2"."DATAOBJ#"=:B6 AND
+              "U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id'))))))
+  44 - filter("O"."OID$" IS NOT NULL)
+  45 - access("O"."OWNER#"="U"."USER#" AND "O"."NAME"=DECODE(:B1,0,NULL,1,DECODE(:B2,2,'NVARCHAR2','VARCHAR2'),2
+              ,DECODE(:B3,(-127),'FLOAT','NUMBER'),3,'NATIVE INTEGER',8,'LONG',9,DECODE(:B2,2,'NCHAR
+              VARYING','VARCHAR'),11,'ROWID',12,'DATE',23,'RAW',24,'LONG
+              RAW',29,'BINARY_INTEGER',58,'OPAQUE/XMLTYPE',69,'ROWID',96,DECODE(:B2,2,'NCHAR','CHAR'),100,'BINARY_FLOAT',101,'
+              BINARY_DOUBLE',102,'REF CURSOR',104,'UROWID',105,'MLSLABEL',106,'MLSLABEL',110,'REF',111,'REF',112,DECODE(:B2,2,
+              'NCLOB','CLOB'),113,'BLOB',114,'BFILE',115,'CFILE',121,'OBJECT',122,'TABLE',123,'VARRAY',178,'TIME',179,'TIME
+              WITH TIME ZONE',180,'TIMESTAMP',181,'TIMESTAMP WITH TIME ZONE',231,'TIMESTAMP WITH LOCAL TIME
+              ZONE',182,'INTERVAL YEAR TO MONTH',183,'INTERVAL DAY TO SECOND',250,'PL/SQL RECORD',251,'PL/SQL
+              TABLE',252,'PL/SQL BOOLEAN','UNDEFINED') AND "O"."SUBNAME" IS NULL)
+       filter("O"."SUBNAME" IS NULL AND "O"."TYPE#"<>10)
+  46 - filter(BITAND("T"."PROPERTIES",64)=64 AND BITAND("T"."PROPERTIES",2048)=0 AND "T"."PACKAGE_OBJ#" IS NULL)
+  47 - access("O"."OID$"="T"."TVOID")
+  49 - filter( NOT EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "TYPE#"=:B1 AND
+              "UE"."USER#"=:B2) AND "O"."TYPE#"<>88 OR BITAND("O"."FLAGS",1048576)=1048576 OR BITAND("U"."SPARE1",16)=0 OR
+              EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "UE"."TYPE#"=:B3 AND
+              "UE"."USER#"=:B4) AND ("U"."TYPE#"<>2 AND SYS_CONTEXT('userenv','current_edition_name')='ORA$BASE' OR
+              "U"."TYPE#"=2 AND "U"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')) OR  EXISTS (SELECT /*+
+              LEADING ("U2" "O2") INDEX_SS ("U2" "I_USER2") PARTIAL_JOIN ("O2") USE_NL ("O2") INDEX ("O2" "I_OBJ4") */ 0 FROM
+              "SYS"."USER$" "U2","SYS"."OBJ$" "O2" WHERE "O2"."OWNER#"="U2"."USER#" AND "O2"."TYPE#"=88 AND
+              "O2"."DATAOBJ#"=:B5 AND "U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+              ))
+  50 - access("O"."OWNER#"="U"."USER#")
+  52 - access("O"."OID$"="T"."SUPERTOID")
+  54 - filter("TYPE#"=:B1 AND "UE"."USER#"=:B2)
+  55 - filter("UE"."TYPE#"=:B1 AND "UE"."USER#"=:B2)
+  57 - access("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+       filter("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+  58 - access("O2"."DATAOBJ#"=:B1 AND "O2"."TYPE#"=88 AND "O2"."OWNER#"="U2"."USER#")
+  60 - access("SO"."OWNER#"="SU"."USER#"(+))
+  63 - access("GRANTEE#"="KZSROROL" AND "OA"."OBJ#"=:B1)
+  64 - filter("TYPE#"=:B1 AND "UE"."USER#"=:B2)
+  65 - filter("UE"."TYPE#"=:B1 AND "UE"."USER#"=:B2)
+  67 - access("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+       filter("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+  68 - access("O2"."DATAOBJ#"=:B1 AND "O2"."TYPE#"=88 AND "O2"."OWNER#"="U2"."USER#")
+  70 - filter(("OWNER"=SYS_CONTEXT('USERENV','CURRENT_USER') OR  EXISTS (SELECT /*+ OPT_ESTIMATE
+              (@"SEL$DA7B8C5A" TABLE "X$KZSPR"@"SEL$53" SCALE_ROWS=0.122864 ) FULL ("X$KZSPR") */ 0 FROM "SYS"."X$KZSPR"
+              "X$KZSPR" WHERE ((-"KZSPRPRV")=(-144) OR (-"KZSPRPRV")=(-141)) AND "INST_ID"=USERENV('INSTANCE')) OR  EXISTS
+              (SELECT /*+ LEADING ("X$KZSRO" "OBJAUTH$") PARTIAL_JOIN ("OBJAUTH$") USE_NL ("OBJAUTH$") INDEX ("OBJAUTH$"
+              "I_OBJAUTH1") FULL ("X$KZSRO") */ 0 FROM "SYS"."OBJAUTH$" "OBJAUTH$","SYS"."X$KZSRO" "X$KZSRO" WHERE "OBJ#"=:B1
+              AND "GRANTEE#"="KZSROROL" AND "PRIVILEGE#"=12)) AND ("U"."NAME"=SYS_CONTEXT('USERENV','CURRENT_USER') OR
+              EXISTS (SELECT /*+ OPT_ESTIMATE (@"SEL$DD46E77B" TABLE "X$KZSPR"@"SEL$33" SCALE_ROWS=0.122864 ) FULL
+              ("X$KZSPR") */ 0 FROM "SYS"."X$KZSPR" "X$KZSPR" WHERE ((-"KZSPRPRV")=(-144) OR (-"KZSPRPRV")=(-141)) AND
+              "INST_ID"=USERENV('INSTANCE')) OR  EXISTS (SELECT /*+ LEADING ("X$KZSRO" "OBJAUTH$") PARTIAL_JOIN ("OBJAUTH$")
+              USE_NL ("OBJAUTH$") INDEX ("OBJAUTH$" "I_OBJAUTH1") FULL ("X$KZSRO") */ 0 FROM "SYS"."OBJAUTH$"
+              "OBJAUTH$","SYS"."X$KZSRO" "X$KZSRO" WHERE "OBJ#"=:B2 AND "GRANTEE#"="KZSROROL" AND "PRIVILEGE#"=12)) AND ( NOT
+              EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "TYPE#"=:B3 AND "UE"."USER#"=:B4)
+              AND "O"."TYPE#"<>88 OR BITAND("O"."FLAGS",1048576)=1048576 OR BITAND("U"."SPARE1",16)=0 OR  EXISTS (SELECT /*+
+              FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "UE"."TYPE#"=:B5 AND "UE"."USER#"=:B6) AND
+              ("U"."TYPE#"<>2 AND SYS_CONTEXT('userenv','current_edition_name')='ORA$BASE' OR "U"."TYPE#"=2 AND
+              "U"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')) OR  EXISTS (SELECT /*+ LEADING ("U2" "O2")
+              INDEX_SS ("U2" "I_USER2") PARTIAL_JOIN ("O2") USE_NL ("O2") INDEX ("O2" "I_OBJ4") */ 0 FROM "SYS"."USER$"
+              "U2","SYS"."OBJ$" "O2" WHERE "O2"."OWNER#"="U2"."USER#" AND "O2"."TYPE#"=88 AND "O2"."DATAOBJ#"=:B7 AND
+              "U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id'))))))
+  76 - access("U"."NAME" LIKE SYS_OP_C2C(:1) ESCAPE :SYS_B_109)
+       filter("U"."NAME" LIKE SYS_OP_C2C(:1) ESCAPE :SYS_B_109)
+  78 - access("O"."SPARE3"="U"."USER#")
+       filter("O"."TYPE#"=13 AND "O"."SUBNAME" IS NULL OR "O"."TYPE#"=7 OR "O"."TYPE#"=8 OR "O"."TYPE#"=9 OR
+              "O"."TYPE#"=11 OR "O"."TYPE#"=14)
+  79 - filter("A"."LEVEL#"=:SYS_B_111 AND ("A"."ARGUMENT" LIKE SYS_OP_C2C(:5) ESCAPE :SYS_B_112 OR
+              "A"."ARGUMENT" IS NULL AND DECODE("A"."TYPE#",0,NULL,1,DECODE("A"."CHARSETFORM",2,'NVARCHAR2','VARCHAR2'),2,DECO
+              DE("A"."SCALE",(-127),'FLOAT','NUMBER'),3,'NATIVE INTEGER',8,'LONG',9,DECODE("A"."CHARSETFORM",2,'NCHAR
+              VARYING','VARCHAR'),11,'ROWID',12,'DATE',23,'RAW',24,'LONG
+              RAW',29,'BINARY_INTEGER',58,'OPAQUE/XMLTYPE',69,'ROWID',96,DECODE("A"."CHARSETFORM",2,'NCHAR','CHAR'),100,'BINAR
+              Y_FLOAT',101,'BINARY_DOUBLE',102,'REF CURSOR',104,'UROWID',105,'MLSLABEL',106,'MLSLABEL',110,'REF',111,'REF',112
+              ,DECODE("A"."CHARSETFORM",2,'NCLOB','CLOB'),113,'BLOB',114,'BFILE',115,'CFILE',121,'OBJECT',122,'TABLE',123,'VAR
+              RAY',178,'TIME',179,'TIME WITH TIME ZONE',180,'TIMESTAMP',181,'TIMESTAMP WITH TIME ZONE',231,'TIMESTAMP WITH
+              LOCAL TIME ZONE',182,'INTERVAL YEAR TO MONTH',183,'INTERVAL DAY TO SECOND',250,'PL/SQL RECORD',251,'PL/SQL
+              TABLE',252,'PL/SQL BOOLEAN','UNDEFINED') IS NOT NULL))
+  80 - access("O"."OBJ#"="A"."OBJ#")
+       filter(NVL("A"."PROCEDURE$","O"."NAME") LIKE SYS_OP_C2C(:2) ESCAPE :SYS_B_110 AND
+              DECODE("A"."PROCEDURE$",NULL,NULL,"O"."NAME") IS NULL)
+  81 - access("O"."OWNER#"="U"."USER#")
+  82 - filter("A"."PROCEDURE#"="SUBPROGRAM_ID")
+  84 - filter( NOT EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "TYPE#"=:B1 AND
+              "UE"."USER#"=:B2) AND "O"."TYPE#"<>88 OR BITAND("O"."FLAGS",1048576)=1048576 OR BITAND("U"."SPARE1",16)=0 OR
+              EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "UE"."TYPE#"=:B3 AND
+              "UE"."USER#"=:B4) AND ("U"."TYPE#"<>2 AND SYS_CONTEXT('userenv','current_edition_name')='ORA$BASE' OR
+              "U"."TYPE#"=2 AND "U"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')) OR  EXISTS (SELECT /*+
+              LEADING ("U2" "O2") INDEX_SS ("U2" "I_USER2") PARTIAL_JOIN ("O2") USE_NL ("O2") INDEX ("O2" "I_OBJ4") */ 0 FROM
+              "SYS"."USER$" "U2","SYS"."OBJ$" "O2" WHERE "O2"."OWNER#"="U2"."USER#" AND "O2"."TYPE#"=88 AND
+              "O2"."DATAOBJ#"=:B5 AND "U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+              ))
+  85 - filter("U"."NAME" LIKE SYS_OP_C2C(:1) ESCAPE :SYS_B_109)
+  92 - access("U"."NAME"="U"."NAME")
+       filter("U"."NAME" LIKE SYS_OP_C2C(:1) ESCAPE :SYS_B_109)
+  93 - filter("U"."USER#"="O"."SPARE3" AND (("O"."TYPE#"=7 OR "O"."TYPE#"=8 OR "O"."TYPE#"=9 OR "O"."TYPE#"=11
+              OR "O"."TYPE#"=12 OR "O"."TYPE#"=14 OR "O"."TYPE#"=22 OR "O"."TYPE#"=28 OR "O"."TYPE#"=29 OR "O"."TYPE#"=30 OR
+              "O"."TYPE#"=87) OR "O"."TYPE#"=13 AND "O"."SUBNAME" IS NULL))
+  94 - access("O"."OBJ#"="O"."OBJ#")
+  95 - access("O"."OWNER#"="U"."USER#")
+  97 - access("PI"."OBJ#"="O"."OBJ#")
+       filter("O"."OBJ#"="PI"."OBJ#")
+  99 - filter( NOT EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "TYPE#"=:B1 AND
+              "UE"."USER#"=:B2) AND "O"."TYPE#"<>88 OR BITAND("O"."FLAGS",1048576)=1048576 OR BITAND("U"."SPARE1",16)=0 OR
+              EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "UE"."TYPE#"=:B3 AND
+              "UE"."USER#"=:B4) AND ("U"."TYPE#"<>2 AND SYS_CONTEXT('userenv','current_edition_name')='ORA$BASE' OR
+              "U"."TYPE#"=2 AND "U"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')) OR  EXISTS (SELECT /*+
+              LEADING ("U2" "O2") INDEX_SS ("U2" "I_USER2") PARTIAL_JOIN ("O2") USE_NL ("O2") INDEX ("O2" "I_OBJ4") */ 0 FROM
+              "SYS"."USER$" "U2","SYS"."OBJ$" "O2" WHERE "O2"."OWNER#"="U2"."USER#" AND "O2"."TYPE#"=88 AND
+              "O2"."DATAOBJ#"=:B5 AND "U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+              ))
+ 102 - access("O"."OBJ#"="PI"."ITYPEOBJ#")
+ 103 - access("O"."OWNER#"="U"."USER#")
+ 104 - filter("TYPE#"=:B1 AND "UE"."USER#"=:B2)
+ 105 - filter("UE"."TYPE#"=:B1 AND "UE"."USER#"=:B2)
+ 107 - access("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+       filter("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+ 108 - access("O2"."DATAOBJ#"=:B1 AND "O2"."TYPE#"=88 AND "O2"."OWNER#"="U2"."USER#")
+ 109 - access("O2"."OWNER#"="U2"."USER#"(+))
+ 110 - filter("TYPE#"=:B1 AND "UE"."USER#"=:B2)
+ 111 - filter("UE"."TYPE#"=:B1 AND "UE"."USER#"=:B2)
+ 113 - access("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+       filter("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+ 114 - access("O2"."DATAOBJ#"=:B1 AND "O2"."TYPE#"=88 AND "O2"."OWNER#"="U2"."USER#")
+ 115 - filter( NOT EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "TYPE#"=:B1 AND
+              "UE"."USER#"=:B2) AND "O"."TYPE#"<>88 OR BITAND("O"."FLAGS",1048576)=1048576 OR BITAND("U"."SPARE1",16)=0 OR
+              EXISTS (SELECT /*+ FULL ("UE") */ 0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "UE"."TYPE#"=:B3 AND
+              "UE"."USER#"=:B4) AND ("U"."TYPE#"<>2 AND SYS_CONTEXT('userenv','current_edition_name')='ORA$BASE' OR
+              "U"."TYPE#"=2 AND "U"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')) OR  EXISTS (SELECT /*+
+              LEADING ("U2" "O2") INDEX_SS ("U2" "I_USER2") PARTIAL_JOIN ("O2") USE_NL ("O2") INDEX ("O2" "I_OBJ4") */ 0 FROM
+              "SYS"."USER$" "U2","SYS"."OBJ$" "O2" WHERE "O2"."OWNER#"="U2"."USER#" AND "O2"."TYPE#"=88 AND
+              "O2"."DATAOBJ#"=:B5 AND "U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+              ))
+ 116 - filter("U"."NAME" LIKE SYS_OP_C2C(:1) ESCAPE :SYS_B_109)
+ 117 - filter("PI"."PROCEDURE#" IS NULL OR "PI"."PROCEDURE#"=1)
+
+DBMS_SQLTUNE.REPORT_TUNING_TASK('3SGCS8F280UGY_TUNING_TASK01')
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 122 - access("U"."NAME"="U"."NAME")
+       filter("U"."NAME" LIKE SYS_OP_C2C(:1) ESCAPE :SYS_B_109)
+ 123 - filter("O"."SPARE3"="U"."USER#")
+ 124 - access("O"."OBJ#"="O"."OBJ#")
+       filter("O"."TYPE#"=9 OR "O"."TYPE#"=12)
+ 125 - access("O"."OWNER#"="U"."USER#")
+ 127 - access("PI"."OBJ#"(+)="O"."OBJ#")
+       filter("O"."OBJ#"="PI"."OBJ#"(+))
+ 128 - filter("TYPE#"=:B1 AND "UE"."USER#"=:B2)
+ 129 - filter("UE"."TYPE#"=:B1 AND "UE"."USER#"=:B2)
+ 131 - access("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+       filter("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+ 132 - access("O2"."DATAOBJ#"=:B1 AND "O2"."TYPE#"=88 AND "O2"."OWNER#"="U2"."USER#")
+ 133 - filter(((-"KZSPRPRV")=(-144) OR (-"KZSPRPRV")=(-141)) AND "INST_ID"=USERENV('INSTANCE'))
+ 136 - access("OBJ#"=:B1 AND "GRANTEE#"="KZSROROL" AND "PRIVILEGE#"=12)
+       filter("GRANTEE#"="KZSROROL" AND "PRIVILEGE#"=12)
+ 137 - filter(((-"KZSPRPRV")=(-144) OR (-"KZSPRPRV")=(-141)) AND "INST_ID"=USERENV('INSTANCE'))
+ 140 - access("OBJ#"=:B1 AND "GRANTEE#"="KZSROROL" AND "PRIVILEGE#"=12)
+       filter("GRANTEE#"="KZSROROL" AND "PRIVILEGE#"=12)
+ 141 - filter("TYPE#"=:B1 AND "UE"."USER#"=:B2)
+ 142 - filter("UE"."TYPE#"=:B1 AND "UE"."USER#"=:B2)
+ 144 - access("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+       filter("U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')))
+ 145 - access("O2"."DATAOBJ#"=:B1 AND "O2"."TYPE#"=88 AND "O2"."OWNER#"="U2"."USER#")
+
+3- Using SQL Profile
+--------------------
+Plan hash value: 419860590
+
+--------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                                         | Name                 | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                                  |                      |     1 |   301 |   978   (1)| 00:00:01 |
+|   1 |  VIEW                                             | ALL_TYPES            |     2 |   264 |   583   (1)| 00:00:01 |
+|   2 |   SORT UNIQUE                                     |                      |     2 |  1012 |   583   (1)| 00:00:01 |
+|   3 |    UNION-ALL                                      |                      |       |       |            |          |
+|*  4 |     FILTER                                        |                      |       |       |            |          |
+|   5 |      NESTED LOOPS OUTER                           |                      |     1 |   262 |   291   (1)| 00:00:01 |
+|   6 |       NESTED LOOPS OUTER                          |                      |     1 |   244 |   290   (1)| 00:00:01 |
+|   7 |        NESTED LOOPS                               |                      |     1 |   163 |   287   (1)| 00:00:01 |
+|   8 |         NESTED LOOPS                              |                      |     1 |   103 |   286   (1)| 00:00:01 |
+|   9 |          NESTED LOOPS                             |                      |     1 |    85 |   285   (1)| 00:00:01 |
+|  10 |           INDEX FULL SCAN                         | I_USER2              |   141 |  3384 |     1   (0)| 00:00:01 |
+|* 11 |           TABLE ACCESS BY INDEX ROWID BATCHED     | OBJ$                 |     1 |    61 |     3   (0)| 00:00:01 |
+|* 12 |            INDEX RANGE SCAN                       | I_OBJ2               |     1 |       |     2   (0)| 00:00:01 |
+|  13 |          TABLE ACCESS CLUSTER                     | USER$                |     1 |    18 |     1   (0)| 00:00:01 |
+|* 14 |           INDEX UNIQUE SCAN                       | I_USER#              |     1 |       |     0   (0)| 00:00:01 |
+|* 15 |         TABLE ACCESS BY INDEX ROWID               | TYPE$                |     1 |    60 |     1   (0)| 00:00:01 |
+|* 16 |          INDEX UNIQUE SCAN                        | I_TYPE2              |     1 |       |     0   (0)| 00:00:01 |
+|  17 |        VIEW PUSHED PREDICATE                      | _CURRENT_EDITION_OBJ |     1 |    81 |     3   (0)| 00:00:01 |
+|* 18 |         FILTER                                    |                      |       |       |            |          |
+|* 19 |          HASH JOIN                                |                      |    22 |  1804 |     3   (0)| 00:00:01 |
+|  20 |           TABLE ACCESS BY INDEX ROWID BATCHED     | OBJ$                 |    22 |  1276 |     2   (0)| 00:00:01 |
+|* 21 |            INDEX RANGE SCAN                       | I_OBJ3               |     1 |       |     1   (0)| 00:00:01 |
+|  22 |           INDEX FULL SCAN                         | I_USER2              |   141 |  3384 |     1   (0)| 00:00:01 |
+|* 23 |          TABLE ACCESS FULL                        | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|* 24 |          TABLE ACCESS FULL                        | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|  25 |          NESTED LOOPS SEMI                        |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|* 26 |           INDEX SKIP SCAN                         | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|* 27 |           INDEX RANGE SCAN                        | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|  28 |       TABLE ACCESS CLUSTER                        | USER$                |     1 |    18 |     1   (0)| 00:00:01 |
+|* 29 |        INDEX UNIQUE SCAN                          | I_USER#              |     1 |       |     0   (0)| 00:00:01 |
+|  30 |      NESTED LOOPS SEMI                            |                      |     1 |    12 |     2   (0)| 00:00:01 |
+|  31 |       FIXED TABLE FULL                            | X$KZSRO              |     2 |     6 |     0   (0)| 00:00:01 |
+|* 32 |       INDEX RANGE SCAN                            | I_OBJAUTH2           |     1 |     9 |     1   (0)| 00:00:01 |
+|* 33 |      TABLE ACCESS FULL                            | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|* 34 |      TABLE ACCESS FULL                            | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|  35 |      NESTED LOOPS SEMI                            |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|* 36 |       INDEX SKIP SCAN                             | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|* 37 |       INDEX RANGE SCAN                            | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|* 38 |     FILTER                                        |                      |       |       |            |          |
+|  39 |      NESTED LOOPS OUTER                           |                      |     1 |   244 |   290   (1)| 00:00:01 |
+|  40 |       NESTED LOOPS OUTER                          |                      |     1 |   226 |   289   (1)| 00:00:01 |
+|  41 |        NESTED LOOPS                               |                      |     1 |   145 |   286   (1)| 00:00:01 |
+|  42 |         NESTED LOOPS                              |                      |     1 |    85 |   285   (1)| 00:00:01 |
+|  43 |          INDEX FULL SCAN                          | I_USER2              |   141 |  3384 |     1   (0)| 00:00:01 |
+|* 44 |          TABLE ACCESS BY INDEX ROWID BATCHED      | OBJ$                 |     1 |    61 |     3   (0)| 00:00:01 |
+|* 45 |           INDEX RANGE SCAN                        | I_OBJ2               |     1 |       |     2   (0)| 00:00:01 |
+|* 46 |         TABLE ACCESS BY INDEX ROWID               | TYPE$                |     1 |    60 |     1   (0)| 00:00:01 |
+|* 47 |          INDEX UNIQUE SCAN                        | I_TYPE2              |     1 |       |     0   (0)| 00:00:01 |
+|  48 |        VIEW PUSHED PREDICATE                      | _CURRENT_EDITION_OBJ |     1 |    81 |     3   (0)| 00:00:01 |
+|* 49 |         FILTER                                    |                      |       |       |            |          |
+|* 50 |          HASH JOIN                                |                      |    22 |  1804 |     3   (0)| 00:00:01 |
+|  51 |           TABLE ACCESS BY INDEX ROWID BATCHED     | OBJ$                 |    22 |  1276 |     2   (0)| 00:00:01 |
+|* 52 |            INDEX RANGE SCAN                       | I_OBJ3               |     1 |       |     1   (0)| 00:00:01 |
+|  53 |           INDEX FULL SCAN                         | I_USER2              |   141 |  3384 |     1   (0)| 00:00:01 |
+|* 54 |          TABLE ACCESS FULL                        | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|* 55 |          TABLE ACCESS FULL                        | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|  56 |          NESTED LOOPS SEMI                        |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|* 57 |           INDEX SKIP SCAN                         | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|* 58 |           INDEX RANGE SCAN                        | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|  59 |       TABLE ACCESS CLUSTER                        | USER$                |     1 |    18 |     1   (0)| 00:00:01 |
+|* 60 |        INDEX UNIQUE SCAN                          | I_USER#              |     1 |       |     0   (0)| 00:00:01 |
+|  61 |      NESTED LOOPS SEMI                            |                      |     1 |    12 |     2   (0)| 00:00:01 |
+|  62 |       FIXED TABLE FULL                            | X$KZSRO              |     2 |     6 |     0   (0)| 00:00:01 |
+|* 63 |       INDEX RANGE SCAN                            | I_OBJAUTH2           |     1 |     9 |     1   (0)| 00:00:01 |
+|* 64 |      TABLE ACCESS FULL                            | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|* 65 |      TABLE ACCESS FULL                            | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|  66 |      NESTED LOOPS SEMI                            |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|* 67 |       INDEX SKIP SCAN                             | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|* 68 |       INDEX RANGE SCAN                            | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|  69 |  SORT ORDER BY                                    |                      |     1 |   301 |   978   (1)| 00:00:01 |
+|* 70 |   FILTER                                          |                      |       |       |            |          |
+|  71 |    NESTED LOOPS                                   |                      |     1 |   301 |   394   (2)| 00:00:01 |
+|  72 |     NESTED LOOPS                                  |                      |     1 |   277 |   393   (2)| 00:00:01 |
+|  73 |      NESTED LOOPS                                 |                      |    13 |  1898 |   143   (1)| 00:00:01 |
+|  74 |       NESTED LOOPS                                |                      |    40 |  3080 |    62   (2)| 00:00:01 |
+|  75 |        TABLE ACCESS BY INDEX ROWID BATCHED        | USER$                |     1 |    18 |     2   (0)| 00:00:01 |
+|* 76 |         INDEX RANGE SCAN                          | I_USER1              |     1 |       |     1   (0)| 00:00:01 |
+|  77 |        TABLE ACCESS BY INDEX ROWID BATCHED        | OBJ$                 |    40 |  2360 |    60   (2)| 00:00:01 |
+|* 78 |         INDEX RANGE SCAN                          | I_OBJ5               |    52 |       |    39   (3)| 00:00:01 |
+|* 79 |       TABLE ACCESS BY INDEX ROWID BATCHED         | ARGUMENT$            |     1 |    69 |     3   (0)| 00:00:01 |
+|* 80 |        INDEX RANGE SCAN                           | I_ARGUMENT1          |     1 |       |     2   (0)| 00:00:01 |
+|* 81 |      VIEW                                         | INT$DBA_PROCEDURES   |     1 |   131 |    19   (0)| 00:00:01 |
+|  82 |       UNION ALL PUSHED PREDICATE                  |                      |       |       |            |          |
+|* 83 |        FILTER                                     |                      |       |       |            |          |
+|* 84 |         FILTER                                    |                      |       |       |            |          |
+|  85 |          NESTED LOOPS OUTER                       |                      |     1 |   131 |    13   (0)| 00:00:01 |
+|  86 |           NESTED LOOPS                            |                      |     1 |   127 |    12   (0)| 00:00:01 |
+|  87 |            NESTED LOOPS OUTER                     |                      |     1 |   103 |    11   (0)| 00:00:01 |
+|* 88 |             HASH JOIN                             |                      |     1 |    88 |     7   (0)| 00:00:01 |
+|  89 |              NESTED LOOPS                         |                      |    13 |   377 |     4   (0)| 00:00:01 |
+|  90 |               TABLE ACCESS BY INDEX ROWID         | USER$                |     1 |    18 |     1   (0)| 00:00:01 |
+|* 91 |                INDEX UNIQUE SCAN                  | I_USER1              |     1 |       |     0   (0)| 00:00:01 |
+|  92 |               TABLE ACCESS BY INDEX ROWID BATCHED | PROCEDUREINFO$       |    13 |   143 |     3   (0)| 00:00:01 |
+|* 93 |                INDEX RANGE SCAN                   | I_PROCEDUREINFO1     |    13 |       |     1   (0)| 00:00:01 |
+|* 94 |              TABLE ACCESS BY INDEX ROWID BATCHED  | OBJ$                 |     1 |    59 |     3   (0)| 00:00:01 |
+|* 95 |               INDEX RANGE SCAN                    | I_OBJ1               |     1 |       |     2   (0)| 00:00:01 |
+|  96 |             VIEW PUSHED PREDICATE                 | _CURRENT_EDITION_OBJ |     1 |    15 |     4   (0)| 00:00:01 |
+|* 97 |              FILTER                               |                      |       |       |            |          |
+|  98 |               NESTED LOOPS                        |                      |     1 |    45 |     4   (0)| 00:00:01 |
+|  99 |                TABLE ACCESS BY INDEX ROWID BATCHED| OBJ$                 |     1 |    21 |     3   (0)| 00:00:01 |
+|*100 |                 INDEX RANGE SCAN                  | I_OBJ1               |     1 |       |     2   (0)| 00:00:01 |
+|*101 |                INDEX RANGE SCAN                   | I_USER2              |     1 |    24 |     1   (0)| 00:00:01 |
+|*102 |               TABLE ACCESS FULL                   | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|*103 |               TABLE ACCESS FULL                   | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+| 104 |               NESTED LOOPS SEMI                   |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|*105 |                INDEX SKIP SCAN                    | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|*106 |                INDEX RANGE SCAN                   | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|*107 |            INDEX RANGE SCAN                       | I_USER2              |     1 |    24 |     1   (0)| 00:00:01 |
+|*108 |           INDEX RANGE SCAN                        | I_USER2              |     1 |     4 |     1   (0)| 00:00:01 |
+|*109 |         TABLE ACCESS FULL                         | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|*110 |         TABLE ACCESS FULL                         | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+| 111 |         NESTED LOOPS SEMI                         |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|*112 |          INDEX SKIP SCAN                          | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|*113 |          INDEX RANGE SCAN                         | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|*114 |        FILTER                                     |                      |       |       |            |          |
+|*115 |         FILTER                                    |                      |       |       |            |          |
+|*116 |          FILTER                                   |                      |       |       |            |          |
+| 117 |           NESTED LOOPS OUTER                      |                      |     1 |   107 |     6   (0)| 00:00:01 |
+| 118 |            NESTED LOOPS                           |                      |     1 |    98 |     4   (0)| 00:00:01 |
+| 119 |             NESTED LOOPS                          |                      |     1 |    74 |     3   (0)| 00:00:01 |
+| 120 |              TABLE ACCESS BY INDEX ROWID          | USER$                |     1 |    18 |     1   (0)| 00:00:01 |
+|*121 |               INDEX UNIQUE SCAN                   | I_USER1              |     1 |       |     0   (0)| 00:00:01 |
+|*122 |              TABLE ACCESS BY INDEX ROWID BATCHED  | OBJ$                 |     1 |    56 |     2   (0)| 00:00:01 |
+|*123 |               INDEX RANGE SCAN                    | I_OBJ1               |     1 |       |     1   (0)| 00:00:01 |
+|*124 |             INDEX RANGE SCAN                      | I_USER2              |     1 |    24 |     1   (0)| 00:00:01 |
+| 125 |            TABLE ACCESS BY INDEX ROWID BATCHED    | PROCEDUREINFO$       |     9 |    81 |     2   (0)| 00:00:01 |
+|*126 |             INDEX RANGE SCAN                      | I_PROCEDUREINFO1     |     1 |       |     1   (0)| 00:00:01 |
+|*127 |         TABLE ACCESS FULL                         | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|*128 |         TABLE ACCESS FULL                         | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+| 129 |         NESTED LOOPS SEMI                         |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|*130 |          INDEX SKIP SCAN                          | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|*131 |          INDEX RANGE SCAN                         | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|*132 |     INDEX RANGE SCAN                              | I_USER2              |     1 |    24 |     1   (0)| 00:00:01 |
+|*133 |    FIXED TABLE FULL                               | X$KZSPR              |     1 |     7 |     0   (0)| 00:00:01 |
+| 134 |    NESTED LOOPS SEMI                              |                      |     1 |    15 |     2   (0)| 00:00:01 |
+| 135 |     FIXED TABLE FULL                              | X$KZSRO              |     2 |     6 |     0   (0)| 00:00:01 |
+|*136 |     INDEX RANGE SCAN                              | I_OBJAUTH1           |     1 |    12 |     1   (0)| 00:00:01 |
+|*137 |    TABLE ACCESS FULL                              | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+|*138 |    TABLE ACCESS FULL                              | USER_EDITIONING$     |     1 |     6 |     2   (0)| 00:00:01 |
+| 139 |    NESTED LOOPS SEMI                              |                      |     1 |    29 |     2   (0)| 00:00:01 |
+|*140 |     INDEX SKIP SCAN                               | I_USER2              |     1 |    20 |     1   (0)| 00:00:01 |
+|*141 |     INDEX RANGE SCAN                              | I_OBJ4               |     1 |     9 |     1   (0)| 00:00:01 |
+|*142 |    FIXED TABLE FULL                               | X$KZSPR              |     1 |     7 |     0   (0)| 00:00:01 |
+| 143 |    NESTED LOOPS SEMI                              |                      |     1 |    15 |     2   (0)| 00:00:01 |
+| 144 |     FIXED TABLE FULL                              | X$KZSRO              |     2 |     6 |     0   (0)| 00:00:01 |
+|*145 |     INDEX RANGE SCAN                              | I_OBJAUTH1           |     1 |    12 |     1   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   4 - filter(("O"."SPARE3"=USERENV('SCHEMAID') OR ORA_CHECK_SYS_PRIVILEGE("O"."SPARE3","O"."TYPE#")=1 OR  EXISTS
+              (SELECT 0 FROM "SYS"."OBJAUTH$" "OA","SYS"."X$KZSRO" "X$KZSRO" WHERE "OA"."OBJ#"=:B1 AND "GRANTEE#"="KZSROROL"))
+              AND (BITAND("U"."SPARE1",16)=0 OR BITAND("O"."FLAGS",1048576)=1048576 OR "O"."TYPE#"<>88 AND  NOT EXISTS (SELECT
+              0 FROM "SYS"."USER_EDITIONING$" "UE" WHERE "TYPE#"=:B2 AND "UE"."USER#"=:B3) OR  EXISTS (SELECT 0 FROM
+              "SYS"."USER_EDITIONING$" "UE" WHERE "UE"."TYPE#"=:B4 AND "UE"."USER#"=:B5) AND
+              (SYS_CONTEXT('userenv','current_edition_name')='ORA$BASE' AND "U"."TYPE#"<>2 OR "U"."TYPE#"=2 AND
+              "U"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id')) OR  EXISTS (SELECT 0 FROM "SYS"."USER$"
+              "U2","SYS"."OBJ$" "O2" WHERE "O2"."OWNER#"="U2"."USER#" AND "O2"."TYPE#"=88 AND "O2"."DATAOBJ#"=:B6 AND
+              "U2"."TYPE#"=2 AND "U2"."SPARE2"=TO_NUMBER(SYS_CONTEXT('userenv','current_edition_id'))))))
+  11 - filter("O"."OID$" IS NOT NULL)
+  12 - access("O"."OWNER#"="U"."USER#" AND "O"."NAME"=DECODE(:B1,0,NULL,1,DECODE(:B2,2,'NVARCHAR2','VARCHAR2'),2,D
+              ECODE(:B3,(-127),'FLOAT','NUMBER'),3,'NATIVE INTEGER',8,'LONG',9,DECODE(:B2,2,'NCHAR
+              VARYING','VARCHAR'),11,'ROWID',12,'DATE',23,'RAW',24,'LONG
+              RAW',29,'BINARY_INTEGER',58,'OPAQUE/XMLTYPE',69,'ROWID',96,DECODE(:B2,2,'NCHAR','CHAR'),100,'BINARY_FLOAT',101,'BI
+              NARY_DOUBLE',102,'REF CURSOR',104,'UROWID',105,'MLSLABEL',106,'MLSLABEL',110,'REF',111,'REF',112,DECODE(:B2,2,'NCL
+              OB','CLOB'),113,'BLOB',114,'BFILE',115,'CFILE',121,'OBJECT',122,'TABLE',123,'VARRAY',178,'TIME',179,'TIME WITH
+              TIME ZONE',180,'TIMESTAMP',181,'TIMESTAMP WITH TIME ZONE',231,'TIMESTAMP WITH LOCAL TIME ZONE',182,'INTERVAL YEAR
+              TO MONTH',183,'INTERVAL DAY TO SECOND',250,'PL/SQL RECORD',251,'PL/SQL TABLE',252,'PL/SQL BOOLEAN','UNDEFINED')
+              AND "O"."SUBNAME" IS NULL)
+       filter("O"."SUBNAME" IS NULL AND "O"."TYPE#"<>10)
+  14 - access("O"."SPARE3"="U"."USER#")
+  15 - filter("T"."PACKAGE_OBJ#" IS NULL AND BITAND("T"."PROPERTIES",2048)=0 AND BITAND("T"."PROPERTIES",64)<>64)
+  16 - access("O"."OID$"="T"."TVOID")

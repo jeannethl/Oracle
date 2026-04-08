@@ -1,0 +1,52 @@
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES1_01.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES1_02.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES1_03.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES1_04.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES2_01.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES2_02.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES2_03.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES2_04.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES7_01.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES7_02.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES7_03.dmp
+
+
+a otro serv
+
+
+
+
+
+Buenos dias, espero se encuentre bien.
+
+Se solicita el respaldo con retencion de 10 años de los siguientes archivos:
+
+
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES8_01.dmp
+
+
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES12_01.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES12_02.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES12_03.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES12_04.dmp
+
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES11_01.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES11_02.dmp
+/exportdb/CCENLNP/backup_temp/CCL_PAY_TRANSACTION_2024_P_MES11_03.dmp
+
+
+
+De la DB CCENLNP que se encuentra en el servidor SUN1006P.
+
+Así mismo, luego de realizar el respaldo se solicita enviar una copia del mismo a la siguiente ruta
+/exportdb/CCENNLNHssh 
+DB CCENNLNH que se encuentra en el servidor SUN2327P.
+
+
+
+
+
+Extadisticas
+
+ANALYZE TABLE CCENLNP.CCL_PAY_TRANSACTION_2024 COMPUTE STATISTICS;
+

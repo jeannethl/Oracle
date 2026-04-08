@@ -1,0 +1,121 @@
+DBMS_SQLTUNE.REPORT_TUNING_TASK('BZRJFVWC0S0HQ_TUNING_TASK01')
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+GENERAL INFORMATION SECTION
+-------------------------------------------------------------------------------
+Tuning Task Name   : bzrjfvwc0s0hq_tuning_task01
+Tuning Task Owner  : SYS
+Workload Type      : Single SQL Statement
+Scope              : COMPREHENSIVE
+Time Limit(seconds): 20000
+Completion Status  : COMPLETED
+Started at         : 03/06/2024 14:26:14
+Completed at       : 03/06/2024 14:26:16
+
+------------------------------------------------------------------------------- 
+Schema Name: PAGOF
+SQL ID     : bzrjfvwc0s0hq
+SQL Text   : SELECT
+                ROWID, TIPO_MOVIMIENTO, NUMERO_COMPROBANTE, CEDULA_ORIGEN,
+                CONCEPTO, CUENTA_ABONO, CUENTAS_CARGO,
+                ESTADO, FECHA_CREACION, IMPORTE,
+                IMPORTE_COMISION, LOG_ID, MONEDA,
+                NACION_ORIGEN, PRODUCTO, RESULTADO,
+                CODIGO_PROMOCION, ESTADO_CREDITO, MONTO_ABONADO,
+                MONTO_APROBADO, NUMERO_CONTRATO, DIVISA_DESTINO,
+                DIVISA_ORIGEN, MONTO, MONTO_COMISION,
+                TRANSACTION_ID, AUTENTICACION, CEDULA_DESTINO,
+                COD_TRANSACCION, CODIGO, DESCRIPCION,
+                ID, NACION_DESTINO, TASA,
+                TIPO_TRANSACCION, TITULAR_TERCERO, CODIGO_BANCO,
+                NUMERO_DESTINO, NUMERO_ORIGEN, TIPO,
+                CODIGO_CONVENIO, REFERENCIA_PRINCIPAL, AMOUNT,
+                BANK_ID, DOCUMENTO_DESTINO, DOCUMENTO_ORIGEN,
+                TIPO_OPERACION, CODIGOCONVENIO, REFERENCIAPRINCIPAL,
+                CEDULADESTINO, CODTRANSACCION, NACIONDESTINO,
+                TITULARTERCERO, TIPOTRANSACCION, CODIGOPROMOCION,
+                ESTADOCREDITO, MONTOABONADO, MONTOAPROBADO,
+                NUMEROCONTRATO, TIPOOPERACION, BANKID,
+                TRANSACTIONID, DIVISADESTINO, DIVISAORIGEN,
+                MONTOCOMISION, DOCUMENTODESTINO, DOCUMENTOORIGEN,
+                CODIGOBANCO, NUMERODESTINO, NUMEROORIGEN,
+                DATA_TRANSACCION
+             FROM PAGOF.BDVX_REGISTRO_MOVIMIENTO
+             ORDER BY :"SYS_B_0" DESC NULLS LAST
+
+-------------------------------------------------------------------------------
+FINDINGS SECTION (1 finding)
+-------------------------------------------------------------------------------
+
+1- Alternative Plan Finding
+---------------------------
+  Some alternative execution plans for this statement were found by searching
+  the system's real-time and historical performance data.
+
+  The following table lists these plans ranked by their average elapsed time.
+  See section "ALTERNATIVE PLANS SECTION" for detailed information on each
+  plan.
+
+  id plan hash  last seen            elapsed (s)  origin          note
+  -- ---------- -------------------- ------------ --------------- ----------------
+   1 2590146030  2024-03-04/15:25:22     9289.514 Cursor Cache    not reproducible
+
+  Information
+  -----------
+  - All alternative plans other than the Original Plan could not be
+    reproduced in the current environment.
+  - The plan with id 1 could not be reproduced in the current environment.
+    For this reason, a SQL plan baseline cannot be created to instruct the
+    Oracle optimizer to pick this plan in the future.
+
+-------------------------------------------------------------------------------
+EXPLAIN PLANS SECTION
+-------------------------------------------------------------------------------
+
+1- Original
+-----------
+Plan hash value: 194569300
+
+------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation            | Name                     | Rows  | Bytes | Cost (%CPU)| Time     |    TQ  |IN-OUT| PQ Distrib |
+------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT     |                          |  1045M|   202G| 64308   (8)| 00:00:03 |        |      |            |
+|   1 |  PX COORDINATOR      |                          |       |       |            |          |        |      |            |
+|   2 |   PX SEND QC (RANDOM)| :TQ10000                 |  1045M|   202G| 64308   (8)| 00:00:03 |  Q1,00 | P->S | QC (RAND)  |
+|   3 |    PX BLOCK ITERATOR |                          |  1045M|   202G| 64308   (8)| 00:00:03 |  Q1,00 | PCWC |            |
+|   4 |     TABLE ACCESS FULL| BDVX_REGISTRO_MOVIMIENTO |  1045M|   202G| 64308   (8)| 00:00:03 |  Q1,00 | PCWP |            |
+------------------------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+ALTERNATIVE PLANS SECTION
+-------------------------------------------------------------------------------
+
+Plan 1
+------
+
+  Plan Origin                 :Cursor Cache
+  Plan Hash Value             :2590146030
+  Executions                  :1
+  Elapsed Time                :9289.514 sec
+  CPU Time                    :7664.334 sec
+  Buffer Gets                 :12306460
+  Disk Reads                  :12165750
+  Disk Writes                 :15652689
+
+Notes:
+  1. Statistics shown are averaged over multiple executions.
+  2. The plan with id 1 could not be reproduced in the current environment. For this reason, a SQL plan baseline cannot be created to instruct the Oracle optimizer to pick this plan in the future.
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation               | Name                     | Rows  | Bytes |TempSpc| Cost (%CPU)| Time     |    TQ  |IN-OUT| PQ Distrib |
+-----------------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT        |                          |       |       |       |   474K(100)|          |        |      |            |
+|   1 |  PX COORDINATOR         |                          |       |       |       |            |          |        |      |            |
+|   2 |   PX SEND QC (ORDER)    | :TQ10001                 |  1045M|   202G|       |   474K  (3)| 00:00:19 |  Q1,01 | P->S | QC (ORDER) |
+|   3 |    SORT ORDER BY        |                          |  1045M|   202G|   362G|   474K  (3)| 00:00:19 |  Q1,01 | PCWP |            |
+|   4 |     PX RECEIVE          |                          |  1045M|   202G|       | 64308   (8)| 00:00:03 |  Q1,01 | PCWP |            |
+|   5 |      PX SEND RANGE      | :TQ10000                 |  1045M|   202G|       | 64308   (8)| 00:00:03 |  Q1,00 | P->P | RANGE      |
+|   6 |       PX BLOCK ITERATOR |                          |  1045M|   202G|       | 64308   (8)| 00:00:03 |  Q1,00 | PCWC |            |
+|   7 |        TABLE ACCESS FULL| BDVX_REGISTRO_MOVIMIENTO |  1045M|   202G|       | 64308   (8)| 00:00:03 |  Q1,00 | PCWP |            |
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------

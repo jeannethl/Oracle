@@ -1,0 +1,27 @@
+HEADER_STATUS             NAME                 PATH                           STATE      TOTAL_MB    FREE_MB      OS_MB
+------------------------- -------------------- ------------------------------ -------- ---------- ---------- ----------
+FORMER                                         /dev/rdsk/c1d57s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d58s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d59s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d60s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d61s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d62s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d63s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d64s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d65s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d66s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d67s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d68s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d69s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d70s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d71s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d72s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d73s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d74s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d75s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d76s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d77s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d78s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d79s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d80s6              NORMAL            0          0     102394
+FORMER                                         /dev/rdsk/c1d81s6              NORMAL            0          0     102394

@@ -1,0 +1,110 @@
+/////////////////////////////////////////////////////
+//           CONSULTAS DE S.O LINUX
+//         RHEL-CENTOS-ORACLE LINUX
+//              ADSI DBA-TEAM
+//  YOSDUAR RANGEL-ALIUSKA PEÑA-ADRIAN AGUILERA
+/////////////////////////////////////////////////////
+
+
+
+
+----FABRICANTE,MODELO,(DOMINIO/LDOM/VIRTUALIZACION)
+
+
+lscpu
+hostnamectl
+lshw -short
+
+
+
+----HOSTNAME
+
+
+hostname
+
+
+
+---HARDWARE
+
+
+lscpu
+lshw -short
+
+
+-----SISTEMA OPERATIVO,VERSION,ARQUITECTURA,VERSIÓN DE KERNEL
+
+uname -a
+hostnamectl
+lshw -short
+
+
+
+-----IP PUBLICA, ADMINISTRATIVA, PRIVADA
+
+ifconfig
+
+
+
+
+-----OBTENER LAS VIP
+
+srvctl config nodeapps -viponly
+
+
+
+-----OBTENER LAS IP PRIVADAS
+
+olsnodes -n -i -l -p
+
+
+
+----OBTENER EL NOMBRE DEL SCAN Y SUS SCAN-VIP
+
+srvctl config scan
+
+
+
+
+
+-----ORACLE_BASE
+
+Con oracle
+echo $ORACLE_BASE
+
+
+con grid
+echo $ORACLE_BASE
+
+
+
+
+
+-----ORACLE_HOME
+
+Con oracle
+echo $ORACLE_HOME
+
+
+con grid
+echo $ORACLE_HOME
+
+
+
+----CONFIGURACION DE CRONTAB
+
+*ORACLE Y GRID
+
+crontab -l
+
+
+
+----DIRECCION ORACHK
+
+orachk -showahfhome
+
+
+
+
+----ORATAB
+
+/etc/oratab
