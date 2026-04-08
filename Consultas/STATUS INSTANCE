@@ -1,0 +1,7 @@
+Status de la instance
+
+desc gv$instance
+
+ALTER SESSION SET NLS_DATE_FORMAT = "DD/MM/YYYY HH24:MI:SS";
+
+select instance_name, status, startup_time from gv$instance;

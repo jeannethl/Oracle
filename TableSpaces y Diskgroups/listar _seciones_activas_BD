@@ -1,0 +1,13 @@
+col TIME format a20
+select TO_CHAR(sample_time,'DD-MM-YYYY HH24:MI') time, COUNT(1) total
+--, INSTANCE_NUMBER
+from
+dba_hist_active_sess_history
+where
+sample_time >= to_date('2024/11/22 15:00:00','YYYY/MM/DD HH24:MI:SS')
+and sample_time <= to_date('2024/11/22 16:00:00','YYYY/MM/DD HH24:MI:SS')
+and sql_exec_start is not null
+and IS_SQLID_CURRENT='Y'
+-- and sql_id = '8vp5sknd8bq6d'
+GROUP BY TO_CHAR(sample_time,'DD-MM-YYYY HH24:MI')--, INSTANCE_NUMBER
+ORDER BY 1;

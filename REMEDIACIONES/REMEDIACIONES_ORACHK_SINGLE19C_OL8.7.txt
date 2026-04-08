@@ -1,0 +1,1100 @@
+REMEDIACIONES ORACHCK PARA SISTEMA OPERATIVO ORACLE LINUX 8.7
+PROYECTO: AMBIENTE DE PRUEBAS S7B EN ADSI
+
+
+
+
+
+A.- Se recomienda actualizar el CVU para evitar errores, instalar el cvupack_linux
+
+i.- Iniciar seccion con root
+
+
+ii.- Ir a la ruta y descomprimir el CVU
+
+cd /opt/oracle.ahf/common/cvu
+unzip -q /u01/instaladores/installOracle/Oracle19C/utils/cvupack_linux_ol7_x86_64.zip
+
+
+iii.- comandos para ejecutar el orachk
+
+su - oracle 
+
+su root
+cd /opt/oracle.ahf/bin
+
+./orachk -nodaemon
+./orachk -noupgrade
+
+
+---------------------------------------------------------------------------------------------------
+-------------------------------REMADIACIONES-------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------
+1.-RAC background processes are not set to run with real time priority scheduling   
+
+N/A 
+
+
+---------------------------------------------------------------------------------------------------
+2.-Linux transparent huge pages are enabled 
+
+Fuente:https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/disabling-transparent-hugepages.html#GUID-02E9147D-D565-4AF8-B12A-8E6E9F74BEEA
+
+Red Hat Enterprise Linux kernels:
+
+cat /sys/kernel/mm/redhat_transparent_hugepage/enabled
+
+Other kernels:
+
+# cat /sys/kernel/mm/transparent_hugepage/enabled
+
+A.- Editar el archivo /etc/default/grub y agregar el la variable GRUB_CMDLINE_LINUX el parametro transparent_hugepage=never. Ejemplo:
+
+vi /etc/default/grub 
+
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL_OUTPUT="console"
+GRUB_CMDLINE_LINUX="crashkernel=auto resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet transparent_hugepage=never"
+GRUB_DISABLE_RECOVERY="true"
+GRUB_ENABLE_BLSCFG=true
+
+B.- Aplicar los cambios al arranque del kernel 
+
+grub2-mkconfig -o /boot/grub2/grub.cfg
+
+
+---------------------------------------------------------------------------------------------------
+3.-Operating system hugepages count does not satisfy total SGA requirements(Aplicar en ambos nodos)
+
+Acceder con root
+
+cd /tmp
+vi hugepages_settings.sh
+
+
+#!/bin/bash
+#
+# hugepages_settings.sh
+#
+# Linux bash script to compute values for the
+# recommended HugePages/HugeTLB configuration
+# on Oracle Linux
+#
+# Note: This script does calculation for all shared memory
+# segments available when the script is run, no matter it
+# is an Oracle RDBMS shared memory segment or not.
+#
+# This script is provided by Doc ID 401749.1 from My Oracle Support
+# http://support.oracle.com
+
+# Welcome text
+echo "
+This script is provided by Doc ID 401749.1 from My Oracle Support
+(http://support.oracle.com) where it is intended to compute values for
+the recommended HugePages/HugeTLB configuration for the current shared
+memory segments on Oracle Linux. Before proceeding with the execution please note following:
+ * For ASM instance, it needs to configure ASMM instead of AMM.
+ * The 'pga_aggregate_target' is outside the SGA and
+   you should accommodate this while calculating the overall size.
+ * In case you changes the DB SGA size,
+   as the new SGA will not fit in the previous HugePages configuration,
+   it had better disable the whole HugePages,
+   start the DB with new SGA size and run the script again.
+And make sure that:
+ * Oracle Database instance(s) are up and running
+ * Oracle Database 11g Automatic Memory Management (AMM) is not setup
+   (See Doc ID 749851.1)
+ * The shared memory segments can be listed by command:
+     # ipcs -m
+
+
+Press Enter to proceed..."
+
+read
+
+# Check for the kernel version
+KERN=`uname -r | awk -F. '{ printf("%d.%d\n",$1,$2); }'`
+
+# Find out the HugePage size
+HPG_SZ=`grep Hugepagesize /proc/meminfo | awk '{print $2}'`
+if [ -z "$HPG_SZ" ];then
+    echo "The hugepages may not be supported in the system where the script is being executed."
+    exit 1
+fi
+
+# Initialize the counter
+NUM_PG=0
+
+# Cumulative number of pages required to handle the running shared memory segments
+for SEG_BYTES in `ipcs -m | cut -c44-300 | awk '{print $1}' | grep "[0-9][0-9]*"`
+do
+    MIN_PG=`echo "$SEG_BYTES/($HPG_SZ*1024)" | bc -q`
+    if [ $MIN_PG -gt 0 ]; then
+        NUM_PG=`echo "$NUM_PG+$MIN_PG+1" | bc -q`
+    fi
+done
+
+RES_BYTES=`echo "$NUM_PG  $HPG_SZ  1024" | bc -q`
+
+# An SGA less than 100MB does not make sense
+# Bail out if that is the case
+if [ $RES_BYTES -lt 100000000 ]; then
+    echo "***********"
+    echo "* ERROR *"
+    echo "***********"
+    echo "Sorry! There are not enough total of shared memory segments allocated for
+HugePages configuration. HugePages can only be used for shared memory segments
+that you can list by command:
+
+    # ipcs -m
+
+of a size that can match an Oracle Database SGA. Please make sure that:
+ * Oracle Database instance is up and running
+ * Oracle Database 11g Automatic Memory Management (AMM) is not configured"
+    exit 1
+fi
+
+# Finish with results
+case $KERN in
+    '2.4') HUGETLB_POOL=`echo "$NUM_PG*$HPG_SZ/1024" | bc -q`;
+           echo "Recommended setting: vm.hugetlb_pool = $HUGETLB_POOL" ;;
+    '2.6') echo "Recommended setting: vm.nr_hugepages = $NUM_PG" ;;
+    '3.8') echo "Recommended setting: vm.nr_hugepages = $NUM_PG" ;;
+    '3.10') echo "Recommended setting: vm.nr_hugepages = $NUM_PG" ;;
+    '4.1') echo "Recommended setting: vm.nr_hugepages = $NUM_PG" ;;
+    '4.14') echo "Recommended setting: vm.nr_hugepages = $NUM_PG" ;;
+    '4.18') echo "Recommended setting: vm.nr_hugepages = $NUM_PG" ;;
+    '5.4') echo "Recommended setting: vm.nr_hugepages = $NUM_PG" ;;
+    *) echo "Kernel version $KERN is not supported by this script (yet). Exiting." ;;
+esac
+
+# End
+
+
+B.-Crear la permisologia
+
+chmod +x hugepages_settings.sh
+
+
+C.-Ejecutar 
+./hugepages_settings.sh
+
+
+D.-Una vez el script arroje el resultado recomendado, colocar en el archivo /etc/sysctl.conf el parámetro
+
+vm.nr_hugepages = 4834
+
+Nota: para este caso el valor se colocó de 60000, siendo superior al resultado arrojado por el script
+
+E.-Aplicar los cambios
+sysctl -p
+
+
+---------------------------------------------------------------------------------------------------
+4.-Maximum memory used to reassemble IP fragments is not configured at recommended value   
+5.-Minimum memory used to reassemble IP fragments is not configured at recommended value.   
+
+
+Establecer los valores de los parametros permanentemente:
+
+Agregar al archivo /etc/sysctl.conf
+
+net.ipv4.ipfrag_low_thresh=15728640 
+net.ipv4.ipfrag_high_thresh=16777216
+
+
+Establecer los valores de los parametros temporalmente:
+
+sysctl -w net.ipv4.ipfrag_low_thresh=15728640 
+sysctl -w net.ipv4.ipfrag_high_thresh=16777216
+
+echo 15728640 > /proc/sys/net/ipv4/ipfrag_low_thresh 
+echo 16777216 > /proc/sys/net/ipv4/ipfrag_high_thresh
+
+Verificar: 
+
+cat /proc/sys/net/ipv4/ipfrag_low_thresh 
+cat /proc/sys/net/ipv4/ipfrag_high_thresh
+
+
+---------------------------------------------------------------------------------------------------
+6.-Table AUD$[FGA_LOG$] should use Automatic Segment Space Management
+
+
+Verificacion: El siguiente query debe devolver AUTO
+
+col TABLE_NAME format a30
+select t.table_name
+      ,ts.segment_space_management 
+  from dba_tables t
+      ,dba_tablespaces ts 
+ where ts.tablespace_name = t.tablespace_name and t.table_name in ('AUD$','FGA_LOG$');
+
+Remediacion:
+
+BEGIN
+DBMS_AUDIT_MGMT.set_audit_trail_location(audit_trail_type => DBMS_AUDIT_MGMT.AUDIT_TRAIL_AUD_STD, --this moves table AUD$ 
+audit_trail_location_value => 'SYSAUX');
+END;  
+/
+
+BEGIN
+DBMS_AUDIT_MGMT.set_audit_trail_location(audit_trail_type => DBMS_AUDIT_MGMT.AUDIT_TRAIL_FGA_STD,--this moves table FGA_LOG$ 
+audit_trail_location_value => 'SYSAUX');
+END;
+/  
+
+
+Verificar que no exista objetos invalidos:
+
+COLUMN object_name FORMAT A50
+column OWNER format a30
+set pagesize 1000
+SELECT owner
+      ,object_type
+      ,object_name
+      ,status
+ FROM dba_objects
+WHERE status = 'INVALID'
+ORDER BY owner, object_type, object_name;
+
+select comp_id
+      ,version
+      ,version_full
+      ,status
+      ,modified 
+  from dba_registry 
+ order by modified;
+
+select owner
+      ,object_type
+   ---,object_type
+      ,count(object_type) 
+  from dba_objects 
+  where status='INVALID' 
+  group by owner, object_type order by 1,2;
+
+Recompilar objetos invalidos:
+
+@?/rdbms/admin/utlrp
+
+
+---------------------------------------------------------------------------------------------------
+7.-The vm.min_free_kbytes configuration is not set as recommended (Aplicarlo en todos los nodos)
+
+A.-Validar que el numactl esté instalado
+
+rpm -qa | grep -i numactl 
+
+Deben aparecer:
+numactl-2.0.9-7.el7.x86_64
+numactl-libs-2.0.9-7.el7.x86_64
+
+B.-Si no estáinstalado el paquete numactl, proceder a instalarlo:
+yum install -y numactl
+
+
+cd /tmp
+vi min_free_kbytes_settings.sh
+
+#!/bin/bash
+
+MIN_FREE_KBYTES_SYSCTL=$(egrep ^vm.min_free_kbytes /etc/sysctl.conf | awk -F'=' '{print $2}' | tr -d ' ')
+MIN_FREE_KBYTES_MEMORY=$(cat /proc/sys/vm/min_free_kbytes)
+NUMA_NODE_COUNT=$(numactl --hardware | grep available: | awk '{print $2}')
+TOTAL_MEMORY_KBYTES=$(free -k | awk '/Mem:/ {print $2}')
+NUMA_BASED=$(( $NUMA_NODE_COUNT * 1048576 ))
+MEMORY_BASED=$(( $TOTAL_MEMORY_KBYTES / 200 ))
+if [[ $NUMA_BASED -ge $MEMORY_BASED ]]
+then
+  RECOMMEND_VALUE=$NUMA_BASED
+else
+  RECOMMEND_VALUE=$MEMORY_BASED
+fi
+OFFSET=$(echo $RECOMMEND_VALUE*.05 | bc | cut -d"." -f1)
+LOWER_BOUND=$(echo $RECOMMEND_VALUE-$OFFSET | bc)
+UPPER_BOUND=$(echo $RECOMMEND_VALUE+$OFFSET | bc)
+if [[ $MIN_FREE_KBYTES_SYSCTL -ge LOWER_BOUND && $MIN_FREE_KBYTES_SYSCTL -le UPPER_BOUND ]]
+then
+  SYSCTL_IN_RANGE=YES
+else
+  SYSCTL_IN_RANGE=NO
+fi
+#sysctl in range?
+if [[ $MIN_FREE_KBYTES_MEMORY -ge LOWER_BOUND && $MIN_FREE_KBYTES_MEMORY -le UPPER_BOUND ]]
+then
+  MEMORY_IN_RANGE=YES
+else
+  MEMORY_IN_RANGE=NO
+fi
+DETAIL=$(
+echo -e "Total Memory:       $TOTAL_MEMORY_KBYTES";
+echo -e "NUMA node count:    $NUMA_NODE_COUNT";
+echo -e "NUMA calculated:    $NUMA_BASED";
+echo -e "memory calculated:  $MEMORY_BASED";
+echo -e "recommended value:  $RECOMMEND_VALUE";
+echo -e "permitted range:    $LOWER_BOUND to $UPPER_BOUND";
+echo -e "in sysctl.conf:     $MIN_FREE_KBYTES_SYSCTL";
+echo -e "sysctl in range?:   $SYSCTL_IN_RANGE";
+echo -e "in active memory:   $MIN_FREE_KBYTES_MEMORY";
+echo -e "memory in range?:   $MEMORY_IN_RANGE";
+)
+if [[ $SYSCTL_IN_RANGE = YES && $MEMORY_IN_RANGE = YES ]]
+then
+  echo -e "SUCCESS: vm.min_free_kbytes is configured as recommended.  Details:\n\n$DETAIL"
+elif [[ $MIN_FREE_KBYTES_SYSCTL -lt $LOWER_BOUND || $MIN_FREE_KBYTES_MEMORY -lt $LOWER_BOUND ]]
+then
+  echo -e "FAILURE: vm.min_free_kbytes is not configured as recommended.  Details:\n\n$DETAIL"
+elif  [[ $MIN_FREE_KBYTES_SYSCTL -gt $UPPER_BOUND && $MIN_FREE_KBYTES_MEMORY -gt $UPPER_BOUND ]]
+then
+  echo -e "WARNING: vm.min_free_kbytes is not configured as recommended.  Details:\n\n$DETAIL"
+else
+  echo -e "ERROR: Inconsistent results.  Details:\n\n$DETAILS"
+fi
+
+# End
+
+
+B.-Crear la permisologia
+
+chmod +x min_free_kbytes_settings.sh
+
+
+C.-Ejecutar 
+./min_free_kbytes_settings.sh
+
+
+D.-Una vez el script arroje el resultado recomendado, colocar en el archivo /etc/sysctl.conf el parámetro
+
+vm.min_free_kbytes = 1048576
+Nota: para este caso el valor se colocó de 1048576, siendo el resultado arrojado por el script.
+
+E.-Aplicar los cambios
+sysctl -p
+
+
+
+---------------------------------------------------------------------------------------------------
+8.-Consider investigating changes to the schema objects such as DDLs or new object creation
+
+No se toma en cuenta, ya que se está realizando el healt check a una instalación nueva, en caso de ser una base de datos en funcionamiento, si es necesario verificar el por qué hubo cambios en los DDL y en los objetos
+
+
+---------------------------------------------------------------------------------------------------
+9.-Ensure ASM disks have enough free space for rebalance
+10.-Linux Disk I/O Scheduler should be configured to Deadline
+11.-One or more read/write errors found for ASM disks   
+
+
+---------------------------------------------------------------------------------------------------
+12.-
+    Consider setting the value of the parameter _cursor_obsolete_threshold to 1024 for Non-Multitenant environment which is the appropriate recommended value
+    Consider increasing the value of the session_cached_cursors database parameter
+
+
+
+Verificar:
+
+show parameter session_cached_cursors
+show parameter "_cursor_obsolete_threshold"
+
+Remediar:
+
+A.-Respaldar el spfile 
+create pfile='/home/oracle/initSTOKEN.resp_2023_11_17.ora' from spfile;
+
+B.-Aplicar los alter system
+
+alter system set session_cached_cursors=300 Comment='Recomendation AHF' scope=spfile;
+
+alter system set "_cursor_obsolete_threshold"=1024 Comment='Recomendation AHF' scope=spfile;   ---->>> SOLO SE APLICA A VERSION 12.2 release 
+alter system set "_cursor_obsolete_threshold"=1024 scope=spfile sid='*';
+
+C.-Reiniciar la BD
+
+srvctl stop database -d ORABDP03
+srvctl start database -d ORABDP03
+
+-- rollback
+
+alter system reset "_cursor_obsolete_threshold" scope=spfile;
+
+
+D.-Comprobar los cambios realizados
+
+show parameter session_cached_cursors
+show parameter "_cursor_obsolete_threshold"
+
+
+---------------------------------------------------------------------------------------------------
+13.- WARNING: All disk groups should have compatible.rdbms attribute set to recommended values
+
+
+SE DEBE TENER EL PARCHE ACFS CORRESPONDIENTE AL S.O (SINGLE y RAC)
+
+Verificar:
+
+set pagesize 20
+col name format a40
+col value format a20
+select name,value,group_number,attribute_index
+  from v$asm_attribute
+ where name like '%compatible%';
+
+col compatibility format a20
+col database_compatibility format a20
+select group_number
+      ,name
+      ,state
+      ,type
+      ,compatibility
+      ,database_compatibility
+  from v$asm_diskgroup;
+
+Remediar:
+
+ALTER DISKGROUP MGMT SET ATTRIBUTE 'compatible.advm' = '19.0.0.0.0';
+ALTER DISKGROUP DATA SET ATTRIBUTE 'compatible.advm' = '19.0.0.0.0';
+ALTER DISKGROUP FRA SET ATTRIBUTE 'compatible.advm' = '19.0.0.0.0';
+ALTER DISKGROUP REDO01 SET ATTRIBUTE 'compatible.advm' = '19.0.0.0.0';
+ALTER DISKGROUP REDO02 SET ATTRIBUTE 'compatible.advm' = '19.0.0.0.0';
+ALTER DISKGROUP OCRVOTE SET ATTRIBUTE 'compatible.advm' = '19.0.0.0.0';
+
+
+---------------------------------------------------------------------------------------------------
+14.-NIC bonding is NOT configured for public network (VIP)
+15.-NIC bonding is not configured for interconnect
+
+
+---------------------------------------------------------------------------------------------------
+16.- 
+
+Shell limit hard stack for GI is NOT configured according to recommendation
+Shell limit hard nproc for GI is NOT configured according to recommendation
+Shell limit hard nofile for GI is NOT configured according to recommendation
+Shell limit soft nofile for GI is NOT configured according to recommendation    
+Shell limit soft nproc for GI is not configured according to recommendation
+
+
+Nota: Existe un bug del AHF, el cual tiene problemas al realizar las validaciones de SO par el usuario grid de los parametros hard y soft.
+
+
+---------------------------------------------------------------------------------------------------
+17.-WARNING: There are some application objects with STALE statistics 
+
+
+Remediar:
+
+sqlplus / as sysdba
+
+exec dbms_stats.FLUSH_DATABASE_MONITORING_INFO(); 
+exec DBMS_STATS.gather_database_stats(cascade => TRUE, options => 'GATHER AUTO');
+
+
+----Para fines de prueba:
+ANALYZE TABLE <owner>.<table> COMPUTE STATISTICS;   ---> Analizar estadisticas de una tabla especifica
+
+
+REM To list the objects having stale statistics (excluding SYS, SYSTEM, SYSMAN, DBSNMP objects)
+REM Run the following from SYS or SYSTEM
+set lines 120
+column owner format a20
+column table_name format a30
+SELECT DT.OWNER,
+       DT.TABLE_NAME, DT.LAST_ANALYZED,
+       ROUND ( (DELETES + UPDATES + INSERTS) / NUM_ROWS * 100) STALE_PERCENT, NUM_ROWS
+FROM   DBA_TABLES DT, DBA_TAB_MODIFICATIONS DTM
+WHERE      DT.OWNER = DTM.TABLE_OWNER
+       AND DT.TABLE_NAME = DTM.TABLE_NAME
+       AND NUM_ROWS > 0 
+       AND ROUND ( (DELETES + UPDATES + INSERTS) / NUM_ROWS * 100) >= 10 AND OWNER NOT IN ('SYS','SYSTEM','SYSMAN','DBSNMP')
+ORDER BY 4 desc,5 desc;
+
+Nota: El resultado debe dar: No rows select, ya que no deben haber objetos con STALE statistics
+
+
+---------------------------------------------------------------------------------------------------
+18.-One or more log archive destination and alternate log archive destination settings are not as recommended  
+
+
+alter system set log_archive_dest_1='LOCATION=USE_DB_RECOVERY_FILE_DEST valid_for=(ALL_LOGFILES,ALL_ROLES) MAX_FAILURE=1 REOPEN=5 DB_UNIQUE_NAME=STOKENQ ALTERNATE=LOG_ARCHIVE_DEST_10';
+
+alter system set log_archive_dest_10='location=+DATA_STOKEN valid_for=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME=STOKENQ ALTERNATE=LOG_ARCHIVE_DEST_1';
+
+alter system set log_archive_dest_state_1='ENABLE';
+alter system set log_archive_dest_state_10='ALTERNATE';
+
+
+---------------------------------------------------------------------------------------------------
+19.-fast_start_mttr_target should be greater than or equal to 300
+
+show parameter fast_start_mttr_target;
+alter system set fast_start_mttr_target=300 Comment='Recomendation AHF' scope=both;
+
+---------------------------------------------------------------------------------------------------
+20.-Database parameter DB_LOST_WRITE_PROTECT is not set to recommended value
+
+show parameter DB_LOST_WRITE_PROTECT
+alter system set db_lost_write_protect=TYPICAL Comment='Recomendation AHF'scope=both;
+
+
+---------------------------------------------------------------------------------------------------
+21.-Database parameter DB_BLOCK_CHECKING on primary is not set to the recommended value.
+show parameter DB_BLOCK_CHECKING;
+alter system set db_block_checking=MEDIUM Comment='Recomendation AHF' scope=both;
+
+
+---------------------------------------------------------------------------------------------------
+22.-Hidden database initialization parameters should not be set per best practice recommendations (Remediación en observación)
+
+A.-Consultar elvalor del parámetro
+select display_value from v$parameter where name='_cursor_obsolete_threshold';
+
+
+B.-Respaldar el spfile para ambas instancias
+create pfile='/home/oracle/initDB_NAME.resp_2023_12_12.02.ora' from spfile;
+
+
+C.-Retirar el parámetro
+
+alter system reset "_cursor_obsolete_threshold" scope=spfile;
+
+
+D.Reiniciar la base de datos
+
+srvctl stop database -d ORABDP03
+srvctl start database -d ORABDP03
+
+---------------------------------------------------------------------------------------------------
+23.-Flashback on PRIMARY is not configured
+
+A.-Comandos para verificar:
+
+show parameter flashback;
+select flashback_on from v$database;
+
+B.-Remediar:
+
+alter system set db_flashback_retention_target=120;
+alter database flashback on;
+
+
+---------------------------------------------------------------------------------------------------
+24.-DATABASE/CLUSTER/SITE FAILURE PREVENTION BEST PRACTICES
+Primary database is not protected with Data Guard (standby database) for real-time data protection and availability
+
+No aplica por el momento, debído a que la base de datos no tiene configurado un dataguard
+
+
+---------------------------------------------------------------------------------------------------
+25.- The RMAN snapshot control file location is not shared on all database nodes in the cluster
+
+rman target /
+show all;
+
+CONFIGURE BACKUP OPTIMIZATION ON;
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '+FRA/snapcf_INTTEGP1.f';
+
+
+---------------------------------------------------------------------------------------------------
+26.-loopback address is NOT configured as recommended in /etc/hosts
+
+
+Verificar en /etc/hosts quela direccion de loopback 127.0.0.1 y ::1 no estén comentadas, inexistentes o mal configuradas
+
+
+
+---------------------------------------------------------------------------------------------------
+27.-system service rngd is not running (Aplicarlo en todos los nodos)
+
+# yum install -y rng-tools
+
+cd /usr/lib/systemd/system
+cp -p rngd.service rngd.service.yr.2022_11_08
+
+vi rngd.service
+
+[Service]
+ExecStart=/sbin/rngd -f -r /dev/urandom
+
+# systemctl daemon-reload
+# systemctl start rngd
+# systemctl status rngd
+
+
+---------------------------------------------------------------------------------------------------
+28.- WARNING: TFA Collector is either not installed or not running (Automaticamente al reiniciar el server)
+
+A.-mkdir $ORACLE_HOME/utils
+B.-cd $ORACLE_HOME/utils
+C.-vi osw.sh
+
+#!/bin/bash
+
+#Script de inicio OSWATCHER
+cd /opt/oracle.ahf/tfa/ext/oswbb/ && nohup ./startOSWbb.sh 60 10
+
+D.-chmod 775 osw.sh
+
+E.- # crontab -e
+
+@reboot /u01/app/oracle/product/19c/db1/utils/osw.sh
+
+-------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------
+29.-There exists one or more underscore parameters without a comment
+
+
+Asignar comentario
+alter system set "_cursor_obsolete_threshold"=1024 Comment='Recomendation AHF' scope=spfile;
+
+Ver comentario
+select ksppstcmnt from x$ksppsv where indx=(select indx from x$ksppi where ksppinm='_cursor_obsolete_threshold');
+
+---------------------------------------------------------------------------------------------------
+30.-Operating system hugepages count does not satisfy total SGA requirements
+
+show parameter shared_pool_size
+
+SELECT
+   a.ksppinm  "Parameter",
+   c.ksppstvl "Instance",      
+   a.ksppdesc "Description"
+FROM
+   x$ksppi     a,
+   x$ksppcv    b,
+   x$ksppsv    c,
+   v$parameter p
+WHERE
+   a.indx = b.indx
+AND
+   a.indx = c.indx  
+AND
+   p.name(+) = a.ksppinm  
+AND
+   UPPER(a.ksppinm) LIKE UPPER('%gc_policy%')
+ORDER BY
+   a.ksppinm;
+   
+
+create pfile='/home/oracle19/respfile20230526.ora' from spfile;
+
+alter system set shared_pool_size=2G Comment='Recomendation AHF' scope=spfile;
+alter system set "_gc_policy_minimum"=15000 Comment='dynamic object policy minimum activity per minute' scope=spfile;
+
+srvctl stop database -d INTTEGP
+srvctl start database -d INTTEGP
+
+
+Comment='Recomendation AHF' scope=spfile;
+
+
+alter system set "_gc_policy_minimum"=15000 Comment='Recomendation AHF';
+alter system set "_ipddb_enable"=TRUE Comment='Recomendation AHF';
+
+select display_value from v$parameter where name="_ipddb_enable";
+select display_value from v$parameter where name='_gc_policy_minimum';
+
+select ksppstcmnt from x$ksppsv where indx=(select indx from x$ksppi where ksppinm='_ipddb_enable');
+select ksppstcmnt from x$ksppsv where indx=(select indx from x$ksppi where ksppinm='_gc_policy_minimum');
+
+
+NOTA: ESTOS PARÁMETROS AL REINICIAR LA BD, SE VAN A RESETAR LOS COMENTARIOS
+
+-----------------------------------------------------------------------------------------------------
+
+
+
+  orachk -id autostart_client_oratier1 -set "AUTORUN_SCHEDULE=3 2 1 * *"   
+    orachk -id autostart_client_oratier1 -set "AUTORUN_FLAGS=-usediscovery -profile oratier1 -dball -showpass -tag autostart_client_oratier1 -readenvconfig"
+    orachk -id autostart_client_oratier1 -set "COLLECTION_RETENTION=7"
+
+
+
+  orachk -id autostart_client -set "AUTORUN_SCHEDULE=3 3 1 * *"  
+  orachk -id autostart_client -set "AUTORUN_FLAGS=-usediscovery -tag autostart_client -readenvconfig"
+    orachk -id autostart_client -set "COLLECTION_RETENTION=7"
+
+  orachk -autostatus
+
+/opt/oracle.ahf/ahf/bin/tfactl startahf
+/opt/oracle.ahf/orachk/orachk -autostart
+
+
+---------------------------------------------------------------------------------------------------
+31.- Software home check failed
+- Cluster Verification Utility (CVU 21.8.0.0.0 ) result
+
+su root
+
+ls -ltr /u01/app/grid/product/19c/grid/lib/libmql1.so
+chown root /u01/app/grid/product/19c/grid/lib/libmql1.so
+
+
+------PERMISOS DE GRID
+
+
+./runcluvfy.sh comp software -n all -verbose
+
+
+chown root "/u01/app/grid/product/19c/grid/lib/libipc1.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libmql1.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libons.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libasmclntsh19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libclntsh.so.19.1"
+chown root "/u01/app/grid/product/19c/grid/lib/libskgxpcompat.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libclntshcore.so.19.1"
+chown root "/u01/app/grid/product/19c/grid/lib/libskgxp19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libnnz19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libnque19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libhasgen19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libocrutl19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libperlhasgen.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libclsra19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libocrb19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/perlhasgen.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libocr19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libagfw19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libcrs19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libskgxn2.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libsrvmocr19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libgns19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libeons.so"
+chown root "/u01/app/grid/product/19c/grid/lib/librdjni19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libgnsjni19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libdbcfg19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libsrvmhas19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libclsce19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libuini19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libsrvm19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libonsx.so"
+chown root "/u01/app/grid/product/19c/grid/bin/cdpcfg.pl"
+chown root "/u01/app/grid/product/19c/grid/bin/crsrename.pl"
+chown root "/u01/app/grid/product/19c/grid/lib/libeonsserver.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libjagent19.so"
+chown root "/u01/app/grid/product/19c/grid/lib/libcha19.so"
+chown root "/u01/app/grid/product/19c/grid/bin/oradnssd"
+chown root "/u01/app/grid/product/19c/grid/bin/crsd.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/ohasd.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/cssdmonitor"
+chown root "/u01/app/grid/product/19c/grid/bin/octssd.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/ologgerd"
+chown root "/u01/app/grid/product/19c/grid/bin/cssvfupgd.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/cssdagent"
+chown root "/u01/app/grid/product/19c/grid/bin/ocrconfig.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/oracsswd.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/crsctl.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/oclumon.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/oradnssd.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/oclskd.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/appvipcfg.pl"
+chown root "/u01/app/grid/product/19c/grid/bin/clscfg.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/orarootagent.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/clsecho.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/ocrdump.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/osysmond.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/gnsd"
+chown root "/u01/app/grid/product/19c/grid/bin/ocrcheck.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/gnsd.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/odig.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/odig"
+chown root "/u01/app/grid/product/19c/grid/bin/diskmon"
+chown root "/u01/app/grid/product/19c/grid/lib/libcrf19.so"
+chown root "/u01/app/grid/product/19c/grid/bin/rhpctl"
+chown root "/u01/app/grid/product/19c/grid/bin/kfod"
+chown root "/u01/app/grid/product/19c/grid/bin/lsnodes"
+chown root "/u01/app/grid/product/19c/grid/lib/libcell19.so"
+chown root "/u01/app/grid/product/19c/grid/bin/kfod.bin"
+chown root "/u01/app/grid/product/19c/grid/bin/usrvip"
+chown root "/u01/app/grid/product/19c/grid/bin/appvipcfg"
+chown root "/u01/app/grid/product/19c/grid/bin/rdtool"
+chown root "/u01/app/grid/product/19c/grid/bin/oclumon.pl"
+chown root "/u01/app/grid/product/19c/grid/bin/ologdbg.pl"
+chown root "/u01/app/grid/product/19c/grid/bin/mgmtca"
+chown root "/u01/app/grid/product/19c/grid/bin/mgmtua"
+chown root "/u01/app/grid/product/19c/grid/bin/crswrapexece.pl"
+chown root "/u01/app/grid/product/19c/grid/bin/cluutil"
+chown root "/u01/app/grid/product/19c/grid/bin/ocrcheck"
+chown root "/u01/app/grid/product/19c/grid/bin/ocrconfig"
+chown root "/u01/app/grid/product/19c/grid/bin/ocrdump"
+chown root "/u01/app/grid/product/19c/grid/bin/ocrpatch"
+chown root "/u01/app/grid/product/19c/grid/bin/gipcd"
+chown root "/u01/app/grid/product/19c/grid/bin/mdnsd"
+chown root "/u01/app/grid/product/19c/grid/bin/oranetmonitor"
+chown root "/u01/app/grid/product/19c/grid/bin/gpnpd"
+chown root "/u01/app/grid/product/19c/grid/bin/gpnptool"
+chown root "/u01/app/grid/product/19c/grid/bin/appagent"
+chown root "/u01/app/grid/product/19c/grid/bin/clssproxy"
+chown root "/u01/app/grid/product/19c/grid/bin/cssvfupgd"
+chown root "/u01/app/grid/product/19c/grid/bin/cemutls"
+chown root "/u01/app/grid/product/19c/grid/bin/cemutlo"
+chown root "/u01/app/grid/product/19c/grid/bin/octssd"
+chown root "/u01/app/grid/product/19c/grid/bin/ohasd"
+chown root "/u01/app/grid/product/19c/grid/bin/crsd"
+chown root "/u01/app/grid/product/19c/grid/bin/evmd"
+chown root "/u01/app/grid/product/19c/grid/bin/evminfo"
+chown root "/u01/app/grid/product/19c/grid/bin/evmlogger"
+chown root "/u01/app/grid/product/19c/grid/bin/evmmkbin"
+chown root "/u01/app/grid/product/19c/grid/bin/evmmklib"
+chown root "/u01/app/grid/product/19c/grid/bin/evmpost"
+chown root "/u01/app/grid/product/19c/grid/bin/evmshow"
+chown root "/u01/app/grid/product/19c/grid/bin/evmsort"
+chown root "/u01/app/grid/product/19c/grid/bin/evmwatch"
+chown root "/u01/app/grid/product/19c/grid/bin/crscdpd"
+chown root "/u01/app/grid/product/19c/grid/bin/cdpc"
+chown root "/u01/app/grid/product/19c/grid/bin/clsdiaglsnr"
+chown root "/u01/app/grid/product/19c/grid/bin/oifcfg"
+chown root "/u01/app/grid/product/19c/grid/bin/olsnodes"
+chown root "/u01/app/grid/product/19c/grid/bin/oraagent"
+chown root "/u01/app/grid/product/19c/grid/bin/orarootagent"
+chown root "/u01/app/grid/product/19c/grid/bin/oracsswd"
+chown root "/u01/app/grid/product/19c/grid/bin/scriptagent"
+chown root "/u01/app/grid/product/19c/grid/bin/lsdb"
+chown root "/u01/app/grid/product/19c/grid/bin/emcrsp"
+chown root "/u01/app/grid/product/19c/grid/bin/racgwrap"
+chown root "/u01/app/grid/product/19c/grid/bin/odnsd"
+chown root "/u01/app/grid/product/19c/grid/bin/scrctl"
+chown root "/u01/app/grid/product/19c/grid/bin/oc4jctl"
+chown root "/u01/app/grid/product/19c/grid/bin/rhprepos"
+chown root "/u01/app/grid/product/19c/grid/bin/ghappctl"
+chown root "/u01/app/grid/product/19c/grid/bin/dhcpproxy"
+chown root "/u01/app/grid/product/19c/grid/bin/qosctl"
+chown root "/u01/app/grid/product/19c/grid/bin/chactl"
+chown root "/u01/app/grid/product/19c/grid/bin/ochadctl"
+chown root "/u01/app/grid/product/19c/grid/bin/oclumon"
+chown root "/u01/app/grid/product/19c/grid/bin/crfsetenv"
+chown root "/u01/app/grid/product/19c/grid/bin/ologdbg"
+chown root "/u01/app/grid/product/19c/grid/bin/osysmond"
+chown root "/u01/app/grid/product/19c/grid/bin/crsrename"
+chown root "/u01/app/grid/product/19c/grid/bin/cdpcfg"
+chown root "/u01/app/grid/product/19c/grid/bin/cluvfy"
+chown root "/u01/app/grid/product/19c/grid/bin/srvctl"
+chown root "/u01/app/grid/product/19c/grid/bin/clscfg"
+chown root "/u01/app/grid/product/19c/grid/bin/clsid"
+chown root "/u01/app/grid/product/19c/grid/bin/crsctl"
+chown root "/u01/app/grid/product/19c/grid/bin/clsecho"
+chown root "/u01/app/grid/product/19c/grid/bin/ndfnceca"
+chown root "/u01/app/grid/product/19c/grid/bin/oclskd"
+chown root "/u01/app/grid/product/19c/grid/bin/oclsomon"
+chown root "/u01/app/grid/product/19c/grid/bin/oclsvmon"
+chown root "/u01/app/grid/product/19c/grid/bin/ocssd"
+chown root "/u01/app/grid/product/19c/grid/bin/crsboot_diags.sh"
+chown root "/u01/app/grid/product/19c/grid/bin/setasmgidwrap"
+chown root "/u01/app/grid/product/19c/grid/bin/jwcctl"
+chown root "/u01/app/grid/product/19c/grid/bin/orajagent"
+chown root "/u01/app/grid/product/19c/grid/bin/orajrootagent"
+chown root "/u01/app/grid/product/19c/grid/bin/crskeytoolctl"
+chown root "/u01/app/grid/product/19c/grid/bin/rhpplsnrctl"
+chown root "/u01/app/grid/product/19c/grid/bin/rhpplsnr"
+chown root "/etc/tmpfiles.d/oracleGI.conf"
+
+
+
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libipc1.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libmql1.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libons.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libasmclntsh19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libclntsh.so.19.1"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libskgxpcompat.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libclntshcore.so.19.1"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libskgxp19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libnnz19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libnque19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libhasgen19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libocrutl19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libperlhasgen.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libclsra19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libocrb19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/perlhasgen.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libocr19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libagfw19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libcrs19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libskgxn2.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libsrvmocr19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libgns19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libeons.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/librdjni19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libgnsjni19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libdbcfg19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libsrvmhas19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libclsce19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libuini19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libsrvm19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libonsx.so"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cdpcfg.pl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crsrename.pl"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libeonsserver.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libjagent19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libcha19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oradnssd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crsd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ohasd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cssdmonitor"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/octssd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ologgerd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cssvfupgd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cssdagent"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ocrconfig.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oracsswd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crsctl.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oclumon.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oradnssd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oclskd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/appvipcfg.pl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/clscfg.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/orarootagent.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/clsecho.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ocrdump.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/osysmond.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/gnsd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ocrcheck.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/gnsd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/odig.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/odig"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/diskmon"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libcrf19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/rhpctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/kfod"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/lsnodes"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libcell19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/kfod.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/usrvip"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/appvipcfg"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/rdtool"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oclumon.pl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ologdbg.pl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/mgmtca"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/mgmtua"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crswrapexece.pl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cluutil"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ocrcheck"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ocrconfig"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ocrdump"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ocrpatch"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/gipcd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/mdnsd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oranetmonitor"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/gpnpd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/gpnptool"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/appagent"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/clssproxy"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cssvfupgd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cemutls"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cemutlo"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/octssd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ohasd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crsd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/evmd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/evminfo"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/evmlogger"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/evmmkbin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/evmmklib"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/evmpost"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/evmshow"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/evmsort"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/evmwatch"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crscdpd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cdpc"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/clsdiaglsnr"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oifcfg"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/olsnodes"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oraagent"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/orarootagent"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oracsswd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/scriptagent"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/lsdb"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/emcrsp"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/racgwrap"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/odnsd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/scrctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oc4jctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/rhprepos"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ghappctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/dhcpproxy"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/qosctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/chactl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ochadctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oclumon"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crfsetenv"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ologdbg"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/osysmond"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crsrename"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cdpcfg"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/cluvfy"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/srvctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/clscfg"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/clsid"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crsctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/clsecho"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ndfnceca"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oclskd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oclsomon"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/oclsvmon"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/ocssd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crsboot_diags.sh"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/setasmgidwrap"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/jwcctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/orajagent"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/orajrootagent"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/crskeytoolctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/rhpplsnrctl"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/rhpplsnr"
+chmod 775 "/etc/tmpfiles.d/oracleGI.conf"
+
+
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsload"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsload"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_dupd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_dupd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfssinglefsmount"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfssinglefsmount"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsregistrymount"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsregistrymount"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsdriverstate"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsdriverstate"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_dupd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_dupd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/okaload"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/okaload"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_initializer"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_initializer"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_preapply"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_preapply"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_apply"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_apply"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/okacmd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/okacmd.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/okacmd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/okacmd"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_transport"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_transport"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsreplcrs"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsreplcrs"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_apply.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_apply.bin"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/afdload"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/afdload"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_monitor"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsrepl_monitor"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/okadriverstate"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/okadriverstate"
+chmod 775 "/u01/app/grid/product/19c/grid/lib/libacfs19.so"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsroot"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/acfsroot"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/afddriverstate"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/afddriverstate"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/afdroot"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/afdroot"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/okaroot"
+chmod 775 "/u01/app/grid/product/19c/grid/bin/okaroot"
+
+-------------------------------------------------END

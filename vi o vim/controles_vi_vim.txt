@@ -1,0 +1,2 @@
+Eliminar caracteres especiales.
+:%s/\r//g

@@ -1,0 +1,66 @@
+PROCEDIMIENTO PARA COPIAR BBDD RESPALDO DE WORDPRESS
+#####################################################
+
+
+1) Ingresar al servidor de calidad:
+
+	ssh ct24371@172.27.58.20
+
+	:: Las credenciales se obtienen en el inventario. Palabra clave --> WORDPRESS
+
+2) Se introduce el siguiente comando:
+
+	kmn
+
+3) Se ingresa a la ruta scripts/
+
+	cd scripts/
+
+4) Se ejecuta el script de backup, el mismo generará un archivo .sql comprimido
+
+	sh backup_qa.sh
+
+5) Se envía el archivo de backup generado en QA al servidor de PRD.
+
+	scp wordpress_qa-21-09-2023_14-18-38.sql.gz ct24371@172.27.11.41:/var/kubeadmin/publica/wordpress-prod/backup_local
+#####
+6) Se Ingresa al servidor de Producción:
+
+	ssh ct24371@172.27.11.41
+
+7) Se introduce el siguiente comando:
+	
+	km
+
+8) Se ingresa a la ruta scripts/
+
+	cd scripts/
+
+9) Se ejecuta el script de backup, el mismo generará un archivo .sql comprimido, la BBDD de PRD.
+
+	sh backup_qa.sh
+
+10) Se descomprime el archivo de respaldo de la BBDD QA.
+	
+	gunzip wordpress_qa-21-09-2023_14-18-38.sql.gz
+
+11) Se ingresa a la BBDD Maria
+
+	maria
+
+12) Se realiza el DROP a la BBDD
+
+	drop database wordpress;
+
+13) Se crea la BBDD y se verifica la existencia de la misma.
+
+	create database wordpress;
+	show databases;
+
+14) Se ejecuta el restore de la BBDD.
+
+	/rest.sh ../backup_local/wordpress_qa-21-09-2023_14-18-38.sql
+
+#############################################################################################
+
+

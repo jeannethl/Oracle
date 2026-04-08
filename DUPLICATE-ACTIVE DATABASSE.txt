@@ -1,0 +1,300 @@
+//////////////////////////////////////////////////
+//        DUPLICATE ACTIVE DATABASE
+//                  ORACLE
+//              ADSI-DBA TEAM                 
+//       YOSDUAR RANGEL-ALIUSKA PEÑA  
+////////////////////////////////////////////////
+
+
+
+
+Descripción:
+Se cuenta con una base de datos 11G llamada ORCL cuyo hostname del servidor se llama laboratorio
+Para el nuevo server, se cuenta con el software grid y oracle instalado, el hostname de este servidor también se llama laboratorio.
+
+
+Server antiguo:     192.168.56.101
+Server nuevo:       192.168.56.116
+Hostname:           laboratorio  (ambos nodos)
+Puerto de Listener: 1521 (ambos nodos)
+
+
+
+
+Prerequisitos:
+1.-Tener comunicación entre las dos másquinas.
+2.-Tener instalado grid y oracle en el server nuevo
+3.-Tener configurado los diskgroups en el server nuevo con los mismos nombres que en el server antiguo
+4.-Tener configurado el LISTENER en el server nuevo, puede ser con el utilitario netca desde el usuario grid
+5.-Tener configurado el archivo /etc/hosts en cada servidor
+
+
+
+0.-CREAR LA ESTRUCTURA DE DIRECTORIO PARA EL BACKUP (AMBOS AMBIENTES)
+
+su - root
+mkdir -p /exportdb/ORCL/bkup/
+chown -R oracle:oinstall /exportdb
+
+
+NOTA: CREARLO EN AMBOS AMBIENTES
+
+
+
+
+1.-Configurar el archivo hosts en el servidor PRIMARY Y CLONING
+
+Ejemplo:
+
+vi /etc/hosts
+
+192.168.56.112 CLONING
+192.168.56.111 PRIMARY
+
+
+
+
+2.-Verificar si la base de datos está en archivelog, es importante que esté activado para hacer los backups con la base de datos open.
+
+select log_mode from v$database;
+
+--Si no está activo:
+sqlplus / as sysdba
+A.-shutdown immediate;
+B.-startup mount;
+C.-alter database archivelog;
+D.-alter database open;
+E.-select log_mode from v$database;
+
+
+
+
+3.-Crear el pfile en la base de datos primaria para usarla en el SERVIDOR DE CLONING
+
+sqlplus / as sysdba
+create pfile='/exportdb/ORCL/bkup/resp_pfile.ora' from spfile;
+
+
+
+4.-Copiar el tnsnames al directorio de backups
+
+cp -p $ORACLE_HOME/network/admin/tnsnames.ora /exportdb/ORCL/bkup/ 
+
+
+
+5.-Copiar el passwordfile al directorio de backups
+
+cp -p $ORACLE_HOME/dbs/orapwORCL /exportdb/ORCL/bkup/
+
+
+
+6.-Enviar los archivos al servidor de cloning
+
+scp /exportdb/ORCL/bkup/* oracle@CLONING:/exportdb/ORCL/bkup/
+
+
+7.-EDITAR EL TNSNAMES AÑADIENDO EL NUEVO STRING DE CONEXIÓN
+
+ORCL =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = laboratorio)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = ORCL)
+    )
+  )
+
+CLONING =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = CLONING)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = ORCL)
+    )
+  )
+
+
+
+-----------------------------------------------------------------------------------------------------
+SERVIDOR SECUNDARIO
+
+
+
+Tener seteado el ORACLE_HOME en el servidor secundario
+
+
+
+1.-Configurar el ORACLE_SID en el .profile de oracle en el DRP
+
+
+El .bash_profile del usuario oracle debe contar con el siguiente parámetro:
+ORACLE_SID=ORCL
+
+Aplicar los cambios a la sesión actual
+source ~/.bash_profile
+
+
+
+
+2.-Copiar el tnsnames a $ORACLE_HOME/network/admin/ y configurarlo
+
+cd /exportdb/ORCL/bkup/
+cp -p tnsnames.ora $ORACLE_HOME/network/admin/
+
+
+
+
+PRIMARY =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = PRIMARY)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = ORCL)
+    )
+  )
+
+
+
+CLONING =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = laboratorio)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = ORCL)
+    )
+  )
+
+
+
+
+
+
+3.-Copiar el passwordfile a $ORACLE_HOME/dbs/
+
+cd /exportdb/ORCL/bkup/
+cp -p orapwORCL $ORACLE_HOME/dbs/
+
+
+
+4.-Crear la estructura de carpetas en el servidor cloning, que aparecen en el /exportdb/ORCL/bkup/resp_pfile.ora de la base de datos primaria 
+
+cd /exportdb/ORCL/bkup/
+cat resp_pfile.ora 
+
+Contenido del initORCL.ora
+
+*.audit_file_dest='/u01/app/oracle/admin/ORCL/adump'
+*.audit_trail='db'
+*.compatible='11.2.0.4.0'
+*.control_files='+DATA/orcl/controlfile/current.260.1089926737','+FRA/orcl/controlfile/current.256.1089926739'
+*.db_block_size=8192
+*.db_create_file_dest='+DATA'
+*.db_domain=''
+*.db_name='ORCL'
+*.db_recovery_file_dest='+FRA'
+*.db_recovery_file_dest_size=4385144832
+*.diagnostic_dest='/u01/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=ORCLXDB)'
+*.memory_target=1656750080
+*.open_cursors=300
+*.processes=150
+*.remote_login_passwordfile='EXCLUSIVE'
+*.undo_tablespace='UNDOTBS1'
+
+
+Para este caso, se debe crear los siguientes directorios en el servidor cloning:
+
+$ mkdir -p /u01/app/oracle/admin/ORCL/adump
+
+
+
+
+5.-Conectarse a la base de datos cloning y crear el spfile
+
+sqlplus / as sysdba
+startup nomount pfile='/exportdb/ORCL/bkup/resp_pfile.ora';
+create spfile='+DATA' from pfile='/exportdb/ORCL/bkup/resp_pfile.ora';
+shutdown immediate;
+
+
+
+
+Ir al asmcmd desde grid y ubicar el spfile creado
+
+su - grid
+asmcmd
+cd +DATA/ORCL/PARAMETERFILE
+
+Aparece para este caso un spfile llamado spfile.266.1089927463, colocar esa ruta en el siguiente archivo
+
++DATA/ORCL/PARAMETERFILE/spfile.266.1123873275
+
+Con oracle:
+$ vi $ORACLE_HOME/dbs/initORCL.ora
+
+SPFILE='+DATA/ORCL/PARAMETERFILE/spfile.266.1123873275'
+
+$ sqlplus / as sysdba
+$ startup nomount
+
+
+
+
+6.-Configurar el static listener
+
+su - grid
+cd $ORACLE_HOME/network/admin
+vi listener.ora
+
+Agregar
+
+SID_LIST_LISTENER =
+  (SID_LIST =
+    (SID_DESC =
+      (GLOBAL_DBNAME = ORCL)
+      (ORACLE_HOME = /u01/app/oracle/product/11.2.0/db1)
+      (SID_NAME = ORCL)
+    )
+  )
+
+lsnrctl reload LISTENER
+
+
+
+7.-Iniciar el cloning
+
+
+rman TARGET sys/oracle1@PRIMARY
+connect AUXILIARY sys/oracle1@CLONING;
+
+
+DUPLICATE DATABASE TO ORCL
+FROM ACTIVE DATABASE
+NOFILENAMECHECK;
+
+
+
+8.-CONFIGURAR EL SERVICIO SRVCTL
+
+
+srvctl add database \
+-d ORCL \
+-n ORCL \
+-a "DATA,FRA" \
+-o /u01/app/oracle/product/11.2.0/db1 \
+-p +DATA/orcl/parameterfile/spfile.265.1124015203
+
+
+
+
+
+OBSERVACIONES: EL NOMBRE DEL STRING DE CONEXION PARA LA BASE DE DATOS SECUNDARIA ES MANDATORIO QUE SE LLAME IGUAL EN AMBOS NODOS
+
+
+
+
+
+
+
+-------------------------------
+PARA CLONAR UNA BASE DE DATOS CON ENCRIPTACIÓN, HAY QUE COPIAR EL WALLET DE EL SERVIDOR PRINCIPAL AL SERVIDOR NUEVO, RESPETANDO LA ESTRUCTURA DE CARPETAS

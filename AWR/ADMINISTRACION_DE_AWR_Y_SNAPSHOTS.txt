@@ -7,6 +7,42 @@
 
 
 
+********* GENERAR REPORTE AWR *********
+
+Para el nodo actual: 
+SQL> @$ORACLE_HOME/rdbms/admin/awrrpt.sql
+
+
+Para consultar otros nodos:
+SQL> @$ORACLE_HOME/rdbms/admin/awrrpti.sql
+
+
+
+********* GENERAR REPORTE AWR PARA CONSULTAR SQL *********
+
+Para el nodo actual:
+@$ORACLE_HOME/rdbms/admin/awrsqrpt.sql
+
+Para consultar otros nodos:
+@$ORACLE_HOME/rdbms/admin/awrsqrpi.sql
+
+
+********* GENERAR REPORTE AWR RAC O GLOBAL *********
+
+SQL> @?/rdbms/admin/awrgrpt.sql
+
+
+********* OBTENER LAS ESTADISTICAS DE CONSUMO DEL AWR *********
+
+SQL> @$ORACLE_HOME/rdbms/admin/awrinfo.sql
+
+
+
+
+
+
+
+
 
 ********* GENERAR UN SNAPSHOTS MANUAL *********
 
@@ -22,12 +58,17 @@ select snap_id,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME
 
 1.1-Verificar el snapshots current de varios dias
 
-set lines 100 pages 999
-select DBID,snap_id,
-  snap_level,
-  to_char(begin_interval_time, 'dd/mm/yy hh24:mi:ss') begin
+set lines 240 pages 999
+col BEGIN_INTERVAL_TIME format a40
+col END_INTERVAL_TIME format a40
+select
+  snap_id
+  ,DBID
+  ,snap_level
+  ,BEGIN_INTERVAL_TIME
+  ,END_INTERVAL_TIME
 from dba_hist_snapshot
-order by 3,4;
+order by 1;
 
 
 2.- Ejecutar snapshots manual
@@ -50,14 +91,115 @@ Ref: AWR Reporting - Licensing Requirements Clarification (Doc ID 1490798.1)
 
 
 
-********* GENERAR REPORTE AWR *********
+************
 
-Para el nodo actual: 
-SQL> @$ORACLE_HOME/rdbms/admin/awrrpt.sql
+	How to Manually Purge Orphan Rows from AWR Repository Tables In Sysaux Tablespace (Doc ID 2536631.1)
+
+4.- Para validar la cantidad de días de Optimizer Statistics Histogram actualmente en la bD
+
+	select systimestamp - min(savtime) from sys.wri$_optstat_histgrm_history;
+
+Para purgar Optimizer Statistics Histogram manualmente mayor a 7 días 
+
+	exec dbms_stats.purge_stats(sysdate - 7);
+
+	exec DBMS_STATS.PURGE_STATS(DBMS_STATS.PURGE_ALL);
 
 
-Para consultar otros nodos:
-SQL> @$ORACLE_HOME/rdbms/admin/awrrpti.sql
+
+
+*********** 
+
+Revisando información de las particiones antes del split 
+
+set lines 150
+col SEGMENT_NAME for a30
+col PARTITION_NAME for a50
+SELECT owner, segment_name, partition_name, segment_type, bytes/1024/1024/1024 Size_GB 
+FROM dba_segments WHERE segment_name='WRH$_ACTIVE_SESSION_HISTORY';
+
+Genera el split de las particiones
+
+	alter session set "_swrf_test_action" = 72;  --> esto se puede repetir por tantas veces quieras hacer el split
+
+
+
+Validando el split
+
+set lines 150
+col SEGMENT_NAME for a30
+col PARTITION_NAME for a50
+SELECT owner, segment_name, partition_name, segment_type, bytes/1024/1024/1024 Size_GB FROM
+dba_segments WHERE segment_name='WRH$_ACTIVE_SESSION_HISTORY';
+
+Pl que devuelve el listado de particiones y el los y High de snapshot almacenado en cada particion
+
+set serveroutput on
+declare
+CURSOR cur_part IS
+SELECT partition_name from dba_tab_partitions
+WHERE table_name = 'WRH$_ACTIVE_SESSION_HISTORY';
+
+query1 varchar2(200);
+query2 varchar2(200);
+
+TYPE partrec IS RECORD (snapid number, dbid number);
+TYPE partlist IS TABLE OF partrec;
+
+Outlist partlist;
+begin
+dbms_output.put_line('PARTITION NAME SNAP_ID DBID');
+dbms_output.put_line('--------------------------- ------- ----------');
+
+for part in cur_part loop
+query1 := 'select min(snap_id), dbid from sys.WRH$_ACTIVE_SESSION_HISTORY partition ('||part.partition_name||')
+ group by dbid';
+execute immediate query1 bulk collect into OutList;
+
+if OutList.count > 0 then
+for i in OutList.first..OutList.last loop
+dbms_output.put_line(part.partition_name||' Min '||OutList(i).snapid||' '||OutList(i).dbid);
+end loop;
+end if;
+
+query2 := 'select max(snap_id), dbid from sys.WRH$_ACTIVE_SESSION_HISTORY partition ('||part.partition_name||')
+ group by dbid';
+execute immediate query2 bulk collect into OutList;
+
+if OutList.count > 0 then
+for i in OutList.first..OutList.last loop
+dbms_output.put_line(part.partition_name||' Max '||OutList(i).snapid||' '||OutList(i).dbid);
+dbms_output.put_line('---');
+end loop;
+end if;
+
+end loop;
+end;
+/
+	
+
+
+
+
+
+
+
+
+
+******* Para borrar los snapshot manualmente 
+
+exec DBMS_WORKLOAD_REPOSITORY.DROP_SNAPSHOT_RANGE( low_snap_id IN NUMBER,high_snap_id IN NUMBER,   dbid IN NUMBER DEFAULT NULL);
+
+exec DBMS_WORKLOAD_REPOSITORY.DROP_SNAPSHOT_RANGE( 3814, 3816,632962209);
+
+
+
+
+
+
+
+
+
 
 
 ********* GENERAR REPORTE AWR Diff Report *********
@@ -65,25 +207,9 @@ SQL> @$ORACLE_HOME/rdbms/admin/awrrpti.sql
 @?/rdbms/admin/awrddrpt.sql
 
 
-********* GENERAR REPORTE AWR PARA CONSULTAR SQL *********
-
-Para el nodo actual:
-@$ORACLE_HOME/rdbms/admin/awrsqrpt.sql
-
-Para consultar otros nodos:
-@$ORACLE_HOME/rdbms/admin/awrsqrpi.sql
 
 
-********* GENERAR REPORTE AWR RAC O GLOBAL *********
 
-SQL> @?/rdbms/admin/awrgrpt.sql
-
-88173
-88174
-
-********* OBTENER LAS ESTADISTICAS DE CONSUMO DEL AWR *********
-
-SQL> @$ORACLE_HOME/rdbms/admin/awrinfo.sql
 
 
 
@@ -96,7 +222,7 @@ Puede ser cualquiera de estos, dependiendo de las necesidades. Se recomienda que
 show parameter statistics_level
 show parameter statis
 
-3.-Modificar parametro (recomendacion ALL)
+3.-Modificar parametro (recomendación ALL)
 
 ALTER SYSTEM SET statistics_level=basic;
 ALTER SYSTEM SET statistics_level=typical;
@@ -128,31 +254,171 @@ select DBID,snap_interval
 
 ********** Configurar el intervalo de métricas (minutos) y el tiempo de retención de snapshots (minutos) **********
 
-Default: execute dbms_workload_repository.modify_snapshot_settings (interval => 60,retention => 11520);
+Default: execute dbms_workload_repository.modify_snapshot_settings (interval => 60,retention => 4320);
+
+#Ejemplo: intervalo para ambientes de laboratorio/pruebas
+execute dbms_workload_repository.modify_snapshot_settings (interval => 10,retention => 11520);
 
 
-
-Ejemplo: intervalo de capturas cada 60 minutos y la retención de 525600 minutos o 1 año
-
+#Ejemplo: intervalo de capturas cada 60 minutos y la retención de 525600 minutos o 1 año
 execute dbms_workload_repository.modify_snapshot_settings (interval => 60,retention => 525600);
 
-Ejemplo: intervalo de capturas cada 15 minutos y la retención de 15 dias
 
-## execute dbms_workload_repository.modify_snapshot_settings (interval => 15,retention => 21600);
+#Ejemplo: intervalo de capturas cada 15 minutos y la retención de 15 dias
+execute dbms_workload_repository.modify_snapshot_settings (interval => 15,retention => 21600);
 
-Ejemplo: intervalo de capturas cada 15 minutos y la retención de 30 dias
+#Ejemplo: intervalo de capturas cada 15 minutos y la retención de 30 dias
+execute dbms_workload_repository.modify_snapshot_settings (interval => 60,retention => 43200);
 
-execute dbms_workload_repository.modify_snapshot_settings (interval => 15,retention => 43200);
-
-
-
-
+#Ejemplo: intervalo de capturas cada 60 minutos 
 execute dbms_workload_repository.modify_snapshot_settings (interval => 15);
+
+#Ejemplo: intervalo más usado retención 8 dias
+execute dbms_workload_repository.modify_snapshot_settings (interval => 15,retention => 11520);
+
+
+# ver la retention de las estadisticas
+
+	select dbms_stats.get_stats_history_retention from dual;
+
+
+# ver las estadísticas que no se han purgado 
+
+	select dbms_stats.get_stats_history_availability from dual;
+
+
+# ver los ocupan en el SYSAUX tablespace
+
+ SELECT occupant_name,
+  occupant_desc,
+  move_procedure
+FROM v$sysaux_occupants
+WHERE move_procedure IS NOT NULL;
+
+column OCCUPANT_NAME format a15
+
+SELECT occupant_name,
+ occupant_desc,
+ space_usage_kbytes
+FROM v$sysaux_occupants
+WHERE occupant_name LIKE '%AWR%';
+
+
+#modificando el windows para los AWR
+
+	ejecutar dbms_workload_repository.modify_baseline_window_size(tamaño_de_ventana=> 7);
+
+# ajuste de AWR para el topsql
+
+	exec dbms_workload_repository.modify_snapshot_settings(retención=>10080, intervalo=>60, topnsql=>100);
+
+
+#Configuration de la retención de las estadísticas para que no consuma mucho espacio enSYSAUX
+
+	exec dbms_stats.alter_stats_history_retention(2);
+
+	exec dbms_stats.purge_stats(SYSDATE-1);
+
+# otra forma de deshabilitar el AWR
+
+	begin dbms_awr.disable_awr(); end;
+
+	SELECT name,
+           detected_usages detected,
+            total_samples   samples,
+                currently_used  used,
+               to_char(last_sample_date,'MMDDYYYY:HH24:MI') last_sample,
+                sample_interval interval
+           FROM dba_feature_usage_statistics
+      WHERE name = 'Automatic Workload Repository';
+
+
+# registros huérfanos en el AWR
+
+SELECT COUNT(1) Orphaned_ASH_Rows
+FROM wrh$_active_session_history a
+WHERE NOT EXISTS
+  (SELECT 1
+  FROM wrm$_snapshot
+  WHERE snap_id       = a.snap_id
+  AND dbid            = a.dbid
+  AND instance_number = a.instance_number
+  );
+
+DELETE
+FROM wrh$_active_session_history a
+WHERE NOT EXISTS
+  (SELECT 1
+  FROM wrm$_snapshot
+  WHERE snap_id       = a.snap_id
+  AND dbid            = a.dbid
+  AND instance_number = a.instance_number
+  );
+
+
+alter table WRH$_ACTIVE_SESSION_HISTORY shrink space;
+
+
+IMPORTANTE:
+    Cuando el valor de retención a establecer es menor al valor por Default de 8 dias establecido por Oracle, se debe modificar
+    el BaseLine Windown Size con el siguiente comando:
+
+--- CONSULTAR EL WINDOW_SIZE
+select baseline_type,moving_window_size from dba_hist_baseline;
+
+--- MODIFICAR EL WINDOW_SIZE
+execute dbms_workload_repository.modify_baseline_window_size(window_size=> 7);
+
+
+
+*************** Borrar snapshots de forma manual****************************************
+
+EXEC dbms_workload_repository.drop_snapshot_range (low_snap_id=>1107, high_snap_id=>1108);
+
+
+
+************** Analysis de espacio del modulo de AWR
+
+@?/rdbms/admin/awrinfo.sql
+
+	https://www.morganslibrary.org/reference/pkgs/awrinfo_util.html
+
+
+
+
+***********. procedimiento para liberar espacio borrando los snap que ocupan los espacios 
+
+SELECT snap_id, begin_interval_time, end_interval_time
+FROM SYS.WRM$_SNAPSHOT WHERE snap_id = ( SELECT MIN (snap_id) FROM SYS.WRM$_SNAPSHOT) UNION SELECT snap_id, begin_interval_time, end_interval_time FROM SYS.WRM$_SNAPSHOT WHERE
+snap_id = ( SELECT MAX (snap_id) FROM SYS.WRM$_SNAPSHOT);
+
+BEGIN
+dbms_workload_repository.drop_snapshot_range(low_snap_id => <start snap>, high_snap_id=><end snap>);
+END;
+/
+
+connect / as sysdba
+@?/rdbms/admin/catnoawr.sql
+@?/rdbms/admin/catawrtb.sql
+
+
+select * from dba_lobs where table_name = 'WRH$_SQLTEXT';
+select * from dba_segments where segment_name = '<seg-name>';
+select count(*) from WRH$_SQLTEXT;
+
+
+Detener la captura de los snap
+
+
+alter table wrh$_sqltext move lob(sql_text) store as <name of LOB> tablespace sysaux;
+select index_name from dba_indexes where table_name='WRH$_SQLTEXT' and status='UNUSABLE';
 
 
 ---------------------------------------------------------------------------------------------------
 FUENTES:    
     https://mikedietrichde.com/hol-19c-awr-diff/
 
+ORA-13541: system moving window baseline size   
+    https://dbaclass.com/article/ora-13541-system-moving-window-baseline-size-greater-retention/
 
 ---------------------------------------------------------------------------------------------------

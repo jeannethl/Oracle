@@ -1,0 +1,80 @@
+SUBIR_BAJAR NODO DE BD
+
+alter database noarchivelog;
+alter database flashback off;
+alter database archivelog;
+alter database flashback on;
+
+
+
+
+
+archive log list;  --- 
+
+
+--- CONSOLA/ORACLE
+
+srvctl status instance -d <nombre_base_datos> -i <nombre_instancia> --- VER EL STATUS
+
+srvctl start instance -d <nombre_base_datos> -i <nombre_instancia> --- SUBIR EL NODO
+
+srvctl stop instance -d <nombre_base_datos> -i <nombre_instancia> --- BAJAR EL NODO
+
+srvctl stop instance -d INTTEGP -i INTTEGP1
+
+
+--- CONSOLA/GRID
+
+
+VER STATUS 
+
+crsctl stat res -t
+
+which crsctl ---- Busca en las rutas definidas en la variable de entorno PATH y devuelve la ruta completa del ejecutable especificado. 
+
+
+
+----CONSOLA/ROOT
+
+
+crsctl disable crs  --- INVESTIGAR / Se usa para deshabilitar el inicio automático del Cluster Ready Services (CRS) durante el arranque del sistema operativo. 
+
+crsctl stop crs --- INVESTIGAR 
+
+
+
+
+--------------- DESACTIVAR/BAJA ---------------
+
+/oracle/app/product/19c/grid/bin/ 
+./crsctl disable crs  --- 
+./crsctl stop crs  --- 
+
+
+--------------- ACTIVAR/SUBIR ---------------
+
+/oracle/app/product/19c/grid/bin/  
+./crsctl enable crs  --- 
+./crsctl start crs  ---
+
+
+
+
+Ejemplo:
+
+/oracle/app/product/19c/grid/bin/crsctl  disable crs  --- DESACTIVAR
+
+/oracle/app/product/19c/grid/bin/crsctl stop crs --- BAJAR
+
+----
+
+/oracle/app/product/19c/grid/bin/crsctl  disable crs  --- ACTIVAR
+
+/oracle/app/product/19c/grid/bin/crsctl stop crs --- SUBIR
+
+
+
+
+ 
+
+

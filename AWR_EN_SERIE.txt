@@ -25,7 +25,7 @@ s=Snapshoot de inicio
 e=Snapshoot final
 i=intervalo de captura de snapshoot
 
-./dbs_gawrr.sh s=39045 e=39046 i=1
+./dbs_gawrr.sh s=26710 e=26806 i=1
 
 
 

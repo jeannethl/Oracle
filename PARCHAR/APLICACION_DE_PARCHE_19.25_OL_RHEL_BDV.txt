@@ -1,0 +1,397 @@
+APLICACION_DE_PARCHE_19.25_OL_RHEL.txt
+
+
+p36866740_190000_Linux-x86-64
+p36878697_190000_Linux-x86-64
+
+p37546427_1925000DBRU_Linux-x86-64
+p37546429_1925000DBRU_Linux-x86-64
+
+
+
+
+
+PRE-REQUISITOS:
+--------------
+
+Oracle version  : Oracle Database 19c Version 19C 
+OPatch Version  : 12.2.0.1.43 or later
+
+
+Patch 36916690 - Combo of OJVM Component Release Update 19.25.0.0.240716 + Grid Infrastructure OCT 2024 Release Update 19.25.0.0.240716
+	
+El cual contiene los siguientes parches:
+
+	Patch 36916690 - Database Grid Infrastructure OCT 2024 Release Update 19.25.0.0.240716 --> RAC-Rolling Installable
+	Patch 36582781 - Database Release Update 19.25.0.0.240716
+	Patch 36878697 - Oracle JavaVM Component Release Update 19.25.0.0.240716               --> Patch has some additional requirements if it is to be installed in a "Conditional Rolling Install" fashion, as detailed in MOS NOTE 2217053.1.
+***************************************************************************************************
+
+tar -pcvzf /exportdb/backup_binarios_26032025/grid_home_$(date +%Y%m%d_%H%M%S).tar.gz /oracle/app/product/19c
+tar -pcvzf /exportdb/backup_binarios_26032025/grid_base_$(date +%Y%m%d_%H%M%S).tar.gz /oracle/app/grid
+tar -pcvzf /exportdb/backup_binarios_26032025/oraInventory_$(date +%Y%m%d_%H%M%S).tar.gz /oracle/app/oraInventory
+tar -pcvzf /exportdb/backup_binarios_26032025/oracle_base$(date +%Y%m%d_%H%M%S).tar.gz /oracle/app/oracle19
+
+
+
+***************************************************************************************************
+
+1.- Validation of Oracle Inventory
+
+As oracle and grid:
+
+$ORACLE_HOME/OPatch/opatch lsinventory
+$ORACLE_HOME/OPatch/opatch lspatches
+
+2.- Download and Unzip the Patch
+
+export UNZIPPED_PATCH_LOCATION=/exportdb/parches/
+cd $UNZIPPED_PATCH_LOCATION
+ls
+unzip -q p36866740_190000_Linux-x86-64.zip
+chmod -R 777 36866740/
+chown -R oracle19:oinstall 36866740/
+
+
+PROCEDIMIENTO:
+--------------
+
+Rutas de los parches:
+
+/exportdb/parches/
+/exportdb/parches/36866740
+/exportdb/parches/36866740/36916690
+/exportdb/parches/36866740/36878697  --OJVM
+
+
+
+----------------------------- VALIDACION DE PREREQUISITOS -----------------------------
+
+
+
+1.- Run OPatch Conflict Check
+
+
+As the Grid home user:
+
+export UNZIPPED_PATCH_LOCATION=/exportdb/parches/36866740   /exportdb/parches/36866740
+
+
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/36916690/36912597
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/36916690/36917416
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/36916690/36917397
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/36916690/36940756
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/36916690/36758186
+
+
+
+For Oracle home, as home user:
+
+export UNZIPPED_PATCH_LOCATION=/exportdb/parches/36866740
+
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/36916690/36912597
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/36916690/36917416
+
+
+
+2.-  Run OPatch System Space Check
+
+
+For Grid Infrastructure home, as home user:
+
+	2.1.- Create file /tmp/patch_list_gihome.txt with the following content:
+
+
+cat <<EOT >>/tmp/patch_list_gihome.txt
+$UNZIPPED_PATCH_LOCATION/36916690/36912597
+$UNZIPPED_PATCH_LOCATION/36916690/36917416
+$UNZIPPED_PATCH_LOCATION/36916690/36917397
+$UNZIPPED_PATCH_LOCATION/36916690/36940756
+$UNZIPPED_PATCH_LOCATION/36916690/36758186
+EOT
+
+cat /tmp/patch_list_gihome.txt
+
+
+	2.2.- Run the OPatch command to check if enough free space is available in the Grid Infrastructure home:
+
+$ORACLE_HOME/OPatch/opatch prereq CheckSystemSpace -phBaseFile /tmp/patch_list_gihome.txt
+
+
+
+For Oracle home, as home user:
+
+	2.3.- Create file /tmp/patch_list_dbhome.txt with the following content:
+
+
+cat <<EOT >>/tmp/patch_list_dbhome.txt
+$UNZIPPED_PATCH_LOCATION/36916690/36912597
+$UNZIPPED_PATCH_LOCATION/36916690/36917416
+EOT
+
+cat /tmp/patch_list_dbhome.txt
+
+
+	2.4.- Run OPatch command to check if enough free space is available in the Oracle home:
+
+$ORACLE_HOME/OPatch/opatch prereq CheckSystemSpace -phBaseFile /tmp/patch_list_dbhome.txt
+
+
+
+
+----------------------------- INSTALACIÓN DE PARCHE RU  -----------------------------
+
+
+1.- INSTALAR PATCH RU GRID 
+
+As root user:
+
+su - root
+
+export CV_ASSUME_DISTID=OL7
+export UNZIPPED_PATCH_LOCATION=/exportdb/parches/36866740
+export PATH=$PATH:/oracle/app/product/19c/grid/OPatch
+
+cd /tmp
+opatchauto apply $UNZIPPED_PATCH_LOCATION/36916690
+
+
+su - grid
+$ORACLE_HOME/OPatch/opatch lspatches
+
+
+
+
+2.- INSTALAR PATCH RU ORACLE  
+
+NOTA IMPORTANTE: Si la base de datos esta creada, el parche se aplicara a los dos homes. Si no tiene db creada aplicar el parche en cada home.
+
+As root user:
+
+su - root
+
+export CV_ASSUME_DISTID=OL7
+export UNZIPPED_PATCH_LOCATION=/exportdb/parches/36866740
+export PATH=$PATH:/oracle/app/oracle19/product/19c/db1/OPatch
+
+cd /tmp
+opatchauto apply $UNZIPPED_PATCH_LOCATION/36916690 -oh /oracle/app/oracle19/product/19c/db1
+
+su - oracle
+$ORACLE_HOME/OPatch/opatch lspatches
+
+
+
+
+3.- Patch Post Installation Instructions
+
+
+	3.1.-Patch Installation Checks
+
+su - grid 
+
+cd $ORACLE_HOME
+./runcluvfy.sh stage -post patch
+
+
+	3.2.- Load Modified SQL Files into the Database
+
+NOTA IMPORTANTE: Realizar los pasos siguientes si se tiene una base de datos creada, la instancia debe estar arriba.
+***************************************** quedamos aqui *************************************************************
+
+su - oracle
+
+cd $ORACLE_HOME/OPatch
+./datapatch -sanity_checks
+./datapatch -verbose
+
+
+	3.3.- Valid invalid objects
+
+su - oracle
+sqlplus / as sysdba
+
+select status,count(1) 
+from dba_objects 
+where status ='INVALID'
+group by status 
+order by status desc;
+
+select OWNER,OBJECT_NAME,OBJECT_TYPE,STATUS 
+from dba_objects
+where OWNER not in ('SYS','SYSTEM') 
+and status = 'INVALID'
+order by OWNER,OBJECT_TYPE,OBJECT_NAME;
+
+
+--- Ejecutar el utilitario para complilar objetos invalidos
+@$ORACLE_HOME/rdbms/admin/utlrp.sql
+
+
+--- Validar parches aplicados en la base de datos 
+set line 240
+set pagesize 100
+col action_time for a40
+col action for a12
+col namespace for a10
+col version for a22
+col comments for a80
+SELECT TO_CHAR(action_time, 'YYYY-MM-DD HH24:MI') AS FECHA
+      ,action
+      ,namespace
+      ,version
+      ,comments
+ --     ,bundle_series
+  FROM sys.registry$history
+ ORDER by action_time;
+
+quit;
+
+
+
+
+----------------------------- INSTALACION DE PATCH 36878697 OJVM  -----------------------------
+
+
+1.- Prerequisites
+
+	1.1.- Shut down all the services running from the Oracle home.
+
+su - grid
+
+$ORACLE_HOME/bin/crsctl stat res -t
+$ORACLE_HOME/bin/crsctl stop has
+	
+
+	1.2.- Determine whether any currently installed interim patches conflict with the patch as shown below
+
+As oracle user:
+
+su - oracle
+
+export PATCH_TOP_DIR=/exportdb/parches/36866740
+export PATH=$PATH:/oracle/app/oracle/product/19c/db1/OPatch
+
+cd $PATCH_TOP_DIR/36878697
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+
+2.- Installation
+
+$ORACLE_HOME/OPatch/opatch lsinventory
+$ORACLE_HOME/OPatch/opatch lspatches
+
+cd $PATCH_TOP_DIR/36878697
+opatch apply
+
+
+3.- Postinstallation
+
+	3.1.- Start all service 
+
+su - grid
+
+$ORACLE_HOME/bin/crsctl start has
+$ORACLE_HOME/bin/crsctl stat res -t
+
+
+	3.1.- Loading Modified SQL Files Into the Database 
+
+NOTA IMPORTANTE: Realizar los pasos siguientes si se tiene una base de datos creada, la instancia debe estar arriba.
+
+su - oracle
+
+cd $ORACLE_HOME/OPatch
+./datapatch -sanity_checks
+./datapatch -verbose
+
+$ORACLE_HOME/OPatch/opatch lspatches
+
+
+
+
+-----------------------------------------------------  MRP 19.25
+
+
+GRID 
+
+
+export UNZIPPED_PATCH_LOCATION=/exportdb/parches/MRP
+export PATH=$PATH:/oracle/app/product/19c/grid/OPatch
+
+
+prerrequisito
+-------------
+
+con root
+
+export UNZIPPED_PATCH_LOCATION=/exportdb/parches/MRP
+cd $UNZIPPED_PATCH_LOCATION
+/oracle/app/product/19c/grid/OPatch/opatchauto apply ./37546429 -analyze
+
+
+/oracle/app/product/19c/grid/OPatch/opatchauto apply ./37546429
+
+
+
+
+NOTA IMPORTANTE: Realizar los pasos siguientes si se tiene una base de datos creada, la instancia debe estar arriba.
+
+su - oracle
+
+cd $ORACLE_HOME/OPatch
+./datapatch -sanity_checks
+./datapatch -verbose
+
+$ORACLE_HOME/OPatch/opatch lspatches
+
+
+
+rollback
+----------
+
+/oracle/app/product/19c/grid/OPatch/opatchauto rollback ./37546429
+
+
+
+-----------------------------------------------------
+--MRP 19.25
+
+--Patch 37546427: GI MRP 19.25.0.0.250121
+-- 
+--grid 
+
+
+--export UNZIPPED_PATCH_LOCATION=/exportdb/parches/MRP
+--export PATH=$PATH:/oracle/app/product/19c/grid/OPatch
+
+
+--prerrequisito
+---------------
+
+--con root
+
+--export UNZIPPED_PATCH_LOCATION=/exportdb/parches/MRP
+--cd $UNZIPPED_PATCH_LOCATION
+--/oracle/app/product/19c/grid/OPatch/opatchauto apply ./37546427 -analyze
+
+
+--/oracle/app/product/19c/grid/OPatch/opatchauto apply ./37546427
+
+
+--NOTA IMPORTANTE: Realizar los pasos siguientes si se tiene una base de datos creada, la instancia debe estar arriba.
+
+--su - oracle
+
+--cd $ORACLE_HOME/OPatch
+--./datapatch -sanity_checks
+--./datapatch -verbose
+
+--$ORACLE_HOME/OPatch/opatch lspatches
+
+
+
+--rollback
+------------
+
+--/oracle/app/product/19c/grid/OPatch/opatchauto rollback ./37546427

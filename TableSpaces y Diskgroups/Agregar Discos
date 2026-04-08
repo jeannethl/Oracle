@@ -1,0 +1,439 @@
+
+
+Solicitar discos
+--Planilla para almacenamiento
+---Ellos generan otra planilla
+----Se reenvia la planilla a soporte unix para que le den los permisos y formatos ASM -----//En caso de Zpool enviar correo a soporte unix para que lo agreguen directamente.
+-----Soporte unix envia la lista de discos y deben aparecer 
+
+--for i in `ls -ld c1d420s6 c1d421s6 c1d422s6 |awk {'print$11'}`; do ls -ltr $i* |grep -i asmadmin; done
+
+
+c0d41s6 500G
+c0d42s6 500G
+c0d43s6 500G
+
+--Consultar los permisos de los discos a nivel del SO:
+--df -k o df -h para listar 
+--cd /dev/rdsk
+
+
+for i in $(ls -ld emcpower395g | awk '{print $11}'); do ls -ltr "${i}"* | grep -i asmadmin done
+for i in `ls -ld emcpower495g |awk {'print$11'}`; do ls -ltr $i* ; done
+
+
+
+
+asmcmd lsdsk -k -G DG_DATA_PRTLDPP                
+asmcmd lsdsk -k -G DG_DATA_SWATCHDB               
+asmcmd lsdsk -k -G DG_REDO1_SWATCHDB              
+asmcmd lsdsk -k -G DG_REDO2_SWATCHDB              
+asmcmd lsdsk -k -G DG_REDO3_SWATCHDB              
+asmcmd lsdsk -k -G FRA  
+
+
+set linesize 2000
+set pagesize 600
+col PATH format a60
+col NAME format a25
+select inst_id, header_status, path, name, total_mb
+from gv$asm_disk
+WHERE inst_id =1
+order by 1, 4;
+
+SELECT TOTAL_MB, COUNT(*) AS cantidad_de_discos
+FROM gv$asm_disk
+GROUP BY TOTAL_MB;
+
+--
+SELECT NAME
+, FREE_MB
+, TOTAL_MB
+, ROUND((1 - (FREE_MB / TOTAL_MB))*100, 2)  PCT_USED
+FROM V$ASM_DISKGROUP
+ORDER BY GROUP_NUMBER;
+
+SELECT NAME, 
+FREE_MB, 
+TOTAL_MB, 
+ROUND((1 - (FREE_MB / NULLIF(TOTAL_MB, 0))) * 100, 2) PCT_USED
+FROM V$ASM_DISKGROUP
+ORDER BY GROUP_NUMBER;
+
+ VIRTUAL PLATFORM	PLBDTRZ01 
+
+ALTER DISKGROUP DG_DATA10 MOUNT;
+
+srvctl config database -d WSO2D
+
+asmcmd lsdsk -k -G DG_DATA1
+asmcmd lsdsk -k -G DATA_TRZSP
+
+ALTER DISKGROUP DG_DATA_SAMFP DISMOUNT;
+ALTER DISKGROUP DG_REDO1_SAMFP DISMOUNT;
+ALTER DISKGROUP DG_REDO2_SAMFP DISMOUNT;
+
+
+ALTER DISKGROUP DG_DATA_SAMFP MOUNT;
+ALTER DISKGROUP DG_REDO1_SAMFP MOUNT;
+ALTER DISKGROUP DG_REDO2_SAMFP MOUNT;
+
+--ver a que diskgroup pertenece o pertenecio
+kfed read /dev/rdsk/emcpower118g
+
+
+kfed read  /dev/rdsk/c1d15s6 | grep -i grpname
+
+kfdhdb.dskname:   DG_REDO3_SWATCHDB0001 
+kfdhdb.grpname:       DG_REDO3_SWATCHDB 
+kfdhdb.fgname:    DG_REDO3_SWATCHDB0001 
+
+
+for i in ${cat discos.txt}
+do
+kfed read $i | grep -i grpname
+done
+
+asmcmd
+--ver todos los discos
+lsdg
+cd --entrar al diskgroup
+ls --para ver las bases de datos
+
+
+
+--Servidores viejos que no tienen grid
+. oraenv
+ORACLE_SID = [oracle11] ? +ASM
+
+---   sqlplus / as sysasm
+	
+-- discos_candidatos o former/member:
+	
+
+set lines 400
+COLUMN header_status FORMAT a25
+COLUMN path FORMAT a30
+COLUMN name FORMAT a20
+SELECT inst_id, header_status, path, state, OS_MB, create_date 
+FROM gv$asm_disk
+WHERE header_status = 'CANDIDATE' and inst_id =1
+ORDER BY path;
+
+
+set lines 400
+COLUMN header_status FORMAT a25
+COLUMN path FORMAT a45
+COLUMN name FORMAT a20
+SELECT inst_id, header_status, path, state, OS_MB, create_date 
+FROM gv$asm_disk
+WHERE header_status = 'PROVISIONED'
+ORDER BY path;
+
+
+set lines 400
+COLUMN header_status FORMAT a25
+COLUMN path FORMAT a30
+COLUMN name FORMAT a20
+SELECT inst_id, header_status, path, state, OS_MB, create_date 
+FROM gv$asm_disk
+WHERE header_status = 'MEMBER' and inst_id = 1
+ORDER BY path;
+
+
+set lines 400
+COLUMN header_status FORMAT a25
+COLUMN path FORMAT a40
+COLUMN name FORMAT a20
+SELECT inst_id, name, header_status, path, state, OS_MB, create_date 
+FROM gv$asm_disk
+WHERE header_status = 'FORMER' 
+ORDER BY path;
+
+
+
+
+
+----Verificar a que pertenecen las etiquetas AFD
+
+set line 300
+col DISK_PATH format a40
+SELECT
+  d.name AS DISKGROUP_NAME,
+  d.path AS DISK_PATH
+FROM
+  v$asm_disk d;
+WHERE
+  d.label = 'DG_DATA_PRTLDPP0002';
+
+
+SELECT
+  DISTINCT g.NAME AS DISKGROUP_NAME,
+  (SELECT COUNT(1) FROM GV$ASM_DISK d WHERE d.GROUP_NUMBER = g.GROUP_NUMBER) AS DISK_COUNT,
+  g.FREE_MB,
+  g.TOTAL_MB,
+  ROUND((1 - (g.FREE_MB / g.TOTAL_MB)) * 100, 2) AS PCT_USED
+FROM
+  GV$ASM_DISKGROUP g
+ORDER BY
+  g.NAME;
+
+
+
+set lines 300
+COLUMN name FORMAT a20
+SELECT inst_id, name, total_mb, cold_used_mb "USED_MB", free_mb, usable_file_mb "USABLE_MB", state, round((cold_used_mb*100)/total_mb, 2) "%USED", round((free_mb*100)/total_mb, 2) "%FREE"
+FROM gv$asm_diskgroup
+WHERE name like 'DATA'
+--OR name like '%'
+--WHERE name = 'FRA'
+ORDER BY 1;
+
+
+
+
+
+---Estar pendiente de los discos que estas agregando al script para que no haya errores.
+Script para agregar los discos al DG:
+													Para saber que nombre le corresponde a los discos que van a ser agregados
+													entrar a TOAD - DATABASE - ADMINISTER - ASM MANAGER
+	
+
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM3' NAME DATA_0025 REBALANCE POWER 20;
+
+ALTER DISKGROUP DG_DATA_SWATCHDB ADD DISK '/dev/rdsk/c1d169s6' NAME DG_DATA_SWATCHDB01 REBALANCE POWER 20;
+ALTER DISKGROUP DG_DATA ADD DISK '/dev/rdsk/c0d43s6' NAME DG_DATA_ REBALANCE POWER 10;
+
+
+DG_DATA_SWATCHDB00
+
+ALTER DISKGROUP DG_DATA_BDVRELP ADD DISK 
+'/dev/rdsk/c1d420s6' NAME DG_DATA_BDVRELP_0041,
+'/dev/rdsk/c1d421s6' NAME DG_DATA_BDVRELP_0042,
+'/dev/rdsk/c1d422s6' NAME DG_DATA_BDVRELP_0043,
+REBALANCE POWER 20;
+
+
+ALTER DISKGROUP DG_DATA_CCENLNH ADD DISK
+  '/dev/rdsk/c1d102s6' NAME DG_DATA_CCENLNH_N01
+, '/dev/rdsk/c1d103s6' NAME DG_DATA_CCENLNH_N02
+, '/dev/rdsk/c1d104s6' NAME DG_DATA_CCENLNH_N03
+, '/dev/rdsk/c1d105s6' NAME DG_DATA_CCENLNH_N04
+, '/dev/rdsk/c1d106s6' NAME DG_DATA_CCENLNH_N05
+, '/dev/rdsk/c1d107s6' NAME DG_DATA_CCENLNH_N06
+, '/dev/rdsk/c1d108s6' NAME DG_DATA_CCENLNH_N07
+, '/dev/rdsk/c1d109s6' NAME DG_DATA_CCENLNH_N08
+, '/dev/rdsk/c1d110s6' NAME DG_DATA_CCENLNH_N09
+, '/dev/rdsk/c1d111s6' NAME DG_DATA_CCENLNH_N10
+, '/dev/rdsk/c1d112s6' NAME DG_DATA_CCENLNH_N11
+, '/dev/rdsk/c1d113s6' NAME DG_DATA_CCENLNH_N12
+, '/dev/rdsk/c1d114s6' NAME DG_DATA_CCENLNH_N13
+REBALANCE POWER 20;
+
+
+
+
+ALTER DISKGROUP DG_REDO1_CCENLNH ADD DISK
+'/dev/rdsk/c1d127s6' NAME DG_REDO1_CCENLNH_N1
+REBALANCE POWER 20;
+
+ALTER DISKGROUP DG_REDO2_CCENLNH ADD DISK
+'/dev/rdsk/c1d128s6' NAME DG_REDO2_CCENLNH_N1
+REBALANCE POWER 20;
+
+--mostrar la operacion de rebalanceo
+SET LINE 500
+SELECT * FROM GV$ASM_OPERATION;
+
+
+
+--Agregar discos
+
+DISK_ASM0033
+
+
+
+ALTER DISKGROUP DG_DATA_PAGOFP ADD DISK '/dev/rdsk/c1d344s6' NAME PWDATA_PAGOFP_032 REBALANCE POWER 20;
+
+
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_DATA023' NAME DATA_0022 REBALANCE POWER 20;
+
+ALTER DISKGROUP DG_DATA ADD DISK '/dev/rdsk/c1d34s6' NAME DG_DATA_0002 REBALANCE POWER 20;
+ALTER DISKGROUP DG_DATA ADD DISK '/dev/rdsk/c1d35s6' NAME DG_DATA_0003 REBALANCE POWER 20;
+
+
+ALTER DISKGROUP DG_DATA_BDUGQ ADD DISK '/dev/rdsk/emcpower9g' NAME DG_DATA_BDUGQ_001 REBALANCE POWER 20;
+
+ALTER DISKGROUP DG_DATA_REGCHQQ ADD DISK '/dev/rdsk/emcpower45g' NAME DG_DATA_REGCHQQ_000 REBALANCE POWER 20;
+ALTER DISKGROUP DG_DATA_REGCHQQ ADD DISK '/dev/rdsk/emcpower47g' NAME DG_DATA_REGCHQQ_001 REBALANCE POWER 20;
+
+
+ALTER DISKGROUP DG_DATA_SNIF01 ADD DISK '/dev/rdsk/emcpower44g' NAME DG_DATA_SNIF01_001 REBALANCE POWER 20;
+
+ALTER DISKGROUP DG_DATA_INFIQ ADD DISK '/dev/rdsk/emcpower7g' NAME DG_DATA_INFIQ_001 REBALANCE POWER 20;
+
+ALTER DISKGROUP DG_DATACOE ADD DISK '/dev/rdsk/emcpower8g' NAME DG_DATACOE_001 REBALANCE POWER 20;
+
+ALTER DISKGROUP DG_INDEX_SNIF01 ADD DISK '/dev/rdsk/emcpower188g' NAME DG_INDEX_SNIF01_000 REBALANCE POWER 20;
+
+
+ALTER DISKGROUP DG_DATA_CYCLOPSP ADD DISK '/dev/rdsk/c1d324s6' NAME PW_DATA_059 REBALANCE POWER 20;
+
+ALTER DISKGROUP DATA_DCSP ADD DISK '/dev/oracleasm/disks/DISK_ASM00140' NAME DISK_ASM00140 REBALANCE POWER 20;
+
+ALTER DISKGROUP DATA_TRZSP ADD DISK '/dev/oracleasm/disks/DISK_ASM00139' NAME DISK_ASM0038 REBALANCE POWER 20;
+ALTER DISKGROUP DATA_TRZSP ADD DISK '/dev/oracleasm/disks/DISK_ASM00128' NAME DISK_ASM00128 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00040' NAME DATA_00040 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00041' NAME DATA_00041 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00042' NAME DATA_00042 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00043' NAME DATA_00043 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00044' NAME DATA_00044 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00045' NAME DATA_00045 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00046' NAME DATA_00046 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00047' NAME DATA_00047 REBALANCE POWER 20;
+
+
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00048' NAME DATA_00048 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00049' NAME DATA_00049 REBALANCE POWER 20;
+
+
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_DATA029' NAME DATA_0028 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_DATA030' NAME DATA_0029 REBALANCE POWER 20;
+
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00057' NAME DATA_00057 REBALANCE POWER 20;
+
+
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00058' NAME DATA_00058 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00059' NAME DATA_00059 REBALANCE POWER 20;
+
+
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00100' NAME DATA_00100 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00101' NAME DATA_00101 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00102' NAME DATA_00102 REBALANCE POWER 20;
+ALTER DISKGROUP DATA ADD DISK '/dev/oracleasm/disks/DISK_ASM_DATA_00103' NAME DATA_00103 REBALANCE POWER 20;
+
+
+ALTER DISKGROUP REDO01 DROP DISK 'REDO01_0000' REBALANCE POWER 20;
+
+
+
+ALTER DISKGROUP DG_DATA_SNIF01 ADD DISK '/dev/rdsk/emcpower40g' NAME DG_DATA_SNIF01_0005 REBALANCE POWER 20;
+
+ALTER DISKGROUP DG_DATA_SNIF01 ADD DISK '/dev/rdsk/emcpower42g' NAME DG_DATA_SNIF01_0007 REBALANCE POWER 20;
+
+
+
+
+
+--ELIMINAR DISCOS
+ALTER DISKGROUP FRA DROP DISK 'FRA_0000' REBALANCE POWER 20;
+ALTER DISKGROUP FRA DROP DISK 'FRA_0001' REBALANCE POWER 20;
+ALTER DISKGROUP FRA DROP DISK 'FRA_0002' REBALANCE POWER 20;
+
+
+ALTER DISKGROUP MGMT DROP DISK 'MGMT_0000' REBALANCE POWER 20;
+ALTER DISKGROUP OCRVOTE DROP DISK 'OCRVOTE_0000' REBALANCE POWER 20;
+
+
+for i in $(cat data_discos.txt | awk '{print$1}') ; do multipath -ll |grep $i; done
+for i in $(cat data_discos.txt | awk '{print$1}') ; do echo $i; done
+for i in $(cat data_discos.txt) ; do lsblk -fm |grep $i |grep -v none | sort -u -k 3 | awk '{print$1,$3,$4}' >> cruceDformer.txt; done
+for i in $(cat data_discos.txt) ; do lsblk -fm |grep $i |grep -v none | sort -u -k 3 | awk '{print$1,$3}' >> cruceDformer.txt; done
+for i in $(cat data_discos.txt | sort -u) ; do lsblk -fm | grep $i | grep -v none | awk '{print $1,$3}'; done | sort -u
+
+/*
+1. for i in $(cat data_discos.txt)
+cat data_discos.txt: Este comando lee el contenido del archivo data_discos.txt. Se espera que este archivo contenga una lista de identificadores de discos o nombres de dispositivos, uno por línea.
+$(...): La sustitución de comandos permite capturar la salida del comando cat y usarla como una lista en el bucle for.
+for i in ...: Inicia un bucle que itera sobre cada elemento (cada línea) del archivo.
+2. lsblk -fm
+lsblk -fm: Este comando lista los dispositivos de bloque y muestra información sobre ellos, incluyendo el sistema de archivos y el punto de montaje, en un formato fácil de leer.
+3. | grep $i
+|: El operador de tubería (|) toma la salida del comando anterior (lsblk -fm) y la envía como entrada al siguiente comando.
+grep $i: Filtra la salida para mostrar solo las líneas que contienen el valor actual de i (el nombre del dispositivo o identificador leído del archivo).
+4. | grep -v none
+grep -v none: Filtra las líneas que contienen "none", excluyendo aquellas que no tienen un punto de montaje.
+5. | sort -u -k 3
+sort -u -k 3: Ordena la salida y elimina duplicados (-u), utilizando la tercera columna (-k 3) como clave de ordenación. Esto es útil para asegurarse de que solo se muestren entradas únicas basadas en el punto de montaje.
+6. | awk '{print $1,$3}'
+awk '{print $1,$3}': Utiliza awk para imprimir la primera y la tercera columna de la salida filtrada, que generalmente corresponden al nombre del dispositivo y al punto de montaje, respectivamente.
+*/
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. Comando: for i in $(cat data_discos.txt | awk '{print$1}') ; do multipath -ll | grep $i; done
+/*
+for i in $(cat data_discos.txt | awk '{print$1}'):
+Lee el archivo data_discos.txt y extrae la primera columna (aunque en este caso, todo el contenido es una sola columna). Para cada línea, asigna el valor a la variable i.
+multipath -ll:
+Este comando muestra la información de los dispositivos de almacenamiento multipath. Es útil para ver cómo se configuran los dispositivos de almacenamiento redundantes.
+| grep $i:
+Filtra la salida de multipath -ll para mostrar solo las líneas que contienen el valor actual de i, que corresponde a un disco específico.
+*/
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2. Comando: for i in $(cat data_discos.txt | awk '{print$1}') ; do echo $i; done
+/*
+for i in $(cat data_discos.txt | awk '{print$1}'):
+
+Similar al anterior, itera sobre cada línea del archivo.
+echo $i:
+
+Simplemente imprime el valor de i. Este comando genera una lista de todos los discos en data_discos.txt */
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3. Comando: for i in $(cat data_discos.txt) ; do lsblk -fm | grep $i | grep -v none | sort -u -k 3 | awk '{print$1,$3,$4}' >> cruceDformer.txt; done
+
+/*for i in $(cat data_discos.txt):
+
+Itera sobre cada línea del archivo, asignando cada disco a i.
+lsblk -fm:
+
+Lista los dispositivos de bloque y su información.
+| grep $i:
+
+Filtra la salida para mostrar solo las líneas que contienen el nombre del dispositivo actual.
+| grep -v none:
+
+Excluye las líneas que no tienen un punto de montaje.
+| sort -u -k 3:
+
+Ordena la salida y elimina duplicados basándose en la tercera columna (punto de montaje).
+| awk '{print$1,$3,$4}':
+
+Imprime la primera, tercera y cuarta columna (nombre del dispositivo, punto de montaje y tipo de sistema de archivos).
+>> cruceDformer.txt:
+Redirige la salida al archivo cruceDformer.txt, añadiendo la información de cada disco.*/
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4. Comando: for i in $(cat data_discos.txt) ; do lsblk -fm | grep $i | grep -v none | sort -u -k 3 | awk '{print$1,$3}' >> cruceDformer.txt; done
+--Este comando es muy similar al anterior, pero solo imprime la primera y la tercera columna (nombre del dispositivo y punto de montaje) en cruceDformer.txt.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+5. Comando: for i in $(cat data_discos.txt | sort -u) ; do lsblk -fm | grep $i | grep -v none | awk '{print $1,$3}'; done | sort -u
+/*
+for i in $(cat data_discos.txt | sort -u):
+
+Lee el archivo y elimina duplicados antes de iterar sobre él.
+lsblk -fm | grep $i | grep -v none | awk '{print $1,$3}':
+
+Similar a los anteriores, obtiene información sobre el dispositivo actual.
+| sort -u:
+
+Finalmente, ordena la salida y elimina cualquier duplicado, asegurando que solo se muestren dispositivos únicos.
+Resumen de Puntos Comunes
+Lectura del Archivo: Todos los comandos utilizan cat data_discos.txt para leer los nombres de los discos.
+Filtrado y Procesamiento: La mayoría de los comandos filtran la salida de lsblk para obtener información relevante sobre los dispositivos.
+Redirección de Salida: Algunos comandos redirigen la salida a cruceDformer.txt, mientras que otros simplemente muestran la información en la terminal.
+Eliminación de Duplicados: Se utilizan varias técnicas (como sort -u) para asegurar que la salida no contenga entradas duplicadas.
+*/
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+

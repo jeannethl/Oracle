@@ -1,0 +1,196 @@
+
+###### APLICACION DE PARCHE ---->> 34672698
+################################################ Oracle19.25
+
+-----------------------------------------------
+-- Descomprimir parche, permisologia
+
+unzip -q p34672698_1925000DBRU_Linux-x86-64.zip 
+chmod -R 777 34672698/
+
+-----------------------------------------------
+
+Con usuario ORACLE19 
+
+		$ORACLE_HOME/OPatch/opatch lsinventory -detail -oh $ORACLE_HOME
+
+Con usuario GRID
+
+		$ORACLE_HOME/OPatch/opatch lsinventory -detail -oh $ORACLE_HOME
+
+----------------------------------------------------
+
+
+
+export UNZIPPED_PATCH_LOCATION=/exportdb/parches
+
+usuario grid
+		
+		export UNZIPPED_PATCH_LOCATION=/exportdb/parches
+		export PATH=$PATH:/oracle/app/product/19c/grid/OPatch
+
+		cd $UNZIPPED_PATCH_LOCATION/34672698
+    	opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+
+usuario oracle19
+		export UNZIPPED_PATCH_LOCATION=/exportdb/parches
+		export PATH=$PATH:/oracle/app/oracle19/product/19c/db1/OPatch
+
+    	cd $UNZIPPED_PATCH_LOCATION/34672698
+    	opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+
+-------DESINSTALAR EL PARCHE 37234122  Patch 37234122: RMAN BACKUP SLOWNESS WITH DNFS ON 19.24 DBRU
+
+
+Con root
+/oracle/app/product/19c/grid/bin/crsctl stop has
+
+Con oracle
+/oracle/app/oracle19/product/19c/db1/OPatch/opatch rollback -id 37234122 
+
+Con root
+/oracle/app/product/19c/grid/bin/crsctl start has
+
+----------------------------------------------------
+
+usuario oracle19
+		
+		export UNZIPPED_PATCH_LOCATION=/exportdb/parches
+		export PATH=$PATH:/oracle/app/oracle19/product/19c/db1/OPatch
+
+
+    $ cd $UNZIPPED_PATCH_LOCATION/34672698
+    $ opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+----------------------------------------------------
+
+
+
+SHUTDOWN BD AND CRS
+
+Usuario root
+
+		/oracle/app/product/19c/grid/bin/crsctl stop has
+
+***********************************************************************************
+----------------- PRE-ROOT SCRIPT
+***********************************************************************************
+Usuario root
+
+
+		    /oracle/app/product/19c/grid/crs/install/roothas.sh -prepatch 
+
+
+
+***********************************************************************************
+---------------- INSTALACION DEL PATCH
+***********************************************************************************
+
+Usuario root
+
+1) Cambio de permisos en la ruta:
+
+	ls -ld /oracle/app/product/19c/grid/bin/oradism 
+
+	chown grid /oracle/app/product/19c/grid/bin/oradism
+    chmod 0750 /oracle/app/product/19c/grid/bin/oradism
+
+	ls -ld /oracle/app/product/19c/grid/bin/oradism 
+
+
+Usuario grid
+
+2. Apply Patch to Grid Home as GI home owner :
+
+export UNZIPPED_PATCH_LOCATION=/exportdb/parches
+
+$ORACLE_HOME/OPatch/opatch apply -oh $ORACLE_HOME -local $UNZIPPED_PATCH_LOCATION/34672698
+
+
+**************
+
+Usuario root
+
+A) Cambio de permisos en la ruta:
+
+	ls -ld /oracle/app/oracle19/product/19c/db1/bin/oradism
+
+	chown oracle19 /oracle/app/oracle19/product/19c/db1/bin/oradism
+    chmod 0750 /oracle/app/oracle19/product/19c/db1/bin/oradism
+
+	ls -ld /oracle/app/oracle19/product/19c/db1/bin/oradism
+
+
+Usuario oracle19
+
+1. Apply Patch to Grid Home as GI home owner :
+
+export UNZIPPED_PATCH_LOCATION=/exportdb/parches
+
+$ORACLE_HOME/OPatch/opatch apply -oh $ORACLE_HOME -local $UNZIPPED_PATCH_LOCATION/34672698
+
+
+***********************************************************************************
+------------------- POST PATCH
+***********************************************************************************
+
+2. Verify whether the patch has been successfully installed by running the following command:
+
+Usuario grid 
+
+   $ORACLE_HOME/OPatch/opatch lsinventory -oh $ORACLE_HOME
+   $ORACLE_HOME/OPatch/opatch util listorderedinactivepatches
+ 
+Usuario oracle
+
+   $ORACLE_HOME/OPatch/opatch lsinventory -oh $ORACLE_HOME
+   $ORACLE_HOME/OPatch/opatch util listorderedinactivepatches
+
+
+
+3. Devolver los permisos al oradism  
+
+		
+		a) Cambio de permisos en la ruta HOME de ORACLE19:
+		
+			ls -ld /oracle/app/oracle19/product/19c/db1/bin/oradism
+		
+			chown root /oracle/app/oracle19/product/19c/db1/bin/oradism
+		    chmod 4750 /oracle/app/oracle19/product/19c/db1/bin/oradism
+		
+			ls -ld /oracle/app/oracle19/product/19c/db1/bin/oradism
+
+
+
+
+
+		b) Cambio de permisos en la ruta HOME de GRID:
+		
+			ls -ld /oracle/app/product/19c/grid/bin/oradism 
+		
+			chown root /oracle/app/product/19c/grid/bin/oradism
+    		chmod 4750 /oracle/app/product/19c/grid/bin/oradism
+		
+			ls -ld /oracle/app/product/19c/grid/bin/oradism 
+
+
+4. Run the post script as a root user from the Oracle home of Oracle Grid Infrastructure:
+
+Usuario root
+
+		/oracle/app/product/19c/grid/crs/install/roothas.sh -postpatch
+
+
+5. Iniciar servicios.
+
+
+
+
+
+
+
+
+
+--$ORACLE_HOME/OPatch/opatch lsinventory -oh $ORACLE_HOME | grep -A10 34672698

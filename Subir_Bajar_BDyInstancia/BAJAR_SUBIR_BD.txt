@@ -1,0 +1,67 @@
+
+SCRIPT PARA SUBIR BD
+
+Las fases de una base de datos:
+NOMOUNT: La instancia está iniciada, pero no hay base de datos asociada.
+MOUNT: La base de datos está montada, pero no está accesible.
+OPEN: La base de datos está abierta y disponible para operaciones.
+
+-----------------------------------------------------------
+
+ENTRAR AL SERVIDOR DE BD 
+	ssh usuario@servidor.dominio
+	ssh usuario@dirección_Ip
+
+
+VER LOS PROCESOS EN EJECUCION | FILTRANDO pmon/smon 
+	ps -fea | grep pmon/smon
+	ps -fe | grep -i local=no
+
+VERIFICAR QUE BD ESTAS SETIADA 
+	echo $ORACLE_SID
+
+
+SI NO ESTA SETEADA  
+	export ORACLE_SID=
+	
+
+LUEGO ENTRAR A LA BD
+	sqlplus/ as sysdba
+
+
+VER STATUS
+
+	select instance_name, host_name, status, database_status from v$instance;
+
+
+	set lin 3000
+	select * from v$instance; -> te muestra todas las intancias 	
+
+
+SI ES NECESARIO SE MODIFICA | SI NO ESTA EN OPEN
+	alter database open;
+
+
+----------------------------------------------------------
+
+
+sqlplus/ as sysdba
+
+alter system switch logfile;
+
+alter system checkpoint;
+
+shutdown immediate; - Bajar la BD
+
+startup NOMOUNT
+startup MOUNT    - Subir la BD
+startup;
+
+
+
+#RMAN11
+180.183.242.4 plrmorabd01 plrmorabd01.banvenez.corp
+
+ 
+	
+	

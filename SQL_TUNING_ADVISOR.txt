@@ -11,10 +11,13 @@ https://dbaclass.com/article/how-to-run-sql-tuning-advisor-for-a-sql_id/
 https://docs.oracle.com/en/database/oracle/oracle-database/19/tgsql/sql-tuning-advisor.html#GUID-8B77491E-9E9A-4E44-9F2A-DFA164C4B074
 http://www.br8dba.com/tag/manually-run-sql-advisor/
 
+---------------------------------------------------------------------------------------------------
+
 
 PARA ESTE EJEMPLO EL SQLID ES EL 87s8z2zzpsg88, obtenido con:
 
 select sid, serial#, sql_id, event from v$session where username='SH';
+
 
 
 1. Crear el Tuning TASK
@@ -23,20 +26,19 @@ DECLARE
 l_sql_tune_task_id VARCHAR2(100);
 BEGIN
 l_sql_tune_task_id := DBMS_SQLTUNE.create_tuning_task (
-sql_id => 'gmdwfq494qq4s',
+sql_id => '3k2yxc721x8y',
 scope => DBMS_SQLTUNE.scope_comprehensive,
 time_limit => 20000,
-task_name => 'gmdwfq494qq4s_tuning_task01',
-description => 'Tuning task1 for statement gmdwfq494qq4s');
+task_name => '3k2yxc721x8y_tuning_task01',
+description => 'Tuning task1 for statement 3k2yxc721x8y');
 DBMS_OUTPUT.put_line('l_sql_tune_task_id: ' || l_sql_tune_task_id);
 END;
 /
 
 
-
 2. EJECUTAR EL TUNING TASK
 
-EXEC DBMS_SQLTUNE.execute_tuning_task(task_name => 'gmdwfq494qq4s_tuning_task01');
+EXEC DBMS_SQLTUNE.execute_tuning_task(task_name => '3k2yxc721x8y_tuning_task01');
 
 
 3. OBTENER EL REPORTE DEL TUNING ADVISOR
@@ -45,7 +47,7 @@ set long 65536
 set longchunksize 65536
 set linesize 240
 set pagesize 500
-select dbms_sqltune.report_tuning_task('gmdwfq494qq4s_tuning_task01') from dual;
+select dbms_sqltune.report_tuning_task('3k2yxc721x8y_tuning_task01') from dual;
 
 
 
@@ -104,7 +106,7 @@ SELECT DBMS_SQLTUNE.REPORT_TUNING_TASK( 'TASK_TEST02') FROM DUAL;
 
 
 
-k3r3p4kup41
+
 
 
 --------------------------------------------------------------------------------
@@ -173,36 +175,3 @@ WHERE ( (TASK_NAME = 'SYS_AUTO_SQL_TUNING_TASK')  AND
        ( (PARAMETER_NAME LIKE '%PROFILE') OR
         (PARAMETER_NAME = 'LOCAL_TIME_LIMIT') OR
         (PARAMETER_NAME = 'EXECUTION_DAYS_TO_EXPIRE') ) );
-
-
-
-SELECT T.SQL_ID
-     ,S.SNAP_ID
-     ,S.INSTANCE_NUMBER
-     ,S.MODULE
-     ,S.ACTION   
-     ,(SN.BEGIN_INTERVAL_TIME) BEGIN_INTERVAL_TIME 
-     ,(SN.END_INTERVAL_TIME) END_INTERVAL_TIME
-     ,(CAST (DBMS_LOB.SUBSTR (T.SQL_TEXT, 2000) AS NVARCHAR2 (2000)))   SQL_TEXT
-     ,(S.EXECUTIONS_DELTA)                                              EXECUTIONS
-     ,(S.ELAPSED_TIME_DELTA)                                            ELAPSED_TIME 
-     ,s.rows_processed_total 
-     ,s.rows_processed_delta 
-     --,dhsp.TIMESTAMP
-FROM DBA_HIST_SQLSTAT S
-    ,DBA_HIST_SQLTEXT T
-    ,DBA_HIST_SNAPSHOT SN
-    --,dba_hist_sql_plan dhsp
-WHERE T.SQL_ID = S.SQL_ID 
- AND S.SNAP_ID = SN.SNAP_ID
- AND S.INSTANCE_NUMBER=SN.INSTANCE_NUMBER
- AND S.DBID=SN.DBID
- AND t.sql_id = '6g13fyg13qbk2'
---  AND SN.BEGIN_INTERVAL_TIME >= SYSDATE  -(49/24) 
---  AND SN.END_INTERVAL_TIME <= SYSDATE
- --and upper(t.SQL_TEXT) like '%DELETE%E2CPDESE%';
- --and dhsp.sql_id= t.sql_id
---ORDER BY ELAPSED_TIME DESC;
-
-
-show parameter cpu

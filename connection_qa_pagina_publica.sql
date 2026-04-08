@@ -1,0 +1,1 @@
+kubectl exec -it -n portal mariadb-wordpress-856b5d7b4f-6pt6r -- mysql  -uroot --password=maria7aral8 wordpress_qa

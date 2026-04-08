@@ -1,0 +1,38 @@
+System expirado
+
+----------------------------- CONSOLA --------------------------------------
+
+1.- Consultamos el status del usuario.
+
+set linesize 400
+set pagesize 300
+col username format a40
+col account_status format a30
+select username, account_status,LOCK_DATE,EXPIRY_DATE from dba_users
+--where account_status='LOCKED';
+--where username like '%nm%'
+order by 1 asc; 
+
+
+2.- Si queremos modificar el password
+
+	alter user CATALOGOD identified by "Catalogo25$.";
+
+
+
+alter user PAGOF identified by "hist_temporal";
+
+
+
+CREATE TABLESPACE INDX DATAFILE '+DATA' SIZE 5G AUTOEXTEND ON NEXT 2G MAXSIZE 32767M;
+
+
+create tablespace AUDIT_TBS datafile '+DATA/auditts.dbf' size 100M autoextend on next 2G MAXSIZE 32767M;
+
+
+SELECT username, account_status, authentication_type 
+FROM dba_users 
+WHERE username = 'COMPENSEC';
+
+
+ALTER USER SYS IDENTIFIED BY bqsmt7aral8;

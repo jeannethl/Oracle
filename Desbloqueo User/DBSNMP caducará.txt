@@ -1,0 +1,49 @@
+DBSNMP caducará
+
+Cambiar la Clave de DBSNMP: geradmon
+
+------------------------- TOAD --------------------------------------------
+
+1. Schema Browser
+2. System
+3. User
+4. Buscar Usuario
+5. Alter User
+6. Cambiar contraseña: geradmon
+
+select USERNAME,ACCOUNT_STATUS,EXPIRY_DATE,PROFILE from dba_users where USERNAME='DBSNMP';
+select USERNAME,ACCOUNT_STATUS,EXPIRY_DATE,PROFILE from dba_users ORDER BY 1;
+
+
+
+----------------------------- CONSOLA --------------------------------------
+
+1.- Consultamos el status del usuario.
+
+set linesize 400
+set pagesize 300
+col username format a40
+col account_status format a30
+select username, account_status,LOCK_DATE,EXPIRY_DATE from dba_users
+--where account_status='OPEN'
+where username like '%DBSNMP%'
+order by 1 asc; 
+
+
+2.- Si queremos modificar el password
+
+	alter user DBSNMP identified by "geradmon";
+	alter user RMAND identified by "rmanexport";
+	
+
+ALTER USER DEV_WLS_RUNTIME EXPIRY_DATE TO DATE '2026-10-01';
+
+
+set linesize 400
+set pagesize 300
+col username format a40
+col account_status format a30
+select username, account_status,LOCK_DATE,EXPIRY_DATE from dba_users
+--where account_status='OPEN'
+where username like '%RMAND%'
+order by 1 asc; 

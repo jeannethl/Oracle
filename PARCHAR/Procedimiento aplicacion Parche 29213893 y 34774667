@@ -1,0 +1,157 @@
+#### Procedimiento aplicacion Parche 29213893
+
+1) Asegurarse de tener instalado las versiones Oracle Database 19 Release 19.25.0.0.241015DBRU
+X) Asegurese que tiene instalado Release 19.25.0.0.241015DBRU Patch Set Update (PSU) 36912597 esta instalado en Oracle.
+
+Usuario oracle (Todos los nodos)
+
+	$ORACLE_HOME/OPatch/opatch lspatches		
+
+
+3) Asegurese de que tenga los Opatch. 
+
+Usuario oracle(Todos los nodos)
+
+	$ORACLE_HOME/OPatch/opatch version
+
+4) LSINVENTORY
+
+Usuarios oracle
+
+	$ORACLE_HOME/OPatch/opatch lsinventory >> /tmp/OPatchInventory_ORACLE_27032025.txt
+
+	cat /tmp/OPatchInventory_ORACLE_27032025.txt
+
+-----------------------------------------------
+-- Descomprimir parche, permisologia
+
+unzip -q p29213893_1925000DBRU_Generic.zip
+chmod -R 777 29213893/
+
+--- Validar que los permisos estan correctos (solicitud de jessika)
+
+ls -ltrR 29213893/ 
+
+
+----------------------------------------------
+---- PRE-PATCH
+
+Usuario Oracle
+
+	export UNZIPPED_PATCH_LOCATION=/exportdb/parches
+	export PATH=$PATH:/oracle/app/product/19c/grid/OPatch
+	
+	cd $UNZIPPED_PATCH_LOCATION/29213893
+	opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+	
+
+---------------------------------------------
+---- APPLY
+
+
+Usuario Oracle
+
+	export UNZIPPED_PATCH_LOCATION=/exportdb/parches
+	export PATH=$PATH:/oracle/app/product/19c/grid/OPatch
+	
+	cd $UNZIPPED_PATCH_LOCATION/29213893
+
+	opatch apply
+	opatch lsinventory
+
+---------------------------------------------
+---- POST-PATCH
+
+Usuario Oracle
+
+	$ORACLE_HOME/OPatch/datapatch
+
+
+---------------------------------------------
+-- Validar parchado
+
+$ORACLE_HOME/OPatch/opatch lspatches
+
+
+
+*****************************************************************************
+*****************************************************************************
+
+#### Procedimiento aplicacion Parche 34774667
+
+
+
+
+4) LSINVENTORY
+
+Usuarios oracle
+
+	$ORACLE_HOME/OPatch/opatch lsinventory >> /tmp/OPatchInventory_ORACLE_27032025_34774667.txt
+
+	cat /tmp/OPatchInventory_ORACLE_13032025_34774667.txt
+
+-----------------------------------------------
+-- Descomprimir parche, permisologia
+
+unzip -q p34774667_1925000DBRU_Linux-x86-64
+chmod -R 777 34774667/
+
+--- Validar que los permisos estan correctos (solicitud de jessika)
+
+ls -ltrR 34774667/ 
+
+
+----------------------------------------------
+---- PRE-PATCH
+
+Usuario Oracle
+
+	export UNZIPPED_PATCH_LOCATION=/exportdb/parches
+	export PATH=$PATH:/oracle/app/product/19c/grid/OPatch
+	
+	cd $UNZIPPED_PATCH_LOCATION/34774667
+	opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+	
+
+
+Bajar Los servicios TODOS (database, ASM, listeners, nodeapps, and CRS daemons)
+
+Con root
+/oracle/app/product/19c/grid/bin/crsctl stop has
+
+
+-- Validar que todo bajo correctamente.
+
+---------------------------------------------
+---- APPLY
+
+
+Usuario Oracle
+
+	export UNZIPPED_PATCH_LOCATION=/exportdb/parches
+	export PATH=$PATH:/oracle/app/product/19c/grid/OPatch
+	
+	cd $UNZIPPED_PATCH_LOCATION/34774667
+
+	opatch apply -local
+	opatch lsinventory
+
+
+
+Subir Los servicios TODOS (database, ASM, listeners, nodeapps, and CRS daemons)
+
+Con root
+/oracle/app/product/19c/grid/bin/crsctl start has
+
+---------------------------------------------
+---- POST-PATCH
+
+Usuario Oracle
+
+	$ORACLE_HOME/OPatch/datapatch
+
+
+---------------------------------------------
+-- Validar parchado
+
+$ORACLE_HOME/OPatch/opatch lspatches

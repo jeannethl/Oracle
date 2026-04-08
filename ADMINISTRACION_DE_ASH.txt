@@ -1,0 +1,231 @@
+ADMINISTRACION_DE_ASH.txt
+////////////////////////////////////////////
+//  	   ADMINISTRACION DE ASH
+//         PROBADO EN ORACLE 19C
+//           ADSI DBA-TEAM
+//     YOSDUAR RANGEL-ALIUSKA PEÑA
+////////////////////////////////////////////
+
+
+76fxznczqskp8
+
+  9up7nh6qm2yg1
+
+
+--- Ejecutar el ASH 
+
+sqlplus / as sysdba
+
+SQL> @$ORACLE_HOME/rdbms/admin/ashrpt.sql
+
+Para cluster:
+
+SQL> @$ORACLE_HOME/rdbms/admin/ashrpti.sql
+
+
+--- Determinar los sql_id en un intervalo de tiempo especificado
+
+select a.sql_id, sample_time 
+  from dba_hist_active_sess_history a, dba_hist_sqltext b
+ where sample_time between to_date('20220809:18:00','yyyymmdd:hh24:mi')
+   and to_date('20220809:18:15','yyyymmdd:hh24:mi') and b.sql_id=a.sql_id
+ order by 2;
+
+
+--- Consulta el pga, sga y tiempo de ejecucion de un query por SQL_ID 
+
+select sql_id,
+      starting_time,
+      end_time,
+ (EXTRACT(HOUR FROM run_time) * 3600
+                    + EXTRACT(MINUTE FROM run_time) * 60
+                    + EXTRACT(SECOND FROM run_time)) run_time_sec,
+      READ_IO_BYTES,
+      PGA_ALLOCATED PGA_ALLOCATED_BYTES,
+      TEMP_ALLOCATED TEMP_ALLOCATED_BYTES
+from  (
+select
+       sql_id,
+       max(sample_time - sql_exec_start) run_time,
+       max(sample_time) end_time,
+       sql_exec_start starting_time,
+       sum(DELTA_READ_IO_BYTES) READ_IO_BYTES,
+       sum(DELTA_PGA) PGA_ALLOCATED,
+       sum(DELTA_TEMP) TEMP_ALLOCATED
+       from
+       (
+       select sql_id,
+       sample_time,
+       sql_exec_start,
+       DELTA_READ_IO_BYTES,
+       sql_exec_id,
+       greatest(PGA_ALLOCATED - first_value(PGA_ALLOCATED) over (partition by sql_id,sql_exec_id order by sample_time rows 1 preceding),0) DELTA_PGA,
+       greatest(TEMP_SPACE_ALLOCATED - first_value(TEMP_SPACE_ALLOCATED) over (partition by sql_id,sql_exec_id order by sample_time rows 1 preceding),0) DELTA_TEMP
+       from
+       dba_hist_active_sess_history
+       where
+       sample_time >= to_date ('2022/08/09 00:00:00','YYYY/MM/DD HH24:MI:SS')
+       and sample_time < to_date ('2022/08/09 19:00:00','YYYY/MM/DD HH24:MI:SS')
+       and sql_exec_start is not null
+       and IS_SQLID_CURRENT='Y'
+       )
+group by sql_id,SQL_EXEC_ID,sql_exec_start
+order by sql_id
+)
+where sql_id = '9sbfnkrgyxq32'
+order by sql_id, run_time_sec desc;
+
+
+--- Encontrar los principales responsables del consumo de PGA durante un periodo de tiempo
+
+!cat ash_sql_id_pga.sql
+col percent head '%' for 99990.99
+col star for A10 head ''
+ 
+accept seconds prompt "Last Seconds [60] : " default 60;
+accept top prompt "Top  Rows    [10] : " default 10;
+ 
+select SQL_ID,round(PGA_MB,1) PGA_MB,percent,rpad('*',percent*10/100,'*') star
+from
+(
+select SQL_ID,sum(DELTA_PGA_MB) PGA_MB ,(ratio_to_report(sum(DELTA_PGA_MB)) over ())*100 percent,rank() over(order by sum(DELTA_PGA_MB) desc) rank
+from
+(
+select SESSION_ID,SESSION_SERIAL#,sample_id,SQL_ID,SAMPLE_TIME,IS_SQLID_CURRENT,SQL_CHILD_NUMBER,PGA_ALLOCATED,
+greatest(PGA_ALLOCATED - first_value(PGA_ALLOCATED) over (partition by SESSION_ID,SESSION_SERIAL# order by sample_time rows 1 preceding),0)/power(1024,2) "DELTA_PGA_MB"
+from
+v$active_session_history
+where
+IS_SQLID_CURRENT='Y'
+and sample_time > sysdate-&seconds/86400
+order by 1,2,3,4
+)
+group by sql_id
+having sum(DELTA_PGA_MB) > 0
+)
+where rank < (&top+1)
+order by rank
+/
+
+--- Encontrar los principales responsables del consumo de TEMP durante un operiodo de tiempo
+
+SQL> !cat ash_sql_id_temp.sql
+col percent head '%' for 99990.99
+col star for A10 head ''
+ 
+accept seconds prompt "Last Seconds [60] : " default 60;
+accept top prompt "Top  Rows    [10] : " default 10;
+ 
+select SQL_ID,TEMP_MB,percent,rpad('*',percent*10/100,'*') star
+from
+(
+select SQL_ID,sum(DELTA_TEMP_MB) TEMP_MB ,(ratio_to_report(sum(DELTA_TEMP_MB)) over ())*100 percent,rank() over(order by sum(DELTA_TEMP_MB) desc) rank
+from
+(
+select SESSION_ID,SESSION_SERIAL#,sample_id,SQL_ID,SAMPLE_TIME,IS_SQLID_CURRENT,SQL_CHILD_NUMBER,temp_space_allocated,
+greatest(temp_space_allocated - first_value(temp_space_allocated) over (partition by SESSION_ID,SESSION_SERIAL# order by sample_time rows 1 preceding),0)/power(1024,2) "DELTA_TEMP_MB"
+from
+v$active_session_history
+where
+IS_SQLID_CURRENT='Y'
+and sample_time > sysdate-&seconds/86400
+order by 1,2,3,4
+)
+group by sql_id
+having sum(DELTA_TEMP_MB) > 0
+)
+where rank < (&top+1)
+order by rank
+/
+
+
+
+--- Distinguir las consultas de ejecución prolongada de las consultas reejecutadas
+
+NOTA: Distinguir las consultas de ejecución prolongada de las consultas reejecutadas, sino que podemos comenzar a observar los tiempos de ejecución promedio y los tiempos de ejecución máximos y comenzar a ver la variación.
+
+col mx for 999999
+col mn for 999999
+col av for 999999.9
+ 
+select
+       sql_id,
+       count(*),
+       max(tm) mx,
+       avg(tm) av,
+       min(tm) min
+from (
+   select
+        sql_id,
+        sql_exec_id,
+        max(tm) tm
+   from ( select
+              sql_id,
+              sql_exec_id,
+              ((cast(sample_time  as date)) -
+              (cast(sql_exec_start as date))) * (3600*24) tm
+           from
+              dba_hist_active_sess_history
+           where sql_exec_id is not null
+    )
+   group by sql_id,sql_exec_id
+   )
+group by sql_id
+having count(*) > 10
+order by mx,av
+/
+
+http://dboptimizer.com/2011/05/04/sql-execution-times-from-ash/
+http://karlarao.tiddlyspot.com/#Elapsed-AvgMinMax
+
+
+---------------------------------------------------------------------------------------------------
+QUERYS
+
+
+--- Verificar metadatos de ASH, Tiempo de muestra mas antiguo y mas reciente.
+
+col MIN_SAMPLE_TIME format a40
+col max_sample_time format a40
+SELECT min(sample_time) min_sample_time
+      ,max(sample_time) max_sample_time
+FROM V$ACTIVE_SESSION_HISTORY;
+
+
+--- uso actual de cpu por instancia de db
+
+select round(100*num_cpus_in_use/num_cpus_total,1) cpu_usage_pct
+  from ( select count(*) num_cpus_in_use
+           from v$active_session_history
+          where sample_time = ( select max(sample_time)
+                                 from v$active_session_history
+                              )
+            and session_state = 'ON CPU'
+       )
+      ,( select value num_cpus_total
+           from v$osstat
+          where stat_name = 'NUM_CPUS'
+        ) num_cpus;
+
+
+--- Promedio de sessiones activas
+
+set line 240 
+set pagesize 200
+select sample_time time
+      ,count(1) activity
+from v$active_session_history
+group by sample_time
+order by sample_time;
+
+
+
+
+---------------------------------------------------------------------------------------------------
+Fuentes:
+	https://www.oracle.com/technetwork/database/manageability/using-ash-ow07-129779.pdf
+	https://bdrouvot.wordpress.com/2013/04/19/drill-down-to-sql_id-execution-details-in-ash/
+	https://oracle-base.com/articles/10g/active-session-history
+	https://docs.oracle.com/cd/B16240_01/doc/doc.102/e16282/oracle_database_help/oracle_database_wait_bottlenecks_buffer_busy_waits_pct.html
+	http://www.remote-dba.net/oracle_10g_tuning/t_buffer_busy_waits.htm
+

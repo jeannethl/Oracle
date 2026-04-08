@@ -1,0 +1,47 @@
+
+	EJECUTAR AL SCRIPT DE AWR EN SERIE
+
+///////////////////////////////////////////////////
+
+0. VERIFICAR QUE BD QUIERES CONSULTAR
+
+1. UBICAR LA CARPETA awr
+
+2. Verificar si el archivo se encuentra dbs_gawrr
+
+3.1 ./dbs_gawrr.sh
+
+3.2 Entrar a sqlplus 
+
+
+4.-CONSULTAR LOS SNAPSHOTS
+
+set lines 100 pages 999
+select snap_id,
+  snap_level,
+  to_char(begin_interval_time, 'dd/mm/yy hh24:mi:ss') begin
+from
+   dba_hist_snapshot
+order by 1;
+
+
+5. salir de sqlplus
+
+6.-Ejecutar los awr
+
+s=Snapshoot de inicio
+e=Snapshoot final
+i=intervalo de captura de snapshoot
+
+./dbs_gawrr.sh s=109358 e=109360 i=1
+
+
+
+7.-En bdv nodo 2
+
+Se encuentra
+/oracle/app/oracle/product/19c/db1/util/dbs_gawrr.sh
+
+
+
+43996

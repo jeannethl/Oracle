@@ -1,0 +1,6 @@
+1.-update INTTEGRIOBDV.tservidoraplicacion set URL= 'http://XXX:8080YYY/UCI', ENLINEA=0;
+2.-update INTTEGRIOBDV.tdispositivofit set disponible = '0';
+commit;
+3.-delete from INTTEGRIOBDV.tusuariosesiones where cusuario = 'TRANSLATE';
+4. delete from INTTEGRIOBDV.tusuariosesionesresumen where cusuario = 'TRANSLATE';
+Commit;

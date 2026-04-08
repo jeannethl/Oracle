@@ -1,0 +1,16 @@
+////////////////////////////////////////////
+//         ADMINISTRACION DE ADDM 
+//                ORACLE
+//           ADSI DBA-TEAM
+//     YOSDUAR RANGEL-ALIUSKA PEÑA
+////////////////////////////////////////////
+
+
+
+1.- Ejecutamos addmrpt.sql y nos aparecerá los datos actuales de la instancia.
+
+SQL> @$ORACLE_HOME/rdbms/admin/addmrpt.sql
+
+
+2.- Seleccionar el intervalo deseado
+

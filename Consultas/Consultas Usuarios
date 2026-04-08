@@ -1,0 +1,6 @@
+Consultas Usuarios de ORACLE DATA_BASE
+
+select USERNAME, ACCOUNT_STATUS from dba_users where USERNAME like 'SYS%';
+
+
+

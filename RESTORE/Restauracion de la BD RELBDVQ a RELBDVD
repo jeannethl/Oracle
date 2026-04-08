@@ -1,0 +1,681 @@
+Restauracion de la BD RELBDVQ a RELBDVD
+
+***********************************************************************
+
+Validacion de backup, controlfile, spfile y los redologs en la BD ORIGEN
+
+
+----Verificar los backup de BD, controlfile, spfile y los redologs
+list backup of database summary;
+list backup of spfile;
+list backup of controlfile;
+report schema;
+
+---- Verificar la ubicación de los datafile, controlfile, tempfile y redolog
+select name from v$datafile
+union
+select name from v$controlfile
+union
+select name from v$tempfile
+union
+select member from v$logfile
+/
+
+
+##Nota los redolog no son necesarios ni los control
+
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.262.1073159461
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.263.1073159453
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.264.1073141241
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.272.1073127323
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.273.1073127329
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.274.1073127335
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.275.1073127341
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.276.1073127349
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.277.1073159467
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.278.1073159475
++DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.279.1073159481
++DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.267.1073127189
++DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.268.1073127195
++DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.269.1073127201
++DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.270.1073127209
++DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.271.1073127215
++DG_DATA_RELBDVQ/relbdvq/datafile/sysaux.257.1073121467
++DG_DATA_RELBDVQ/relbdvq/datafile/system.256.1073121467
++DG_DATA_RELBDVQ/relbdvq/datafile/undotbs1.258.1073121467
++DG_DATA_RELBDVQ/relbdvq/datafile/undotbs1.265.1073128605
++DG_DATA_RELBDVQ/relbdvq/datafile/users.259.1073121467
++DG_DATA_RELBDVQ/relbdvq/tempfile/temp.260.1073121559
++DG_DATA_RELBDVQ/relbdvq/tempfile/temp.266.1073128553
++DG_REDO1_RELBDVQ/relbdvq/controlfile/current.256.1073121551
++DG_REDO1_RELBDVQ/relbdvq/onlinelog/group_1.257.1073121555
++DG_REDO1_RELBDVQ/relbdvq/onlinelog/group_2.258.1073121557
++DG_REDO1_RELBDVQ/relbdvq/onlinelog/group_3.259.1073121557
++DG_REDO2_RELBDVQ/relbdvq/controlfile/current.256.1073121551
++DG_REDO2_RELBDVQ/relbdvq/onlinelog/group_1.257.1073121555
++DG_REDO2_RELBDVQ/relbdvq/onlinelog/group_2.258.1073121557
++DG_REDO2_RELBDVQ/relbdvq/onlinelog/group_3.259.1073121557
++DG_REDO3_RELBDVQ/relbdvq/controlfile/current.256.1073121551
++DG_REDO3_RELBDVQ/relbdvq/onlinelog/group_1.257.1073121555
++DG_REDO3_RELBDVQ/relbdvq/onlinelog/group_2.258.1073121557
++DG_REDO3_RELBDVQ/relbdvq/onlinelog/group_3.259.1073121557
+
+
+35 rows selected.
+
+
+RMAN> report schema;
+
+RMAN> report schema;
+
+using target database control file instead of recovery catalog
+Report of database schema for database with db_unique_name RELBDVQ
+
+List of Permanent Datafiles
+===========================
+File Size(MB) Tablespace           RB segs Datafile Name
+---- -------- -------------------- ------- ------------------------
+1    3072     SYSTEM               ***     +DG_DATA_RELBDVQ/relbdvq/datafile/system.256.1073121467
+2    3072     SYSAUX               ***     +DG_DATA_RELBDVQ/relbdvq/datafile/sysaux.257.1073121467
+3    5120     UNDOTBS1             ***     +DG_DATA_RELBDVQ/relbdvq/datafile/undotbs1.258.1073121467
+4    256      USERS                ***     +DG_DATA_RELBDVQ/relbdvq/datafile/users.259.1073121467
+5    5120     UNDOTBS1             ***     +DG_DATA_RELBDVQ/relbdvq/datafile/undotbs1.265.1073128605
+6    30720    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.264.1073141241
+7    20480    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.263.1073159453
+8    20480    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.262.1073159461
+9    20480    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.277.1073159467
+10   10240    INDX_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.267.1073127189
+11   10240    INDX_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.268.1073127195
+12   10240    INDX_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.269.1073127201
+13   5120     INDX_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.270.1073127209
+14   5120     INDX_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.271.1073127215
+15   30720    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.272.1073127323
+16   30720    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.273.1073127329
+17   30720    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.274.1073127335
+18   30720    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.275.1073127341
+19   30720    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.276.1073127349
+20   20480    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.278.1073159475
+21   10240    DATA_BDVNETP         ***     +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.279.1073159481
+
+List of Temporary Files
+=======================
+File Size(MB) Tablespace           Maxsize(MB) Tempfile Name
+---- -------- -------------------- ----------- --------------------
+1    5120     TEMP                 5120        +DG_DATA_RELBDVQ/relbdvq/tempfile/temp.260.1073121559
+2    5120     TEMP                 5120        +DG_DATA_RELBDVQ/relbdvq/tempfile/temp.266.1073128553
+
+
+***************************************************************************************************
+
+Agarrar el init de calidad y crearlo en el servidor de desarrollo
+
+
+ORIGINAL DEL SERVER DE QA
+
+----
+
+oracle@sun31q:/dbs$ cat initRELBDVQ.ora
+RELBDVQ.__db_cache_size=788529152
+RELBDVQ.__java_pool_size=16777216
+RELBDVQ.__large_pool_size=16777216
+RELBDVQ.__oracle_base='/oracle/app/oracle'#ORACLE_BASE set from environment
+RELBDVQ.__pga_aggregate_target=536870912
+RELBDVQ.__sga_target=1G
+RELBDVQ.__shared_io_pool_size=0
+RELBDVQ.__shared_pool_size=1275068416
+RELBDVQ.__streams_pool_size=16777216
+*.audit_file_dest='/oracle/app/oracle/admin/RELBDVD/adump'
+*.audit_trail='db'
+*.compatible='11.2.0.0.0'
+*.control_files='+DG_REDO1/relbdvq/controlfile/current.256.1073121551','+DG_REDO2/relbdvq/controlfile/current.256.1073121551','+DG_REDO3/relbdvq/controlfile/current.256.1073121551'
+*.db_block_size=8192
+*.db_create_file_dest='+DG_DATA'
+*.db_create_online_log_dest_1='+DG_REDO1'
+*.db_create_online_log_dest_2='+DG_REDO2'
+*.db_create_online_log_dest_3='+DG_REDO3'
+*.db_domain='BANVENEZ.CORP'
+*.db_name='RELBDVQ'
+*.diagnostic_dest='/oracle/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=RELBDVQXDB)'
+*.open_cursors=300
+*.pga_aggregate_target=536870912
+*.processes=500
+*.remote_login_passwordfile='EXCLUSIVE'
+*.sessions=555
+*.sga_target=1G
+*.undo_tablespace='UNDOTBS1'
+oracle@sun31q:/dbs$
+
+
+----------------------------------------------------------------------------------------------------
+
+-***Creacion en el servidor de destino.
+
+Comentar el listener 
+Modificar los DiskGroup
+
+Como quedo en el servidor desarrollo
+
+*Se bajo la SGA a 1g porque el servidor dice sin memoria
+
+
+oracle11@sun2209d:~/dbs$ cat initRELBDVD.ora
+RELBDVQ.__db_cache_size=788529152
+RELBDVQ.__java_pool_size=16777216
+RELBDVQ.__large_pool_size=16777216
+RELBDVQ.__oracle_base='/oracle/app/oracle'#ORACLE_BASE set from environment
+RELBDVQ.__pga_aggregate_target=536870912
+RELBDVQ.__sga_target=1G
+RELBDVQ.__shared_io_pool_size=0
+RELBDVQ.__shared_pool_size=1275068416
+RELBDVQ.__streams_pool_size=16777216
+*.audit_file_dest='/oracle/app/oracle/admin/RELBDVD/adump'
+*.audit_trail='db'
+*.compatible='11.2.0.0.0'
+*.control_files='+DG_REDO1/relbdvq/controlfile/current.275.1119710873','+DG_REDO2/relbdvq/controlfile/current.266.1119710873','+DG_REDO3/relbdvq/controlfile/current.270.1119710873'
+*.db_block_size=8192
+*.db_create_file_dest='+DG_DATA'
+*.db_create_online_log_dest_1='+DG_REDO1'
+*.db_create_online_log_dest_2='+DG_REDO2'
+*.db_create_online_log_dest_3='+DG_REDO3'
+*.db_domain='BANVENEZ.CORP'
+*.db_name='RELBDVQ'
+*.diagnostic_dest='/oracle/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=RELBDVQXDB)'
+*.open_cursors=300
+*.pga_aggregate_target=536870912
+*.processes=500
+*.remote_login_passwordfile='EXCLUSIVE'
+*.sessions=555
+*.sga_target=1G
+*.undo_tablespace='UNDOTBS1'
+
+oracle11@sun2209d:~/dbs$
+
+
+*********************************************************************************
+
+Validar el DBID en el servidor origen
+
+SQL> select dbid from v$database;
+
+      DBID
+----------
+2298922702
+
+**********************************************************************************
+
+Darle un nomount a la BD con el init creado.
+
+
+startup nomount pfile='/oracle/app/oracle/product/11.2.0/db_1/dbs/initRELBDVD.ora';
+ORACLE instance started.
+
+Total System Global Area 1069252608 bytes
+Fixed Size                  2188408 bytes
+Variable Size             436214664 bytes
+Database Buffers          624951296 bytes
+Redo Buffers                5898240 bytesoracle12@sun2317p:/dbs$ cat initPCP.ora
+*.__data_transfer_cache_size=0
+PCP.__data_transfer_cache_size=0
+*.__db_cache_size=40G
+PCP.__db_cache_size=25367150592
+*.__inmemory_ext_roarea=0
+PCP.__inmemory_ext_roarea=0
+*.__inmemory_ext_rwarea=0
+PCP.__inmemory_ext_rwarea=0
+*.__java_pool_size=896M
+PCP.__java_pool_size=134217728
+*.__large_pool_size=384M
+PCP.__large_pool_size=536870912
+*.__oracle_base='/oracle/app/oracle12'# ORACLE_BASE set from environment
+*.__pga_aggregate_target=2304M
+PCP.__pga_aggregate_target=52881784832
+*.__sga_target=46848M
+PCP.__sga_target=30870077440
+*.__shared_io_pool_size=128M
+PCP.__shared_io_pool_size=134217728
+*.__shared_pool_size=4224M
+PCP.__shared_pool_size=4429185024
+*.__streams_pool_size=128M
+PCP.__streams_pool_size=134217728
+*.audit_file_dest='/oracle/app/oracle12/admin/PCP/adump'
+*.audit_trail='DB','EXTENDED'
+*.compatible='12.2.0'
+*.connection_brokers='((TYPE=DEDICATED)(BROKERS=1))','((TYPE=EMON)(BROKERS=1))'# connection_brokers default value
+*.control_files='+DG_REDO1/PCP/CONTROLFILE/current.256.1018885357','+DG_REDO2/PCP/CONTROLFILE/current.256.1018885357','+DG_REDO3/PCP/CONTROLFILE/current.256.1018885357'
+*.core_dump_dest='/oracle/app/oracle12/diag/rdbms/pcp/PCP/cdump'
+*.db_block_size=8192
+*.db_cache_size=0
+*.db_create_file_dest='+DG_DATA'
+*.db_create_online_log_dest_1='+DG_REDO1'
+*.db_create_online_log_dest_2='+DG_REDO2'
+*.db_create_online_log_dest_3='+DG_REDO3'
+*.db_domain='BANVENEZ.CORP'
+*.db_files=1000
+*.db_name='PCP'
+*.db_recovery_file_dest='+FRA'
+*.db_recovery_file_dest_size=268435456000
+*.diagnostic_dest='/oracle/app/oracle12'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=PCPXDB)'
+*.enable_ddl_logging=TRUE
+*.java_pool_size=0
+*.job_queue_processes=0
+*.large_pool_size=0
+*.local_listener='(ADDRESS=(PROTOCOL=TCP)(HOST=sun2317p)(PORT=1560))'
+*.log_archive_dest_1='location=+FRA'
+*.log_archive_format='%t_%s_%r.dbf'
+*.log_buffer=98728K# log buffer update
+*.memory_max_target=83751862272
+*.memory_target=83751862272
+*.nls_language='AMERICAN'
+*.nls_territory='AMERICA'
+*.open_cursors=300
+*.optimizer_dynamic_sampling=2
+*.optimizer_mode='ALL_ROWS'
+*.parallel_max_servers=160
+*.parallel_servers_target=256
+*.pga_aggregate_limit=83751862272
+*.pga_aggregate_target=9663676416
+*.plsql_warnings='DISABLE:ALL'# PL/SQL warnings at init.ora
+*.processes=10000
+*.query_rewrite_enabled='TRUE'
+*.remote_login_passwordfile='EXCLUSIVE'
+*.result_cache_max_size=23616K
+*.session_cached_cursors=100
+*.sessions=15040
+*.sga_max_size=48G# internally adjusted
+*.sga_target=0
+*.shared_pool_size=2304M
+*.skip_unusable_indexes=TRUE
+*.streams_pool_size=0
+*.transactions=12105
+*.undo_tablespace='UNDOTBS1'
+*.workarea_size_policy='AUTO'
+oracle12@sun2317p:/dbs$
+
+
+**********************************************************************************
+
+---Restaurar controlfile
+Restaurar ControlFile
+
+rman
+RMAN   connect rcvcat  rmanp/rmanexport@RMAN12
+RMAN   connect target /
+
+RMAN> set dbid 4272745383
+
+executing command: SET DBID
+database name is "RELBDVQ" and DBID is 4272745383
+
+SET until time "to_date('05-OCT-2024 00:00:00','dd-mm-yyyy hh24:mi:ss')";
+
+
+
+run
+{
+allocate channel ch1 device type sbt_tape ;
+SET until time "to_date('10-OCT-2024 00:00:00','dd-mm-yyyy hh24:mi:ss')";
+send 'SBT_PARMS=(NSR_SERVER=cpprwnetworkerp,NSR_DATA_VOLUME_POOL=PAGOFP_BOVEDA_MENSUAL,NSR_CLIENT=sun1330p)';
+RESTORE controlfile;
+release channel ch1;
+}
+
+allocated channel: ch1
+channel ch1: SID=12 device type=SBT_TAPE
+channel ch1: NMDA Oracle v19.2.1.3
+
+sent command to channel: ch1
+
+Starting restore at 02-NOV-22
+
+channel ch1: starting datafile backup set restore
+channel ch1: restoring control file
+channel ch1: reading from backup piece 2r1bdjrb_1_1
+channel ch1: piece handle=2r1bdjrb_1_1 tag=TAG20221028T141506
+channel ch1: restored backup piece 1
+channel ch1: restore complete, elapsed time: 00:03:25
+output file name=+DG_REDO1/relbdvq/controlfile/current.275.1119710873
+output file name=+DG_REDO2/relbdvq/controlfile/current.266.1119710873
+output file name=+DG_REDO3/relbdvq/controlfile/current.270.1119710873
+Finished restore at 02-NOV-22
+
+released channel: ch1
+
+
+exit 
+
+Conectarse a sqlplus
+
+alter database mount;
+
+
+
+**********************************************************************
+nohup rman rcvcat rmanp/rmanexport@RMAN12 target / cmdfile=duplicate_PAGOFP.cmd log=duplicate_PAGOFP.log &
+
+
+rman target / catalog rmanp/rmanexport@RMAN12
+Restore de la BD
+
+rman
+RMAN   connect rcvcat  rmanp/rmanexport@RMAN12
+RMAN   connect target /
+
+RMAN> set dbid 4272745383
+
+
+RUN
+{
+allocate channel ch1 device type sbt_tape ;
+allocate channel ch2 device type sbt_tape ;
+allocate channel ch3 device type sbt_tape ;
+allocate channel ch4 device type sbt_tape ;
+SET until time "to_date('10-OCT-2024 00:00:00','dd-mm-yyyy hh24:mi:ss')";
+send 'SBT_PARMS=(NSR_SERVER=cpprwnetworkerp,NSR_DATA_VOLUME_POOL=PAGOFP_BOVEDA_MENSUAL,NSR_CLIENT=sun1330p)';
+RESTORE database ;
+switch datafile all;
+release channel ch1 ;
+release channel ch2 ;
+release channel ch3 ;
+release channel ch4 ;
+}
+
+ run
+{
+allocate channel ch1 device type sbt_tape ;
+allocate channel ch2 device type sbt_tape ;
+allocate channel ch3 device type sbt_tape ;
+allocate channel ch4 device type sbt_tape ;
+SET until time "to_date('10-OCT-2024 00:00:00','dd-mm-yyyy hh24:mi:ss')";
+send 'SBT_PARMS=(NSR_SERVER=cpprwnetworkerp,NSR_DATA_VOLUME_POOL=PAGOFP_BOVEDA_MENSUAL,NSR_CLIENT=sun1330p)';
+restore archivelog from logseq=70608 until logseq=71000 thread=1;
+release channel ch1 ;
+release channel ch2 ;
+release channel ch3 ;
+release channel ch4 ;
+}
+
+recover database using backup controlfile until time "to_date('05-OCT-2024 00:00:00','dd-mm-yyyy hh24:mi:ss')";
+
+allocated channel: ch1
+channel ch1: SID=387 device type=SBT_TAPE
+channel ch1: NMDA Oracle v19.2.1.3
+
+allocated channel: ch2
+channel ch2: SID=13 device type=SBT_TAPE
+channel ch2: NMDA Oracle v19.2.1.3
+
+allocated channel: ch3
+channel ch3: SID=399 device type=SBT_TAPE
+channel ch3: NMDA Oracle v19.2.1.3
+
+allocated channel: ch4
+channel ch4: SID=14 device type=SBT_TAPE
+channel ch4: NMDA Oracle v19.2.1.3
+
+sent command to channel: ch1
+sent command to channel: ch2
+sent command to channel: ch3
+sent command to channel: ch4
+
+Starting restore at 02-NOV-22
+
+channel ch1: starting datafile backup set restore
+channel ch1: specifying datafile(s) to restore from backup set
+channel ch1: restoring datafile 00001 to +DG_DATA_RELBDVQ/relbdvq/datafile/system.256.1073121467
+channel ch1: restoring datafile 00002 to +DG_DATA_RELBDVQ/relbdvq/datafile/sysaux.257.1073121467
+channel ch1: restoring datafile 00003 to +DG_DATA_RELBDVQ/relbdvq/datafile/undotbs1.258.1073121467
+channel ch1: restoring datafile 00004 to +DG_DATA_RELBDVQ/relbdvq/datafile/users.259.1073121467
+channel ch1: restoring datafile 00005 to +DG_DATA_RELBDVQ/relbdvq/datafile/undotbs1.265.1073128605
+channel ch1: restoring datafile 00006 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.264.1073141241
+channel ch1: restoring datafile 00007 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.263.1073159453
+channel ch1: restoring datafile 00008 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.262.1073159461
+channel ch1: restoring datafile 00009 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.277.1073159467
+channel ch1: restoring datafile 00010 to +DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.267.1073127189
+channel ch1: restoring datafile 00011 to +DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.268.1073127195
+channel ch1: restoring datafile 00012 to +DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.269.1073127201
+channel ch1: restoring datafile 00013 to +DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.270.1073127209
+channel ch1: restoring datafile 00014 to +DG_DATA_RELBDVQ/relbdvq/datafile/indx_bdvnetp.271.1073127215
+channel ch1: restoring datafile 00015 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.272.1073127323
+channel ch1: restoring datafile 00016 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.273.1073127329
+channel ch1: restoring datafile 00017 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.274.1073127335
+channel ch1: restoring datafile 00018 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.275.1073127341
+channel ch1: restoring datafile 00019 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.276.1073127349
+channel ch1: restoring datafile 00020 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.278.1073159475
+channel ch1: restoring datafile 00021 to +DG_DATA_RELBDVQ/relbdvq/datafile/data_bdvnetp.279.1073159481
+channel ch1: reading from backup piece 2p1bda2a_1_1
+
+listo restore
+
+*********************************************************************************
+
+Cambiar los datafile
+
+Este paso no me funciono, no lo utilice.
+
+set head off feed off verify off echo off pages 0 trimspool on
+set lines 132 pagesize 0
+spo newname.sql
+--
+select 'run{' from dual;
+--
+select
+'set newname for datafile ' || file# || ' to ' || '''' || name || '''' || ';'
+from v$datafile;
+--
+select
+'restore database;' || chr(10) ||
+'switch datafile all;' || chr(10) ||
+'}'
+from dual;
+--
+spo off;
+
+run{
+allocate channel ch1 device type sbt_tape ;
+allocate channel ch2 device type sbt_tape ;
+allocate channel ch3 device type sbt_tape ;
+allocate channel ch4 device type sbt_tape ;
+send 'SBT_PARMS=(NSR_SERVER=cpprwnetworkerp, NSR_DATA_VOLUME_POOL=RELBDVQ_OFFLINE_FULL, NSR_CLIENT=sun31q)';
+set newname for datafile 00001 to '+DG_DATA/RELBDVD/DATAFILE/system.256.1073121467';
+set newname for datafile 00002 to '+DG_DATA/RELBDVD/DATAFILE/sysaux.257.1073121467';
+set newname for datafile 00003 to '+DG_DATA/RELBDVD/DATAFILE/undotbs1.298.1119714499';
+set newname for datafile 00004 to '+DG_DATA/RELBDVD/DATAFILE/users.259.1073121467';
+set newname for datafile 00005 to '+DG_DATA/RELBDVD/DATAFILE/undotbs1.265.1073128605';
+set newname for datafile 00006 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.320.1119711645';
+set newname for datafile 00007 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.289.1119711661';
+set newname for datafile 00008 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.294.1119711663';
+set newname for datafile 00009 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.277.1073159467';
+set newname for datafile 00010 to '+DG_DATA/RELBDVD/DATAFILE/indx_bdvnetp.267.1073127189';
+set newname for datafile 00011 to '+DG_DATA/RELBDVD/DATAFILE/indx_bdvnetp.268.1073127195';
+set newname for datafile 00012 to '+DG_DATA/RELBDVD/DATAFILE/indx_bdvnetp.269.1073127201';
+set newname for datafile 00013 to '+DG_DATA/RELBDVD/DATAFILE/indx_bdvnetp.270.1073127209';
+set newname for datafile 00014 to '+DG_DATA/RELBDVD/DATAFILE/indx_bdvnetp.271.1073127215';
+set newname for datafile 00015 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.305.1119711647';
+set newname for datafile 00016 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.297.1119711651';
+set newname for datafile 00017 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.301.1119711653';
+set newname for datafile 00018 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.293.1119711655';
+set newname for datafile 00019 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.302.1119711657';
+set newname for datafile 00020 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.278.1073159475';
+set newname for datafile 00021 to '+DG_DATA/RELBDVD/DATAFILE/data_bdvnetp.279.1073159481';
+restore database;
+switch datafile all;
+RECOVER DATABASE USING BACKUP CONTROLFILE UNTIL CANCEL;
+release channel ch1 ;
+release channel ch2 ;
+release channel ch3 ;
+release channel ch4 ;
+}
+
+
+
+alter database open resetlogs;
+
+
+
+*************************************************************************************
+
+Luego del restore deberia de seguir lo siguiente
+
+rman target /
+
+
+-- para bd modo noarchivelog
+recover database noredo;
+
+alter database open resetlogs;
+
+me dio error, q usuara el upgrade
+
+alter database open resetlogs upgrade;
+
+me dio error, q usuara el upgrade
+
+
+list backup of archivelog sequence between 70608 and 71000;
+
+******************************************************************************************
+
+Pero como mis versiones de 11 eran diferentes me toco hacer un UPGARDE.
+
+
+Subir la BD de la siguiente manera
+
+
+startup upgrade
+
+Ejecutar lo siguiente
+
+
+Step 12: Need to run precheck script before upgrade and fix the issues.
+
+  @$ORACLE_HOME/rdbms/admin/utlu112i.sql
+
+
+
+Step 13: Run the ungrade script. (refer upgrade.log)
+  @$ORACLE_HOME/rdbms/admin/catupgrd.sql
+
+
+
+Step 14: To check the upgrade (refer check_upgrade.log)
+
+
+SUBIR la BD
+
+
+startup;
+
+  @$ORACLE_HOME/rdbms/admin/utlu112s.sql
+
+
+Step 15: Need to run below script and database no need to be in upgrade mode.
+  @$ORACLE_HOME/rdbms/admin/catuppst.sql
+
+Step 16: To recompile all the invalid objects after upgrade.
+
+
+  @$ORACLE_HOME/rdbms/admin/utlrp.sql Check Database Components:
+
+
+
+col action_time for a30
+col BUNDLE_SERIES for a15
+col NAMESPACE for a10
+col comments for a30
+select * from dba_registry_history;
+
+
+col comp_id for a10
+col comp_name for a40
+col version for a12
+col status for a12
+select comp_id, comp_name, version, status from dba_registry;
+
+
+
+***************************************************************************
+
+Cambiar el db_name
+
+select dbid from v$database;
+
+
+create spfile='+DG_DATA_SAMFQ' from pfile;
+
+SHUTDOWN IMMEDIATE
+STARTUP MOUNT
+
+nid target=SYS/bqsmt7aral8 dbname=PORTALD
+
+
+alter system set db_name=PORTALD scope=spfile;
+
+
+Sino creaste el spfile.
+
+Cambiar el initRELBDVD.ora
+
+a= *.db_name='RELBDVD'
+
+
+SUBIR la BD
+
+select dbid from v$database;
+
+
+**************************************************************
+
+Crear el tnsname
+
+RELBDVD =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = sun2209d.banvendes.corp)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = RELBDVD.BANVENEZ.CORP)
+    )
+  )
+
+
+***************************************************************
+
+Revisar los usuarios.
+
+son 5.
+
+si faltan crear el restante.
+
+*********************************************************
+
+Agregar la BD EN el rman 
+
+rman target /
+
+connect catalog rmanq/rmanexport@RMAN.BANVENEZ.CORP
+
+
+RMAN> register database;
+
+database registered in recovery catalog
+starting full resync of recovery catalog
+full resync complete
+
+RMAN>
+
+***************************************************************
+
+Y hacer los scripts de backup.
+
+
+/oracle/app/oracle/product/11.2.0/db_1/util/cajad/backup/scripts
+
+copiar el cmd que esta en backup.
+copiar el .sh que esta en scripts.
+
+
+a tu ruta nueva
+
+/oracle/app/oracle/product/11.2.0/db_1/util/relbdvd/backup/scripts
