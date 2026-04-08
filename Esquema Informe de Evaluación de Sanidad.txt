@@ -1,0 +1,422 @@
+1.- Datos Generales de la Base de Datos ----- SACARLO DE LOS INFORMES ADDM AWR
+
+
+2.- Versión de la Base de Datos
+
+SQL> set lines 300
+select * from v$version;
+
+
+3.- SGA de la Base de Datos
+
+SQL> show sga
+SQL> show parameter sga
+
+
+4.- Volumetría Actual FileSystem
+
+Identificar rutas de los TableSpaces:
+SQL> column file_name format a65
+SELECT file_name
+FROM dba_data_files
+ORDER by 1;
+
+SQL> column file_name format a50
+SELECT file_name
+FROM dba_temp_files
+ORDER by 1;
+
+SQL> archive log list
+Si archive = USE_DB_RECOVERY_FILE_DEST =====> SQL> show parameter recovery
+SQL> show parameter dump
+SQL> show parameter control
+SQL> show parameter redo
+
+SQL> column member format a60
+SELECT member
+FROM v$logfile
+ORDER by 1;
+
+$ df -k o zpool list
+
+Para el caso de los zpool debe considerarse que los mismos se encuentren preferiblemente en un porcentaje por del 80%,
+debido a que al encontrarse por encima de dicho umbral genera degradación en el zpool. 
+
+
+5.- Volumetría Física ASM
+
+SQL> set lines 300
+column name format a20
+SELECT name, total_mb, free_mb, round((free_mb*100)/total_mb, 2) "%FREE"
+FROM v$asm_diskgroup
+--WHERE name like '%PC%'
+ORDER by 1;
+
+
+6.- Volumetría Física por TableSpace
+
+SQL> set pages 999
+col tablespace_name format a40
+col "size MB" format 999,999,999
+col "free MB" format 99,999,999
+col "% Used" format 999
+SELECT tsu.tablespace_name, ceil(tsu.used_mb) "size MB", decode(ceil(tsf.free_mb),NULL,0,ceil(tsf.free_mb)) "free MB",
+decode(100 - ceil(tsf.free_mb/tsu.used_mb*100),NULL,100,100 - ceil(tsf.free_mb/tsu.used_mb*100)) "% used"
+FROM (select tablespace_name, sum(bytes)/1024/1024 used_mb
+FROM dba_data_files group by tablespace_name union all
+SELECT tablespace_name || '  **TEMP**',	sum(bytes)/1024/1024 used_mb
+FROM dba_temp_files group by tablespace_name) tsu,
+(SELECT tablespace_name, sum(bytes)/1024/1024 free_mb
+FROM dba_free_space group by tablespace_name) tsf
+WHERE tsu.tablespace_name = tsf.tablespace_name (+)
+ORDER by 4;
+
+SELECT tablespace_name, tablespace_size/1024/1024,
+allocated_space/1024/2014, free_space/1024/1024
+FROM   dba_temp_free_space
+
+
+Por estándar de la Gerencia Base de Datos PM, los tablespaces deben encontrarse en un umbral por debajo de 80%.  
+Salvo excepciones en las cuales se realizan mantenimiento a los tablespaces, como es el caso de las bases de datos BDVNETP y ADS (SUN1000 y SUN16)
+
+
+7.- Verificación de Estadísticas en Tablas
+Crear el archivo cons_est.sh con vi:
+
+#!/bin/bash
+
+export ORACLE_SID=PCP
+
+sqlplus '/ as sysdba'   <<EOF
+
+set serveroutput on size 1000000;
+set lines 500
+DECLARE
+  NREGS     number;
+  CNT_DIAS  number;
+CURSOR get_all_tables IS
+  SELECT owner, table_name, last_analyzed
+    FROM dba_tables
+   WHERE num_rows > 100000
+     AND sysdate - last_analyzed > 7
+     AND owner not in ('SYS')
+   ORDER BY num_rows desc;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(
+    Rpad('Tabla', 40)
+    || Rpad('Ult Estadis', 16)
+    || Rpad('Reg Actuales', 16)
+    || Rpad('Dias s/Estad', 16)
+  );
+  DBMS_OUTPUT.PUT_LINE(
+    '---------------------------------------------'
+    ||'---------------------------------------'
+  );
+  FOR i IN get_all_tables LOOP
+    EXECUTE IMMEDIATE
+      'SELECT count(*)
+         FROM '||i.owner||'.'||i.table_name
+         INTO nregs;
+         SELECT sysdate - i.last_analyzed
+           INTO cnt_dias
+           FROM dual;
+         DBMS_OUTPUT.PUT_LINE(
+           Rpad((i.owner||'.'||i.table_name), 40)
+           || Rpad(i.last_analyzed,13)
+           || To_char(nregs,'99999999999999')
+           || To_char(cnt_dias,'999999999999999')
+         );
+  END LOOP;
+END;
+/
+
+EOF
+
+OJOOOO: Lines 39
+
+$ chmod 777 cons_est.sh
+$ nohup ./cons_est.sh &
+$ tail -f nohup.out
+
+
+8.- Verificación de Estadísticas en Índices
+
+set serveroutput on size 1000000;
+set lines 500
+DECLARE
+  CNT_DIAS  number;
+CURSOR get_all_indexes IS
+  SELECT owner, index_name, table_name, last_analyzed
+    FROM dba_indexes
+   WHERE num_rows > 100000
+     AND sysdate - last_analyzed > 7
+     AND owner not in ('SYS')
+   ORDER BY owner, num_rows desc;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(
+    Rpad('Indice', 40)
+    || Rpad('Tabla', 35)
+    || Rpad('Ult Estadis', 16)
+    || Rpad('Dias s/Estad', 16)
+  );
+  DBMS_OUTPUT.PUT_LINE(
+    '-------------------------------------------------------------------'
+    ||'------------------------------------'
+  );
+  FOR i IN get_all_indexes LOOP
+    SELECT sysdate - i.last_analyzed
+      INTO cnt_dias
+      FROM dual;
+    DBMS_OUTPUT.PUT_LINE(
+      Rpad((i.owner||'.'||i.index_name), 40)
+      || Rpad(i.table_name,35)
+      || Rpad(i.last_analyzed,13)
+      || To_char(cnt_dias,'99999999999999')
+    );
+  END LOOP;
+END;
+/   
+
+OJOOOO: Lines 33
+
+
+9.- Mapa de Switcheo Redo Logs ----- SACARLO DEL TOAD
+
+Mapa de switcheo de redologs 
+col h0 format 9999
+col h1 format 9999
+col h2 format 9999
+col h3 format 9999
+col h4 format 9999
+col h5 format 9999
+col h6 format 9999
+col h7 format 9999
+col h8 format 9999
+col h9 format 9999
+col h10 format 9999
+col h11 format 9999
+col h12 format 9999
+col h13 format 9999
+col h14 format 9999
+col h15 format 9999
+col h16 format 9999
+col h17 format 9999
+col h18 format 9999
+col h19 format 9999
+col h20 format 9999
+col h21 format 9999
+col h22 format 9999
+col h23 format 9999
+col Day format a3
+col Total format 9999
+set lin 240
+alter session set nls_date_format='dd-mm-rr';
+
+SELECT TRUNC (first_time) "Date", TO_CHAR (first_time, 'Dy') "Day",
+COUNT (1) "Total",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '00', 1, 0)) "h0",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '01', 1, 0)) "h1",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '02', 1, 0)) "h2",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '03', 1, 0)) "h3",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '04', 1, 0)) "h4",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '05', 1, 0)) "h5",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '06', 1, 0)) "h6",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '07', 1, 0)) "h7",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '08', 1, 0)) "h8",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '09', 1, 0)) "h9",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '10', 1, 0)) "h10",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '11', 1, 0)) "h11",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '12', 1, 0)) "h12",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '13', 1, 0)) "h13",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '14', 1, 0)) "h14",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '15', 1, 0)) "h15",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '16', 1, 0)) "h16",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '17', 1, 0)) "h17",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '18', 1, 0)) "h18",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '19', 1, 0)) "h19",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '20', 1, 0)) "h20",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '21', 1, 0)) "h21",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '22', 1, 0)) "h22",
+SUM (DECODE (TO_CHAR (first_time, 'hh24'), '23', 1, 0)) "h23"
+FROM v$log_history
+GROUP BY TRUNC (first_time), TO_CHAR (first_time, 'Dy')
+ORDER BY 1
+/
+
+
+9.- Tamaño de los RedoLogs 
+
+SQL> set lines 400
+column status format a8
+column member format a60
+SELECT a.group#, b.STATUS, a.MEMBER, b.BYTES/1024/1024 "Size (Mb)"
+FROM v$logfile a, v$log b
+WHERE a.group# = b.group#
+ORDER by 1,3;
+
+
+10.- Parámetros Procesos, Sesiones y Transacciones
+
+SQL> show parameter session
+SQL> show parameter processes
+SQL> show parameter transactions
+
+
+Transacciones por segundo
+
+SET SERVEROUTPUT ON
+DECLARE
+    begindate date;
+    enddate date;
+    beginval number;
+    endval number;
+BEGIN
+
+    select sysdate, sum(value) 
+    into begindate, beginval
+    from v$sysstat 
+    where name in ('user commits','user_rollbacks');
+
+    dbms_lock.sleep(5);
+
+    select sysdate, sum(value) 
+    into enddate, endval
+    from v$sysstat 
+    where name in ('user commits','user_rollbacks');
+
+    dbms_output.put_line( (endval-beginval) || 
+                          ' transactions');
+    
+    dbms_output.put_line( ((enddate-begindate) * 86400) || 
+                          ' seconds');
+
+    dbms_output.put_line( (endval-beginval) / ((enddate-begindate) * 86400) || 
+                          ' transactions per second');
+
+END;
+/
+
+
+
+11.- Principales Eventos de Espera
+
+Evaluación de recomendaciones de reportes ADDMRPT y AWRRPT
+set linesize 200;
+set pagesize 1000;
+col sql_text format a40;
+
+SELECT sq.sql_text, st.executions_total, st.parse_calls_total
+, round( 100*(1-( st.parse_calls_total / st.executions_total )),2) execute_to_parse
+, st.executions_delta, st.parse_calls_delta
+, round( 100*(1-( st.parse_calls_delta / st.executions_delta )),2) delta_ratio
+FROM DBA_HIST_SQLSTAT st
+, DBA_HIST_SQLTEXT sq
+, DBA_HIST_SNAPSHOT s
+WHERE s.snap_id = st.snap_id
+AND s.begin_interval_time >= to_date('2009-08-04 11:30 am','YYYY-MM-DD HH:MI am')
+AND s.end_interval_time <= to_date('2009-08-04 12:01 pm','YYYY-MM-DD HH:MI pm') 
+AND st.sql_id = sq.sql_id AND st.parsing_schema_name='PROD' AND st.executions_total !=0 AND st.executions_delta !=0 ORDER BY delta_ratio; 
+
+
+
+
+
+#---------------------------------------------------
+
+
+SELECT sql_id, SQL_PLAN_HASH_VALUE, SQL_PLAN_LINE_ID, COUNT (*) cnt
+FROM dba_hist_active_sess_history h
+WHERE  sample_time BETWEEN TIMESTAMP '2020-11-28  08:00:00'  AND TIMESTAMP '2020-11-29  08:00:00'
+  AND wait_class = 'Cluster' and event='gc buffer busy acquire'
+GROUP BY sql_id, SQL_PLAN_HASH_VALUE, SQL_PLAN_LINE_ID
+ORDER BY cnt DESC;
+
+set lines 155
+col execs for 999,999,999
+col avg_etime for 999,999.999
+col avg_lio for 999,999,999.9
+col begin_interval_time for a30
+col node for 99999
+break on plan_hash_value on startup_time skip 1
+select ss.snap_id, ss.instance_number node, begin_interval_time, sql_id, plan_hash_value,
+nvl(executions_delta,0) execs,
+(elapsed_time_delta/decode(nvl(executions_delta,0),0,1,executions_delta))/1000000 avg_etime,
+(buffer_gets_delta/decode(nvl(buffer_gets_delta,0),0,1,executions_delta)) avg_lio
+from DBA_HIST_SQLSTAT S, DBA_HIST_SNAPSHOT SS
+where sql_id = nvl('&sql_id','4dqs2k5tynk61')
+and ss.snap_id = S.snap_id
+and ss.instance_number = S.instance_number
+and executions_delta > 0
+order by 1, 2, 3
+/
+
+
+12.- SQL Ordenado por USO de CPU
+
+Evaluación de recomendaciones de reportes: $ORACLE_HOME/rdbms/admin/ ADDMRPT y AWRRPT
+
+
+13.- Clases de Esperas y Su Tiempo
+
+Evaluación de recomendaciones de reportes: $ORACLE_HOME/rdbms/admin/ ADDMRPT y AWRRPT
+
+
+14.- Información Adicional 
+
+Evaluación de recomendaciones de reportes: $ORACLE_HOME/rdbms/admin/ ADDMRPT y AWRRPT
+
+
+15.- Dimensionamiento del FRA:
+
+set serveroutput on
+DECLARE
+v_backup_hold NUMBER;
+v_size_fra NUMBER;
+v_growth_rate NUMBER;
+v_size_db NUMBER;
+v_size_archive NUMBER;
+BEGIN
+v_backup_hold := 3;
+v_growth_rate := 1.2;
+v_size_fra := 0;
+-- Tamano atual de la BBDD en GB
+SELECT ROUND(SUM(bytes)/1024/1024/1024,2)
+  INTO v_size_db
+  FROM v$datafile;
+-- Tamano de 24 horas de archivelog en GB
+SELECT ROUND(SUM(blocks*block_size)/1024/1024/1024,2) 
+  INTO v_size_archive
+  FROM V$ARCHIVED_LOG
+  WHERE completion_time > sysdate-1;
+-- Tamano del FRA
+SELECT ROUND(((v_size_db*v_backup_hold)+v_size_archive)*v_growth_rate,2)
+  INTO v_size_fra
+  FROM dual;
+DBMS_OUTPUT.PUT_LINE('');
+DBMS_OUTPUT.PUT_LINE('Tamano Base de Datos (GB): '||v_size_db);
+DBMS_OUTPUT.PUT_LINE('Tamano Archives 24h (GB): '||v_size_archive);
+DBMS_OUTPUT.PUT_LINE('Numero BackUps level 0 a Retener: '||v_backup_hold||' BackUps.');
+DBMS_OUTPUT.PUT_LINE('Tasa de Crecimiento (%): '||v_growth_rate);
+DBMS_OUTPUT.PUT_LINE('');
+DBMS_OUTPUT.PUT_LINE('Tamano FRA = ((DB Size * Number backups level 0 hold) + Archivelog Size 24h) * Growth rate');
+DBMS_OUTPUT.PUT_LINE('');
+DBMS_OUTPUT.PUT_LINE('Tamano Estimado FRA (GB): '||v_size_fra);
+END;
+/
+
+
+16.- Consejos del Asesor de Segmentos a Través dl Paquete DBMS_SPACE:
+
+SELECT
+'Segment Advice --------------------------'|| chr(10) ||
+'TABLESPACE_NAME : ' || tablespace_name || chr(10) ||
+'SEGMENT_OWNER : ' || segment_owner || chr(10) ||
+'SEGMENT_NAME : ' || segment_name || chr(10) ||
+'ALLOCATED_SPACE : ' || allocated_space || chr(10) ||
+'RECLAIMABLE_SPACE: ' || reclaimable_space || chr(10) ||
+'RECOMMENDATIONS : ' || recommendations || chr(10) ||
+'SOLUTION 1 : ' || c1 || chr(10) ||
+'SOLUTION 2 : ' || c2 || chr(10) ||
+'SOLUTION 3 : ' || c3 Advice
+FROM
+TABLE(dbms_space.asa_recommendations('FALSE', 'FALSE', 'FALSE'));
