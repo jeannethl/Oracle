@@ -1,0 +1,81 @@
+Agregar discos a DG
+
+Consultar los permisos de los discos a nivel del SO:
+
+df -k o df -h para listar 
+cd /dev/rdsk
+
+
+for i in `ls -ld emcpower286g emcpower15a emcpower16a |awk {'print$11'}`; do ls -ltr $i* ; done
+
+
+sqlplus / as sysasm
+	
+discos_candidatos o former:
+	
+set lines 400
+COLUMN header_status FORMAT a25
+COLUMN path FORMAT a35
+COLUMN name FORMAT a20
+SELECT inst_id, header_status, path, state, OS_MB, create_date 
+FROM gv$asm_disk
+WHERE header_status = 'CANDIDATE'
+ORDER BY path;
+
+
+   INST_ID HEADER_STATUS             PATH                                STATE         OS_MB CREATE_DA
+---------- ------------------------- ----------------------------------- -------- ---------- ---------
+         1 CANDIDATE                 /dev/rdsk/emcpower14g               NORMAL        51194
+         1 CANDIDATE                 /dev/rdsk/emcpower15g               NORMAL        51194
+         1 CANDIDATE                 /dev/rdsk/emcpower16g               NORMAL        51194
+
+
+
+Consultamos tamaño total de DG DATA: (antes y despues de lanzar el script para verificar)
+
+set lines 300
+COLUMN name FORMAT a20
+SELECT inst_id, name, total_mb, cold_used_mb "USED_MB", free_mb, usable_file_mb "USABLE_MB", state, round((cold_used_mb*100)/total_mb, 2) "%USED", round((free_mb*100)/total_mb, 2) "%FREE"
+FROM gv$asm_diskgroup
+--WHERE name like '%'
+--OR name like '%'
+WHERE name = 'DG_DATA_PVIEW'
+ORDER BY 1;
+
+
+
+
+   INST_ID NAME                   TOTAL_MB    USED_MB    FREE_MB  USABLE_MB STATE            %USED      %FREE
+---------- -------------------- ---------- ---------- ---------- ---------- ----------- ---------- ----------
+         1 DG_DATA_PVIEW            511940     479578      32362      32362 MOUNTED          93.68       6.32
+
+
+
+Agregar disco ejemplo:
+
+alter diskgroup DG_DATA_DCSP add disk
+'/dev/rdsk/c1d160s6' name PWDATA_017
+REBALANCE POWER 20;
+
+
+AGREGAR DISCOS PVIEW:
+Verificar el nombre de los discos que se encuentran candidate.
+Script para agregar los discos al DG:
+													Para saber que nombre le corresponde a los discos que van a ser agregados
+													entrar a TOAD - DATABASE - ADMINISTER - ASM MANAGER
+	
+
+	
+alter diskgroup DG_DATA_PVIEW add disk '/dev/rdsk/emcpower14g' name DG_DATA_PVIEW_010 REBALANCE POWER 20;
+
+
+
+
+
+alter diskgroup DG_DATA_PVIEW add disk 
+'/dev/rdsk/emcpower15g' name DG_DATA_PVIEW_011 
+REBALANCE POWER 20;
+alter diskgroup DG_DATA_PVIEW add disk 
+'/dev/rdsk/emcpower16g' name DG_DATA_PVIEW_012 
+REBALANCE POWER 20;
+

@@ -1,0 +1,39 @@
+ALTER DISKGROUP DG_DATA_CCENLNH DROP DISK
+'DG_DATA_CCENLNH1'
+REBALANCE POWER 20;
+
+
+asmcmd afd_unlabel 'DG_DATA_CCENLNH23'
+asmcmd afd_unlabel 'DG_DATA_CCENLNH24'
+asmcmd afd_unlabel 'DG_DATA_CCENLNH25'
+
+
+
+
+
+//////////////////////////
+/////////////////////////// REDOS
+////////////////////////////
+
+ALTER DISKGROUP DG_REDO1_CCENLNH DROP DISK
+'DG_REDO1_CCENLNH1'
+REBALANCE POWER 20;
+
+
+ALTER DISKGROUP DG_REDO2_CCENLNH DROP DISK
+'DG_REDO2_CCENLNH1'
+REBALANCE POWER 20;
+
+
+asmcmd afd_unlabel 'DG_REDO1_CCENLNH1'
+asmcmd afd_unlabel 'DG_REDO2_CCENLNH1'
+
+
+Buenos días, 
+Se solicita despresentar (remover del S.O) los siguientes discos del servidor sun2327p los cuales se encuentran con status ''FORMER''
+
+c1d84s6
+c1d85s6
+
+
+

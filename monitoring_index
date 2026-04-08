@@ -1,0 +1,22 @@
+*		alter index  OWNER.INDEX_NAME MONITORING USAGE;
+
+*		alter index  OWNER.INDEX_NAME NOMONITORING USAGE;
+
+*		
+
+
+
+
+
+
+SELECT index_name,
+       table_name,
+       monitoring,
+       used,
+       start_monitoring,
+       end_monitoring
+FROM   dba_object_usage
+WHERE  owner =
+'DCSP'
+ORDER BY index_name;
+

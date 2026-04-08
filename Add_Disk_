@@ -1,0 +1,138 @@
+
+
+Solicitar discos
+--Planilla para almacenamiento
+---Ellos generan otra planilla
+----Se reenvia la planilla a soporte unix para que le den los permisos y formatos ASM -----//En caso de Zpool enviar correo a soporte unix para que lo agreguen directamente.
+-----Soporte unix envia la lista de discos y deben aparecer 
+
+for i in `ls -ld c1d474s6 c1d475s6 c1d476s6 c1d477s6 c1d478s6 |awk {'print$11'}`; do ls -ltr $i* |grep -i asmadmin; done
+
+
+c1d474s6   
+c1d475s6
+c1d476s6
+c1d477s6
+c1d478s6 
+
+
+
+
+
+	Consultar los permisos de los discos a nivel del SO:
+
+	
+df -k o df -h para listar 
+cd /dev/rdsk
+
+
+
+---   sqlplus / as sysasm
+	
+discos_candidatos o former:
+	
+set lines 400
+COLUMN header_status FORMAT a25
+COLUMN path FORMAT a30
+COLUMN name FORMAT a20
+SELECT inst_id, header_status, path, state, OS_MB, create_date 
+FROM gv$asm_disk
+WHERE header_status != 'CANDIDATE'
+ORDER BY path;
+
+
+
+HEADER_STATUS             NAME                 PATH                           STATE      TOTAL_MB    FREE_MB      OS_MB
+------------------------- -------------------- ------------------------------ -------- ---------- ---------- ----------
+CANDIDATE                                      /dev/rdsk/c1d82s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d83s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d86s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d87s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d88s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d89s6              NORMAL            0          0     102394
+CANDIDATE                                      /dev/rdsk/c1d90s6              NORMAL            0          0     102393
+CANDIDATE                                      /dev/rdsk/c1d91s6              NORMAL            0          0     102393
+CANDIDATE                                      /dev/rdsk/c1d92s6              NORMAL            0          0     102393
+CANDIDATE                                      /dev/rdsk/c1d93s6              NORMAL            0          0     102393
+CANDIDATE                                      /dev/rdsk/c1d94s6              NORMAL            0          0     102393
+
+HEADER_STATUS             NAME                 PATH                           STATE      TOTAL_MB    FREE_MB      OS_MB
+------------------------- -------------------- ------------------------------ -------- ---------- ---------- ----------
+CANDIDATE                                      /dev/rdsk/c1d95s6              NORMAL            0          0     102393
+CANDIDATE                                      /dev/rdsk/c1d96s6              NORMAL            0          0     102393
+CANDIDATE                                      /dev/rdsk/c1d97s6              NORMAL            0          0     102393
+CANDIDATE                                      /dev/rdsk/c1d98s6              NORMAL            0          0     102393
+CANDIDATE                                      /dev/rdsk/c1d99s6              NORMAL            0          0     102393
+
+
+
+Consultamos tamaño total de DG DATA: (antes y despues de lanzar el script para verificar)
+
+set lines 300
+COLUMN name FORMAT a20
+SELECT inst_id, name, total_mb, cold_used_mb "USED_MB", free_mb, usable_file_mb "USABLE_MB", state, round((cold_used_mb*100)/total_mb, 2) "%USED", round((free_mb*100)/total_mb, 2) "%FREE"
+FROM gv$asm_diskgroup
+WHERE name like '%'
+--OR name like '%'
+--WHERE name = 'FRA'
+ORDER BY 1;
+
+
+
+-----Estar pendiente de los discos que estas agregando al script para que no haya errores.
+Script para agregar los discos al DG:
+													Para saber que nombre le corresponde a los discos que van a ser agregados
+													entrar a TOAD - DATABASE - ADMINISTER - ASM MANAGER
+	
+alter diskgroup DATA add disk
+'/dev/rdsk/c1d474s6' name DATA_0235
+REBALANCE POWER 20;
+
+alter diskgroup DG_DATA_DCSP add disk
+'/dev/rdsk/c1d160s6' name PWDATA_017
+REBALANCE POWER 20;
+
+
+alter diskgroup DATA add disk
+'/dev/rdsk/c1d477s6' name DATA_0238,
+'/dev/rdsk/c1d478s6' name DATA_0239
+REBALANCE POWER 20;
+
+
+
+
+
+
+ALTER DISKGROUP DG_DATA_CCENLNH ADD DISK
+  '/dev/rdsk/c1d102s6' NAME DG_DATA_CCENLNH_N01
+, '/dev/rdsk/c1d103s6' NAME DG_DATA_CCENLNH_N02
+, '/dev/rdsk/c1d104s6' NAME DG_DATA_CCENLNH_N03
+, '/dev/rdsk/c1d105s6' NAME DG_DATA_CCENLNH_N04
+, '/dev/rdsk/c1d106s6' NAME DG_DATA_CCENLNH_N05
+, '/dev/rdsk/c1d107s6' NAME DG_DATA_CCENLNH_N06
+, '/dev/rdsk/c1d108s6' NAME DG_DATA_CCENLNH_N07
+, '/dev/rdsk/c1d109s6' NAME DG_DATA_CCENLNH_N08
+, '/dev/rdsk/c1d110s6' NAME DG_DATA_CCENLNH_N09
+, '/dev/rdsk/c1d111s6' NAME DG_DATA_CCENLNH_N10
+, '/dev/rdsk/c1d112s6' NAME DG_DATA_CCENLNH_N11
+, '/dev/rdsk/c1d113s6' NAME DG_DATA_CCENLNH_N12
+, '/dev/rdsk/c1d114s6' NAME DG_DATA_CCENLNH_N13
+REBALANCE POWER 20;
+
+
+
+
+ALTER DISKGROUP DG_REDO1_CCENLNH ADD DISK
+'/dev/rdsk/c1d127s6' NAME DG_REDO1_CCENLNH_N1
+REBALANCE POWER 20;
+
+ALTER DISKGROUP DG_REDO2_CCENLNH ADD DISK
+'/dev/rdsk/c1d128s6' NAME DG_REDO2_CCENLNH_N1
+REBALANCE POWER 20;
+
+
+
+c1d127s6
+c1d128s6
+
+

@@ -1,0 +1,32 @@
+
+obtener owner de scheme
+select user_id from dba_users where username = 'PCP_DOMIC';
+
+
+Ver indexes usados, en el filtro de owner se debe colocar el ID del owner previamente conseguido
+
+set line 180 pages 1000
+col INDEX_NAME for a40
+col TABLE_NAME for a30
+col MONITORING for a10
+col USED for a5
+col start_monitoring for a20
+col end_monitoring for a20
+select t.owner#
+, io.name INDEX_NAME
+, t.name TABLE_NAME
+, decode(bitand(i.flags, 65536), 0, 'NO', 'YES') MONITORING
+, decode(bitand(ou.flags, 1), 0, 'NO', 'YES') USED
+, ou.start_monitoring
+, ou.end_monitoring
+from sys.obj$ io
+, sys.obj$ t
+, sys.ind$ i
+, sys.object_usage ou
+where i.obj# = ou.obj#
+AND io.obj# = ou.obj#
+AND t.obj# = i.bo#
+AND t.owner# = 122
+-- AND decode(bitand(ou.flags, 1), 0, 'NO', 'YES') = 'NO'
+order by used
+/

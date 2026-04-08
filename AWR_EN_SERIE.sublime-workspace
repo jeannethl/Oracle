@@ -1,0 +1,265 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"//cpprwrepbin/DATA/ADSI/JESSIKA/Export Crontab",
+		"//cpprwrepbin/DATA/ADSI/SCRIPTS/consultas_solaris.txt",
+		"//cpprwrepbin/DATA/ADSI/SCRIPTS/caracteristicas_db.sql",
+		"//cpprwrepbin/DATA/ADSI/SCRIPTS/CONSULTA_PARAMETROS_HIDDEN_OCULTOS.txt",
+		"//cpprwrepbin/DATA/ADSI/SCRIPTS/consultas_linux.txt",
+		"//cpprwrepbin/DATA/ADSI/SCRIPTS/SQL_TUNING_ADVISOR.txt",
+		"//cpprwrepbin/DATA/ADSI/JESSIKA/Scripts/Scripts/Tablespaces_diskgroups_tablas/Ampliar_Tablespace_ASM.md",
+		"//cpprwrepbin/DATA/ADSI/JESSIKA/Scripts/Scripts/Tablespaces_diskgroups_tablas/ampliar_TBS_ASM.sql",
+		"/C/Users/CT25137/Downloads/VERIFICAR_EJECUCION_DE_UN_JOB",
+		"/C/Users/CT25137/Downloads/ampliar_TBS_ASM.sql",
+		"/Y/ADSI/JESSIKA/Scripts/jessika/Parches Oracle y Grid terminar",
+		"/Y/ADSI/JESSIKA/Scripts/Paso_a_paso_.txt",
+		"/C/Users/CT25137/Downloads/BASH_EXPORT_DATAPUMP_1.txt",
+		"/Y/ADSI/JESSIKA/Scripts/AWR_EN_SERIE.txt",
+		"/C/Users/CT25137/Downloads/FRAGMENTACION_DE_TABLA.txt",
+		"/D/Documents and Settings/CT25137/Desktop/Jessika/reporte_ambientes_oracle.md",
+		"/C/Users/CT25137/Downloads/AUMENTAR_SGA",
+		"/C/Users/CT25137/Downloads/tablas_fragmentadas.lst",
+		"/C/Users/CT25137/Downloads/tablas_fragmentadas_.lst",
+		"/C/Users/CT25137/Downloads/tablas_fragmentadas_V3.lst",
+		"//cpprwrepbin/DATA/ADSI/JESSIKA/Scripts/validar_paquetes.sh",
+		"//cpprwrepbin/DATA/ADSI/JESSIKA/Scripts/QUERY_CHORIZO.sql",
+		"//cpprwrepbin/DATA/ADSI/JESSIKA/Scripts/ver espacio disponible asm_diskgroup",
+		"//cpprwrepbin/DATA/ADSI/JESSIKA/Scripts/show_statistics.sql",
+		"//cpprwrepbin/DATA/ADSI/JESSIKA/Scripts/show_sessions.md",
+		"//cpprwrepbin/DATA/ADSI/JESSIKA/Scripts/revision_parametros_oracle.sql",
+		"/Y/ADSI/JESSIKA/Scripts/Consulta Tablespace",
+		"/C/Users/CT25137/Downloads/ROMPA_EL_VIDRIO_EN_CASO_DE_EMERGENCIA (2).sql",
+		"/D/Documents and Settings/CT25137/Desktop/Jessika/Tablas fragmentadas PAGOFP.sql",
+		"/D/Documents and Settings/CT25137/Desktop/Jessika/bds",
+		"/Y/ADSI/JESSIKA/Scripts/jessika/Parametros_Evidencias_Excel",
+		"/Y/ADSI/JESSIKA/Scripts/dbs_gawrr.sh",
+		"/Y/ADSI/JESSIKA/Scripts/jessika/paso_a_paso_parches",
+		"/Y/ADSI/JESSIKA/Scripts/usuarios de seguridad bdv.sql",
+		"/Y/ADSI/JESSIKA/DB_Informes_otros/TRZS/6HU97KV1ZF0XM_TUNING_TASK12",
+		"/Y/ADSI/JESSIKA/Scripts/Switcheo de redologs",
+		"/C/Users/CT25137/Downloads/TRZS20240318.lst",
+		"/C/Users/CT25137/Downloads/TRZS20240318________mano",
+		"/Y/ADSI/JESSIKA/Scripts/revision_parametros_oracle.sql",
+		"/Y/ADSI/JESSIKA/Scripts/analisis.sql",
+		"/Y/ADSI/JESSIKA/Scripts/ver espacio disponible asm_diskgroup",
+		"/D/Documents and Settings/CT25137/Desktop/Jessika/1.sql",
+		"/D/Documents and Settings/CT25137/Desktop/Jessika/Tue Feb 27",
+		"/D/Documents and Settings/CT25137/Desktop/Jessika/Consulta Tablespace",
+		"/D/Documents and Settings/CT25137/Desktop/Jessika/ENTITI/resource_limit.sql",
+		"/D/Documents and Settings/CT25137/Desktop/tablespaces",
+		"/D/Documents and Settings/CT25137/Desktop/Nuevo Documento de texto.txt",
+		"/C/Users/CT25137/Downloads/SQLids_PagoFP",
+		"/Y/ADSI/JESSIKA/_DBA_HIST_SESS_HIST",
+		"/Y/ADSI/SCRIPTS/AWR/ADMINISTRACION_DE_AWR_Y_SNAPSHOTS.txt",
+		"/Y/ADSI/JESSIKA/encontrar_sql_DBA_HIST_SESS_HIST",
+		"/Y/ADSI/JESSIKA/jessika/parches",
+		"/Y/ADSI/JESSIKA/jessika/Parches Oracle y Grid terminar",
+		"/Y/ADSI/JESSIKA/Paso_a_paso_.txt",
+		"/Y/ADSI/JESSIKA/Binarios_OPatch_Parches_AHF_CVU/REMEDIACIONES_ORACHK_SINGLE19C_OL8.7.txt",
+		"/Y/ADSI/JESSIKA/usuarios de seguridad bdv.sql",
+		"/Z/Archivos/ORACLE/PostCreacion_Database/BACKUP/readme_backup.txt",
+		"/Z/Archivos/ORACLE/PostCreacion_Database/EXPORT/export_data_datapump.sh",
+		"/Z/Archivos/ORACLE/PostCreacion_Database/EXPORT/readme_export.txt",
+		"/Z/Archivos/ORACLE/PostCreacion_Database/Paso_a_paso.txt",
+		"/Y/ADSI/JESSIKA/SIGMED/Instalacion/Pre patch Oracle19",
+		"/Y/ADSI/JESSIKA/SIGMED/Instalacion/Prereq Oracle",
+		"/Y/ADSI/JESSIKA/SIGMED/Instalacion/Prereq Grid",
+		"/Y/ADSI/JESSIKA/REMEDIACIONES_ORACHK_SINGLE19C_OL8.7.txt",
+		"/Y/ADSI/JESSIKA/SIGMED/Instalacion/Pre patch grid",
+		"/D/Documents and Settings/CT25137/Desktop/Jessika/sql tuning",
+		"/C/Users/CT25137/AppData/Local/Temp/notesE97E9E/Ampliar_Tablespace_ASM.md",
+		"/C/Users/CT25137/AppData/Local/Temp/notesE97E9E/count_sessions_for_min.sql",
+		"/C/Users/CT25137/AppData/Local/Temp/notesE97E9E/show_sessions.md",
+		"/C/Users/CT25137/Downloads/AWR_EN_SERIE.txt",
+		"/C/Users/CT25137/AppData/Local/Temp/notesE97E9E/QUERY_CHORIZO.sql",
+		"/C/Users/CT25137/AppData/Local/Temp/notesE97E9E/dbs_gawrr.sh",
+		"/Y/ADSI/SCRIPTS/AWR/dbs_gawrr.sh",
+		"/Y/ADSI/SCRIPTS/AWR/AWR_EN_SERIE.sql",
+		"/Y/ADSI_BANCO/AWR/ADMINISTRACION_DE_ASH.txt",
+		"/Y/ADSI/JESSIKA/TRZS/sqlid 28_02 900_930",
+		"/C/Users/CT25137/AppData/Local/Temp/notesE97E9E/~6793252.sh",
+		"/C/Users/CT25137/Downloads/revision_parametros_oracle.sql",
+		"/C/Users/CT25137/Downloads/validar_paquetes.sh",
+		"/C/Users/CT25137/Downloads/salida_nodo1_intapip.txt",
+		"/C/Users/CT25137/Downloads/salida_nodo2_intapip",
+		"/Y/ADSI/JESSIKA/CYCLO/SQLTUNE 0agcy",
+		"/D/Documents and Settings/CT25137/Desktop/Jessika/2",
+		"/Y/ADSI/SCRIPTS/SQL_TUNING_ADVISOR.txt",
+		"/Y/ADSI_BANCO/AWR/ADMINISTRACION_DE_AWR_Y_SNAPSHOTS.txt",
+		"/C/Users/CT25137/Downloads/desc v$resource_limit",
+		"/C/Users/CT25137/AppData/Local/Temp/notesE97E9E/tablespaces",
+		"/C/Users/CT25137/AppData/Local/Temp/notesE97E9E/show_snapshoots.sh",
+		"/C/Users/CT25137/AppData/Local/Temp/notesE97E9E/show_statistics.sql",
+		"/Y/ADSI/Documentos/URL.txt",
+		"/C/Users/CT25137/AppData/Local/Temp/notesE97E9E/analisis.sql",
+		"/Y/ADSI/JESSIKA/CYCLO/Objetos invalidos",
+		"/Y/ADSI/JESSIKA/CYCLO/particiones.sql",
+		"/Y/ADSI/JESSIKA/ENTITI/Alert log Entitip desde 210224",
+		"/Y/ADSI/JESSIKA/ENTITI/resource_limit.sql",
+		"/Y/ADSI/JESSIKA/SQL_TUNING/CYCLOP1/39u3qrhgwz3nc_tuning_task01",
+		"/Y/ADSI/JESSIKA/SQL_TUNING/CYCLOP1/gzjzyft0cjcts_tuning_task01",
+		"/Y/ADSI/JESSIKA/SQL_TUNING/CYCLOP1/b7vk7zu5rp5w7_tuning_task01",
+		"/Y/ADSI/JESSIKA/SQL_TUNING/CYCLOP1/1y84bus3y6gxd_tuning_task01",
+		"/Y/ADSI/JESSIKA/SQL_TUNING/CYCLOP1/76wmxqy4908x1_tuning_task01",
+		"/D/Documents and Settings/CT25137/My Documents/1y84bus3y6gxd"
+	],
+	"find":
+	{
+		"height": 50.0
+	},
+	"find_in_files":
+	{
+		"height": 101.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 38.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "AWR_EN_SERIE.sublime-project",
+	"replace":
+	{
+		"height": 72.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 592.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 292.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

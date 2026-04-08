@@ -1,0 +1,28 @@
+set line 240
+col owner format a20
+col index_name format a40
+SELECT owner, index_name, tablespace_name
+FROM dba_indexes
+WHERE status = 'UNUSABLE';
+
+
+
+
+select owner,index_name,table_name
+from dba_indexes 
+where index_name = 'SYS_C0081533';
+
+
+
+
+
+
+
+alter index CCENLNP.SYS_C0081533 rebuild;
+
+
+alter index SYS.WRH$_SYSMETRIC_HISTORY_INDEX rebuild;
+
+
+
+

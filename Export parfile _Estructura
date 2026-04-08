@@ -1,0 +1,44 @@
+
+
+
+
+
+
+
+EXPORT /exportdb/ENTITID/backup_temp
+
+select username from dba_users 
+where username='E2FDATOSBASE';
+
+select table_name from dba_tables 
+where owner='EICDATOSBASE' and table_name like '%E2CPSOAUF%';
+
+
+exp SYSTEM/bqsmt7aral8 ATTACH=SYS_EXPORT_FULL_02
+exp SYSTEM/bqsmt7aral8 PARFILE=Estructura_FIDE_20240523.par
+
+
+vi Estructura_FIDE_20240523.par
+
+FULL=Y
+CONTENT=metadata_only
+DIRECTORY=EXPORT
+ESTIMATE_ONLY=YES
+DUMPFILE=Estructura_FIDE_20240523.dmp
+LOGFILE=Estructura_FIDE_20240523.log
+
+--------------
+INSTRUCCIONES REALES JEJE XD
+--------------
+vi EXP_E2CPSOAUF_23052024.par
+
+
+TABLES=EICDATOSBASE.E2CPSOAUF
+CONTENT=ALL
+EXCLUDE=STATISTICS
+DIRECTORY=EXPORT
+DUMPFILE=EXP_E2CPSOAUF_23052024.dmp
+LOGFILE=EXP_E2CPSOAUF_23052024.log
+--------------------------------------
+
+expdp SYSTEM/bqsmt7aral8 PARFILE=EXP_E2CPSOAUF_23052024.par

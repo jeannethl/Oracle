@@ -1,0 +1,6 @@
+col TABLESPACE_NAME format a60
+select OWNER
+, TABLE_NAME
+, TABLESPACE_NAME 
+from ALL_TABLES 
+where OWNER = 'CCENLNP';

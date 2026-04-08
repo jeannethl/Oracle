@@ -1,0 +1,68 @@
+///////////////////////////////////////////////////////////////////////////////////////
+//       CONFIGURACIÓN DEL CRONTAB PARA EL EXPORT DATAPUMP POR PARTICIONES
+//                					LINUX
+//             					ADSI DBA-TEAM
+// 				YOSDUAR RANGEL-ALIUSKA PEÑA-ADRIAN AGUILERA
+////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+CREAR EL DIRECTORIO PARA EL EXPORT DEL DATAPUMP
+
+mkdir /home/oracle/exportdump
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+cat <<EOT >>/home/oracle/exportdump/EXPORT_P_MES.sh
+#!/bin/bash
+expdp \"/ as sysdba\" tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES1 directory=EXPORT dumpfile=CCL_PAY_TRANSACTION_2024_P_MES1_%U.dmp logfile=export_CCL_PAY_TRANSACTION_2024_P_MES1.log EXCLUDE=STATISTICS PARALLEL=4 CLUSTER=N COMPRESSION=ALL
+bash /home/oracle/exportdump/increment.sh
+EOT
+
+-------------------------------------------------------------------------------------
+CONFIGURAR EL ARCHIVO DE INCREMENTAR EL NOMBRE DEL MES
+
+
+cat <<EOT >>/home/oracle/exportdump/increment.sh
+#!/bin/bash
+
+# Leer el valor actual del archivo
+valor_actual=$(cat /home/oracle/exportdump/numero.txt)
+
+# Incrementar el valor
+let valor_incrementado=valor_actual+1
+
+# Mostrar el valor incrementado
+echo "Valor incrementado: $valor_incrementado"
+
+# Guardar el valor incrementado de vuelta en el archivo
+echo $valor_incrementado > numero.txt
+
+#incremetar el nombre de la particion
+particion_actual=MES$valor_actual
+particion_siguiente=MES$valor_incrementado
+sed -i "s/\$particion_actual/\$particion_siguiente/g" /home/oracle/exportdump/EXPORT_P_MES.sh
+EOT
+
+
+-------------------------------------------------------------------------------
+CREAR UN ARCHIVO CON EL NUMERO DE SECUENCIA INICIANDO EN 1
+
+echo "1" > /home/oracle/exportdump/numero.txt
+
+
+
+------------------------------------------------------------------------------
+DAR PERMISOS DE EJECUCIÓN
+
+chmod 755 /home/oracle/exportdump/*.sh
+
+
+
+-------------------------------------------------------------------------------------
+CONFIGURAR EL CRONTAB
+
+00 02 * * * /home/oracle/exportdump/EXPORT_P_MES.sh

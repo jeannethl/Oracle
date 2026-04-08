@@ -1,27 +1,10 @@
-find /oracle -name ".trc" -mtime +90 -exec rm -rf {}\;
+find /oracle -name ".trc" -mtime +90 -exec rm -rf {} \;
 find /oracle -name ".trc" -mtime +90 -exec rm -rf {} \;
 
 
 find /oracle -name ".aud" -mtime +90 -exec rm -rf {} \;
-find /oracle -name "log_*.xml" -mtime +90 -exec rm -f {} \;
+find . -name "log_*.xml" -mtime +90 -exec rm -f {} \;
 
 
-
-find /oracle -size +999999
 
 du -hs *
-
-
-
-
-
-
-mv /oracle/app/oracle/product/oias/EXPORT_TABLES_07022024.dmp /exportdb/IASDB/backup_temp
-
-cd /oracle/app/oracle/product/oias
-mv EXPORT_TABLES_07022024.dmp /exportdb/IASDB/backup_temp
-
-
-
-
-

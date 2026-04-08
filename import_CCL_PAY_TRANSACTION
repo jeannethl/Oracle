@@ -1,0 +1,37 @@
+impdp \"/ as sysdba\" directory=EXPORT_NEW dumpfile=CCL_PAY_TRANSACTION_2024_P_MES2_%U.dmp tables=CCENLNP.CCL_PAY_TRANSACTION_2024:P_MES2 logfile=import_CCL_PAY_TRANSACTION_2024_P_MES2.log PARALLEL=4 CLUSTER=N TABLE_EXISTS_ACTION=APPEND
+
+
+
+impdp \"/ as sysdba\"
+
+
+
+impdp \"/ as sysdba\" directory=EXPORT_NEW dumpfile=CCL_PAY_TRANSACTION_2024_P_MES2_%U.dmp tables=CCENLNP.CCLPAY_TRANSACTION_2024 logfile=import_CCL_PAY_TRANSACTION_2024_P_MES1.log PARALLEL=4 CLUSTER=N TABLE_EXISTS_ACTION=APPEND
+
+
+
+
+
+
+
+
+
+
+
+
+set long 200000000 longchunksize 200000000 pagesize 0 linesize 10000 feedback off verify off trimspool on 
+column ddl format a1000
+
+begin
+   dbms_metadata.set_transform_param (dbms_metadata.session_transform, 'SQLTERMINATOR', true);
+   dbms_metadata.set_transform_param (dbms_metadata.session_transform, 'PRETTY', true);
+end;
+/
+
+
+spool DDL_CCL_PAY.txt
+
+SELECT dbms_metadata.get_ddl('TABLE', 'CCL_PAY_TRANSACTION_2024', 'CCENLNP') FROM dual;
+
+spool off
+

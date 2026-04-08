@@ -1,0 +1,79 @@
+SELECT addr,
+       indx,
+       inst_id,
+       pub_ksxpia,
+       picked_ksxpia,
+       name_ksxpia,
+       ip_ksxpia
+FROM   x$ksxpia;
+
+SELECT inst_id,
+       name,
+       ip_address,
+       is_public
+FROM   gv$cluster_interconnects
+ORDER  BY inst_id;
+
+
+SELECT
+    B1.INST_ID INT,
+    B2.VALUE "gc cr BR",
+    B1.VALUE "gc cr BRT",
+    B4.VALUE "gc cur BR",
+    b3.value "gc cur BRT",
+    ((B1.VALUE/B2.VALUE) 10) "Avg CR BRT(ms)",
+    ((B3.VALUE/B4.VALUE)10) "Avg CUR BRT(ms)"
+FROM GV$SYSSTAT B1,
+     GV$SYSSTAT B2,
+     GV$SYSSTAT B3,
+     GV$SYSSTAT B4
+WHERE B1.NAME = 'gc cr block receive time'
+AND   B2.NAME = 'gc cr blocks received'
+AND   B3.NAME = 'gc current block receive time'
+AND   B4.NAME = 'gc current blocks received'
+AND   B1.INST_ID = B2.INST_ID
+AND   B1.INST_ID = B3.INST_ID
+AND   B1.INST_ID = B4.INST_ID
+ORDER BY 1;
+
+
+SELECT
+      A1.INST_ID ,
+      A3.INSTANCE_NAME,
+     A3.STARTUP_TIME,
+      ROUND (SYSDATE - STARTUP_TIME) "Days",
+      A1.VALUE ,
+   A2.VALUE
+FROM  GV$SYSSTAT A1,
+      GV$SYSSTAT A2,
+      GV$INSTANCE A3
+WHERE A1.NAME = 'gc blocks lost'
+AND   A2.NAME = 'gc blocks corrupt'
+AND   A1.INST_ID = A2.INST_ID
+AND   A1.INST_ID = A3.INSTANCE_NUMBER
+ORDER BY 1;
+
+
+
+
+SELECT
+      A1.INST_ID ,
+      A3.INSTANCE_NAME,
+     A3.STARTUP_TIME,
+      ROUND (SYSDATE - STARTUP_TIME) "Days",
+      A1.VALUE ,
+   A2.VALUE
+FROM  GV$SYSSTAT A1,
+      GV$SYSSTAT A2,
+      GV$INSTANCE A3
+WHERE A1.NAME = 'gc blocks lost'
+AND   A2.NAME = 'gc blocks corrupt'
+AND   A1.INST_ID = A2.INST_ID
+AND   A1.INST_ID = A3.INSTANCE_NUMBER
+ORDER BY 1;
+SELECT inst_id,
+       name,
+       ip_address,
+       is_public
+FROM   gv$cluster_interconnects
+ORDER  BY inst_id;

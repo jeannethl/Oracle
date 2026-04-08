@@ -1,0 +1,108 @@
+*** Verificar status de discos 
+set lines 400 pagesize 300
+COLUMN header_status FORMAT a25
+COLUMN path FORMAT a30
+COLUMN name FORMAT a20
+SELECT header_status, name, path, state, total_mb, free_mb,OS_MB 
+FROM v$asm_disk
+WHERE header_status = 'CANDIDATE'
+ORDER BY path;
+
+
+*** Verificar permisos de los discos
+for i in `ls -ld c1d294s6 c1d295s6 c1d296s6 c1d297s6 c1d298s6 c1d299s6 c1d300s6 c1d301s6 c1d302s6 c1d303s6 c1d304s6 c1d305s6 c1d306s6 c1d307s6 c1d308s6 c1d309s6 c1d310s6 c1d311s6 c1d312s6 c1d313s6 c1d314s6 c1d315s6 c1d316s6 c1d317s6 c1d318s6 c1d319s6 c1d320s6 c1d321s6 c1d322s6 c1d323s6 c1d324s6 c1d325s6 c1d326s6 c1d327s6 c1d328s6 c1d329s6 c1d330s6 c1d331s6 c1d332s6 c1d333s6 c1d334s6 |awk {'print$11'}`; do ls -ltr $i* |grep -i oinstall; done
+
+*** Agregar los discos
+
+********************2 discos 1GB
+alter diskgroup DG_ASM add disk
+'/dev/rdsk/c1d320s6' name PW_ASM_001,
+'/dev/rdsk/c1d321s6' name PW_ASM_002
+REBALANCE POWER 10;
+
+**************2 discos 10GB
+alter diskgroup DG_ENTRY add disk
+'/dev/rdsk/c1d318s6' name PW_ENTRY_001,
+'/dev/rdsk/c1d319s6' name PW_ENTRY_002
+REBALANCE POWER 10;
+
+**************4 discos 10GB
+alter diskgroup DG_REDO1 add disk
+'/dev/rdsk/c1d302s6' name PW_REDO1_001,
+'/dev/rdsk/c1d303s6' name PW_REDO1_002,
+'/dev/rdsk/c1d304s6' name PW_REDO1_003,
+'/dev/rdsk/c1d305s6' name PW_REDO1_004
+REBALANCE POWER 10;
+
+**************4 discos 10GB
+alter diskgroup DG_REDO2 add disk
+'/dev/rdsk/c1d306s6' name PW_REDO2_001,
+'/dev/rdsk/c1d307s6' name PW_REDO2_002,
+'/dev/rdsk/c1d308s6' name PW_REDO2_003,
+'/dev/rdsk/c1d309s6' name PW_REDO2_004
+REBALANCE POWER 10;
+
+**************4 discos 10GB
+alter diskgroup DG_REDO3 add disk
+'/dev/rdsk/c1d310s6' name PW_REDO3_001,
+'/dev/rdsk/c1d311s6' name PW_REDO3_002,
+'/dev/rdsk/c1d312s6' name PW_REDO3_003,
+'/dev/rdsk/c1d313s6' name PW_REDO3_004
+REBALANCE POWER 10;
+
+**************4 discos 10GB
+alter diskgroup DG_REDO4 add disk
+'/dev/rdsk/c1d314s6' name PW_REDO4_001,
+'/dev/rdsk/c1d315s6' name PW_REDO4_002,
+'/dev/rdsk/c1d316s6' name PW_REDO4_003,
+'/dev/rdsk/c1d317s6' name PW_REDO4_004
+REBALANCE POWER 10;
+
+
+
+--------------------------
+---------------------------
+
+**************4 discos 100
+alter diskgroup FRA add disk
+'/dev/rdsk/c1d298s6' name PW_FRA_001,
+'/dev/rdsk/c1d299s6' name PW_FRA_002,
+'/dev/rdsk/c1d300s6' name PW_FRA_003,
+'/dev/rdsk/c1d301s6' name PW_FRA_004
+REBALANCE POWER 10;
+
+
+
+**************3 discos 100GB
+alter diskgroup DG_MODEL add disk
+'/dev/rdsk/c1d295s6' name PW_MODEL_001,
+'/dev/rdsk/c1d296s6' name PW_MODEL_002,
+'/dev/rdsk/c1d297s6' name PW_MODEL_003
+REBALANCE POWER 10;
+
+********************14 discos 500GB
+alter diskgroup DG_DATA add disk
+'/dev/rdsk/c1d294s6' name PW_DATAPCP_001,
+'/dev/rdsk/c1d322s6' name PW_DATAPCP_002,
+'/dev/rdsk/c1d323s6' name PW_DATAPCP_003,
+'/dev/rdsk/c1d324s6' name PW_DATAPCP_004,
+'/dev/rdsk/c1d325s6' name PW_DATAPCP_005,
+'/dev/rdsk/c1d326s6' name PW_DATAPCP_006,
+'/dev/rdsk/c1d327s6' name PW_DATAPCP_007
+REBALANCE POWER 10;
+
+
+
+alter diskgroup DG_DATA add disk
+'/dev/rdsk/c1d328s6' name PW_DATAPCP_008,
+'/dev/rdsk/c1d329s6' name PW_DATAPCP_009,
+'/dev/rdsk/c1d330s6' name PW_DATAPCP_010,
+'/dev/rdsk/c1d331s6' name PW_DATAPCP_011,
+'/dev/rdsk/c1d332s6' name PW_DATAPCP_012,
+'/dev/rdsk/c1d333s6' name PW_DATAPCP_013,
+'/dev/rdsk/c1d334s6' name PW_DATAPCP_014
+REBALANCE POWER 10;
+
+
+
+

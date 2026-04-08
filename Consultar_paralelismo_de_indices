@@ -1,0 +1,9 @@
+----Consultar paralelismo de indices 
+
+col index_name format a40
+col owner format a40
+col table_name format a40
+select index_name,table_name,degree
+  from dba_indexes
+ where index_name = 'MOVEMENT_N6'
+   and owner = 'DCSP' ;

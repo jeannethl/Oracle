@@ -1,0 +1,123 @@
+---   sqlplus / as sysasm
+	
+discos_candidatos o former:
+	
+set lines 400
+COLUMN header_status FORMAT a25
+COLUMN path FORMAT a35
+COLUMN name FORMAT a20
+SELECT inst_id, header_status, path, state, OS_MB, create_date 
+FROM gv$asm_disk
+WHERE header_status = 'FORMER'
+ORDER BY path;
+
+ INST_ID HEADER_STATUS             PATH                                STATE         OS_MB CREATE_DA
+---------- ------------------------- ----------------------------------- -------- ---------- ---------
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM3      NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM3      NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM30     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM30     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM31     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM31     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM32     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM32     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM33     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM33     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM34     NORMAL       511999 03-APR-24
+
+   INST_ID HEADER_STATUS             PATH                                STATE         OS_MB CREATE_DA
+---------- ------------------------- ----------------------------------- -------- ---------- ---------
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM34     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM35     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM35     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM36     NORMAL       102400 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM36     NORMAL       102400 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM37     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM37     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM38     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM38     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM39     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM39     NORMAL       511999 03-APR-24
+
+   INST_ID HEADER_STATUS             PATH                                STATE         OS_MB CREATE_DA
+---------- ------------------------- ----------------------------------- -------- ---------- ---------
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM4      NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM4      NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM40     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM40     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM41     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM41     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM42     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM42     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM43     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM43     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM44     NORMAL       511999 03-APR-24
+
+   INST_ID HEADER_STATUS             PATH                                STATE         OS_MB CREATE_DA
+---------- ------------------------- ----------------------------------- -------- ---------- ---------
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM44     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM45     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM45     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM46     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM46     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM48     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM48     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM49     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM49     NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM5      NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM5      NORMAL       511999 03-APR-24
+
+   INST_ID HEADER_STATUS             PATH                                STATE         OS_MB CREATE_DA
+---------- ------------------------- ----------------------------------- -------- ---------- ---------
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM50     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM50     NORMAL       511999 03-APR-24
+         2 FORMER                    /dev/oracleasm/disks/DISK_ASM6      NORMAL       511999 03-APR-24
+         1 FORMER                    /dev/oracleasm/disks/DISK_ASM6      NORMAL       511999 03-APR-24
+
+
+set lines 300
+COLUMN name FORMAT a20
+SELECT inst_id, name, total_mb, cold_used_mb "USED_MB", free_mb, usable_file_mb "USABLE_MB", state, round((cold_used_mb*100)/total_mb, 2) "%USED", round((free_mb*100)/total_mb, 2) "%FREE"
+FROM gv$asm_diskgroup
+WHERE name like '%'
+--OR name like '%'
+--WHERE name = 'FRA'
+ORDER BY 1;
+
+
+
+  INST_ID NAME                   TOTAL_MB    USED_MB    FREE_MB  USABLE_MB STATE            %USED      %FREE
+---------- -------------------- ---------- ---------- ---------- ---------- ----------- ---------- ----------
+         1 REDO01                   204800     184720      20080      20080 MOUNTED           90.2        9.8
+         1 OCRVOTE                   40952        384      40568      40568 MOUNTED            .94      99.06
+         1 MGMT                     102392      24696      77696      77696 MOUNTED          24.12      75.88
+         1 FRA                     1023992     142600     881392     881392 MOUNTED          13.93      86.07
+         1 DATA                    7679940    7573620     106320     106320 MOUNTED          98.62       1.38
+         1 REDO02                   204800     184720      20080      20080 MOUNTED           90.2        9.8
+         2 REDO01                   204800     184720      20080      20080 MOUNTED           90.2        9.8
+         2 OCRVOTE                   40952        384      40568      40568 MOUNTED            .94      99.06
+         2 MGMT                     102392      24696      77696      77696 MOUNTED          24.12      75.88
+         2 FRA                     1023992     142600     881392     881392 MOUNTED          13.93      86.07
+         2 DATA                    7679940    7573620     106320     106320 MOUNTED          98.62       1.38
+         2 REDO02                   204800     184720      20080      20080 MOUNTED           90.2        9.8
+
+
+
+--agregar discos_candidatos
+alter diskgroup DATA add disk '/dev/rdsk/c1d474s6' name DATA_0235 REBALANCE POWER 20;
+
+
+alter diskgroup DATA add disk '/dev/oracleasm/disks/DISK_ASM33' name DATA_0018 REBALANCE POWER 15;
+
+
+alter diskgroup DATA add disk '/dev/oracleasm/disks/DISK_ASM31' name DATA_0016 REBALANCE POWER 20;
+
+
+
+
+
+--alter tbs -- oracle sqlplus / as sysasm
+
+ALTER TABLESPACE DATA_BDVNETP ADD DATAFILE '+DATA' SIZE 32767M AUTOEXTEND OFF;
+ALTER TABLESPACE DATA_BDVNETP ADD DATAFILE '+DATA' SIZE 32767M AUTOEXTEND OFF;
+ALTER TABLESPACE DATA_BDVNETP ADD DATAFILE '+DATA' SIZE 32767M AUTOEXTEND OFF;

@@ -1,0 +1,96 @@
+get_ddl_tabla_indices
++---+---+---+---+---+---+---+
+| G | E | T | _ | D | D | L |
++---+---+---+---+---+---+---+
+=====================
+TABLA
+
+
+---------------------
+SET LONG 200000 LONGCHUNKSIZE 20000 PAGESIZE 0 LINESIZE 1000 FEEDBACK OFF VERIFY OFF TRIMSPOOL ON
+BEGIN
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'SQLTERMINATOR', true);
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'PRETTY', true);
+END;
+/
+spool '/export/home/oracle11/C003T_TRANSACTION.sql';
+SELECT dbms_metadata.get_ddl('TABLE','C003T_TRANSACTION','CYCLOPS_IDENTITY') FROM dual;
+spool off
+
+
+---------------------
+SET LONG 200000 LONGCHUNKSIZE 20000 PAGESIZE 0 LINESIZE 1000 FEEDBACK OFF VERIFY OFF TRIMSPOOL ON
+BEGIN
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'SQLTERMINATOR', true);
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'PRETTY', true);
+END;
+/
+spool '/export/home/oracle11/C005T_SESSION.sql';
+SELECT dbms_metadata.get_ddl('TABLE','C005T_SESSION','CYCLOPS_IDENTITY') FROM dual;
+spool off
+
+
+---------------------
+SET LONG 200000 LONGCHUNKSIZE 20000 PAGESIZE 0 LINESIZE 1000 FEEDBACK OFF VERIFY OFF TRIMSPOOL ON
+BEGIN
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'SQLTERMINATOR', true);
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'PRETTY', true);
+END;
+/
+spool '/export/home/oracle11/X001T_AUDIT_LOG.sql';
+SELECT dbms_metadata.get_ddl('TABLE','X001T_AUDIT_LOG','CYCLOPS_IDENTITY_LOG') FROM dual;
+spool off
+
+
+
+=====================
+INDICES
+
+
+SELECT INDEX_NAME, TABLE_NAME, UNIQUENESS
+FROM DBA_INDEXES
+WHERE TABLE_NAME = 'C003T_TRANSACTION';
+
+
+---------------------
+SET LONG 200000 LONGCHUNKSIZE 20000 PAGESIZE 0 LINESIZE 1000 FEEDBACK OFF VERIFY OFF TRIMSPOOL ON
+BEGIN
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'SQLTERMINATOR', true);
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'PRETTY', true);
+END;
+/
+spool '/export/home/oracle11/C003T_TRANSACTION_INDEX.sql';
+SELECT dbms_metadata.get_ddl('INDEX','C003T_TRANSACTION','CYCLOPS_IDENTITY') FROM dual;
+spool off
+
+
+---------------------
+SET LONG 200000 LONGCHUNKSIZE 20000 PAGESIZE 0 LINESIZE 1000 FEEDBACK OFF VERIFY OFF TRIMSPOOL ON
+BEGIN
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'SQLTERMINATOR', true);
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'PRETTY', true);
+END;
+/
+spool '/export/home/oracle11/C005T_SESSION_INDEX.sql';
+SELECT dbms_metadata.get_ddl('INDEXES','C005T_SESSION','CYCLOPS_IDENTITY') FROM dual;
+spool off
+
+
+---------------------
+SET LONG 200000 LONGCHUNKSIZE 20000 PAGESIZE 0 LINESIZE 1000 FEEDBACK OFF VERIFY OFF TRIMSPOOL ON
+BEGIN
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'SQLTERMINATOR', true);
+   DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'PRETTY', true);
+END;
+/
+spool '/export/home/oracle11/X001T_AUDIT_LOG_INDEX.sql';
+SELECT dbms_metadata.get_ddl('INDEXES','X001T_AUDIT_LOG','CYCLOPS_IDENTITY_LOG') FROM dual;
+spool off
+
++=====================================================================================================================
+Sino, tambien se puede acceder via toad a esta info
+
+schema_browser
+-ubicar_usuario
+--buscar_tabla
+---verificar_pestaña_scripts

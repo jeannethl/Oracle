@@ -1,0 +1,49 @@
+
+
+
+
+
+---- Espacio total y libre en la base de datos (Tamaño real ocupado)
+
+select df.tablespace_name nb_tablespace,
+       round(sum(df.bytes) / 1024 / 1024) espacio_total_MB,
+       round((free.bytes) / 1024 / 1024) espacio_libre_MB,
+       round(100 * (free.bytes / round(sum(df.bytes))),2) Porcentaje_Libre
+From dba_data_files df
+     join (select tablespace_name, sum(bytes) bytes 
+           From dba_free_space 
+           group by tablespace_name) free on df.tablespace_name=free.tablespace_name
+group by df.tablespace_name, free.bytes;
+
+
+
+
+
+-----LISTADO DE TABLESPACES Y SU TAMAÑOS - MEJORADO
+
+*SOLICITARÁ EL NOMBRE DEL TABLESPACE ESPECIFICO, SI NO INTRODUCE NINGÚN NOMBRE, 
+MOSTRARÁ TODOS LOS TABLESPACES
+
+select a.TABLESPACE_NAME "Name"
+,round((a.BYTES/1024)/1024,2) "Size (MB)"
+,round((((a.BYTES-b.BYTES)/1024)/1024),2) "Used (MB)"
+,round((b.BYTES/1024)/1024,2) "Free (MB)"
+,round((100-((a.BYTES-b.BYTES)/a.BYTES)*100),2) "% Free"
+from 
+(
+select TABLESPACE_NAME
+,sum(BYTES) BYTES
+from dba_data_files
+group by TABLESPACE_NAME
+) a,
+(
+select  TABLESPACE_NAME
+,sum(BYTES) BYTES 
+,max(BYTES) largest
+from dba_free_space
+group by TABLESPACE_NAME
+) b
+where a.TABLESPACE_NAME=b.TABLESPACE_NAME 
+AND a.TABLESPACE_NAME=nvl('&1',a.TABLESPACE_NAME)
+order by 5 desc
+/
