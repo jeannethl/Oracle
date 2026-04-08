@@ -1,0 +1,14 @@
+set pagesize 100
+set linesize 400
+col OWNER for a15
+col DIRECTORY_NAME for a40
+col DIRECTORY_PATH for a70
+select OWNER, DIRECTORY_NAME, DIRECTORY_PATH from all_directories;
+
+
+
+set line 240
+col OWNER format a15
+col DIRECTORY_PATH format a80
+col DIRECTORY_NAME format a35
+select * from dba_directories;
