@@ -1,0 +1,338 @@
+//////////////////////////////////////////////////
+//  REMOVER O AGREGAR UN NODO EN UN RAC ORACLE 19C
+//			LINUX OL 8.7
+//			ADSI DBA-TEAM 
+//		ADRIAN AGUILERA-YOSDUAR RANGEL-ALIUSKA PEÑA
+//////////////////////////////////////////////////
+
+
+
+******************************************************
+		DESCONFIGURAR UN NODO DEL CLUSTER 
+******************************************************
+
+1.- Verificar desde nodo plbdcb01:
+
+Con usuario root:
+
+cd /oracle/app/product/19c/grid/bin
+./olsnodes -s -t
+
+
+2.- Desde el nodo plbdcb02 el cual se desea desincorporar del cluster:
+
+	2.1.-Desinstalar el binario 
+
+A.- Loguearse con usuario grid
+
+##documentar los pasos si estan compartidos el binario
+
+B.- Ir al directorio de oracle home de grid y ejecutar
+
+cd $ORACLE_HOME
+$ORACLE_HOME/deinstall/deinstall -local 
+
+
+En caso de identificar el directorio TEMP:
+
+$ORACLE_HOME/deinstall/deinstall -local -tmpdir <path to tmp location>
+
+
+C.- Seguir los pasos leer detenidamente
+
+
+3.- Desde un nodo plbdcb01 ejecutar los pasos para eliminar nodo
+
+	3.1.- Eliminar nodo del cluster
+
+crsctl delete node -n node_to_be_deleted
+crsctl delete node -n plbdcb02
+
+
+	3.2.- Ejecutar el cluvfy
+
+Con usuario grid:
+
+cluvfy stage -post nodedel -n plbdcb02 -verbose
+
+
+	3.3.- Consultar la vip del nodo 
+
+srvctl config vip -node plbdcb02
+
+
+	3.4.- Detener vip 
+
+srvctl stop vip -vip plbdcb02-vip.banvenez.corp
+
+
+	3.5.- Remove vip 
+
+con root usuario:
+
+srvctl remove vip -vip plbdcb02-vip.banvenez.corp
+
+Please confirm that you intend to remove the VIPs plbdcb02-vip.banvenez.corp (y/[n]) y
+
+
+4.- Desde el nodo plbdcb02 desincorporado limpiar el directorio /oracle 
+
+
+
+
+********************************************************************************************
+					AGREGAR UN NODO DEL CLUSTER GRID_HOME
+*******************************************************************************************
+
+
+En el nodo plbdcb02 el cual se desea reincorporar en el cluster ejecutar:
+
+1.- Crear los directorios 
+
+mkdir -p /oracle/app/oraInventory
+mkdir -p /oracle/app/grid		            
+mkdir -p /oracle/app/product/19c/grid
+mkdir -p /oracle/app/oracle/product/19c/db1
+
+chown -R grid:oinstall /oracle/
+chown -R oracle19:oinstall /oracle/app/oracle
+chmod -R 775 /oracle/
+
+
+2.- Verificar si todo esta corectamente para agregar el nodo
+
+Desde el nodo master plbdcb01 ejecutar:
+
+cluvfy comp peer -refnode plbdcb01 -n plbdcb02 -verbose
+
+cluvfy stage -pre nodeadd -n plbdcb02 -fixup -verbose
+
+
+NOTA: Como buena practica todas las revisiones deben terminar con estatus PASS
+
+-------------------------------------------------
+ERROR:
+  Peer Compatibility ...FAILED
+
+Verification of peer compatibility was unsuccessful.
+Checks did not pass for the following nodes:
+        plbdcb02
+
+
+Failures were encountered during execution of CVU verification request "peer compatibility".
+
+Peer Compatibility ...FAILED
+  Package existence for "glibc (x86_64)" ...FAILED
+
+SOLUCION:
+
+yum install glibc-2.28-211.0.1.el8.i686
+
+
+
+-------------------------------------------------
+RELACION DE CONFIANZA
+
+3.- Verificar y Configurar la relación de confianza entre los nodos 
+
+	Configuración de relación de confianza
+
+Realizar los siguientes pasos con el usuario oracle19, grid y root en todos los nodos del clúster.
+
+3.1.-Generar las llaves públicas
+
+En todos los nodos se ejecuta:
+
+cd 
+mkdir .ssh
+chmod 700 .ssh
+cd .ssh
+ssh-keygen -t rsa
+ssh-keygen -t dsa
+
+3.2.-Se copia el contenido de las llaves publicas al archivo authorized_keys.$(hostname) 
+
+cat *.pub >> authorized_keys.$(hostname)
+
+
+3.3.-Se envía el archivo authorized_keys.$(hostname) a los otros nodo con el que se realizará la relación de confianza
+
+Ejemplo:
+
+Nodo 1 a nodo 2
+scp authorized_keys.$(hostname) user@Nodo2:~/.ssh/
+
+Nodo 2 a nodo 1
+scp authorized_keys.$(hostname) user@Nodo1:~/.ssh/
+
+
+3.4.Copiar el contenido de authorized_keys.$(hostname) al archivo authorized_keys
+
+En todos los nodos Ejecutar:
+
+cd ~/.ssh
+cat authorized_keys.* >> authorized_keys
+chmod 600 authorized_keys
+
+3.5.-Ejecutar las pruebas 
+
+ssh Nodo#
+----------------------------------------------------------------------------------------------------------------
+
+
+
+4.- Agregar nodo al cluster
+
+METODO 1: Agregar nodo graficamente
+
+Abrir una ventana de ssh en el nodo plbdcb01
+
+su - grid 
+cd $ORACLE_HOME
+./gridSetup.sh
+
+Configuracion Option >> seleccionar Add more nodes to the cluster >> Next>
+Cluster Configuracion >> Seleccionar Add
+Add Cluster Nodes informaction >> 
+	Public Hostname:  plbdcb02.banvenez.corp
+	Virtual Hostname: plbdcb02-vip.banvenez.corp
+Seleccionar OK
+Seleccionar SSH Connectivity >> Introducir password de SO >> TEST
+Seleccionar Next>
+Prerequisite Checks >> Deben estar todo OK
+Sumary >> Guardar el archivo response 
+Install product >> execute Configuration Scripts >> Ejecutar como se indica en la ventana
+Finish >> Close
+
+
+METODO 2: Agregar nodo desde consola 
+
+cd $ORACLE_HOME/addnode
+
+-- Para 10g
+./addNode.sh "CLUSTER_NEW_NODES={plbdcb02}" "CLUSTER_NEW_VIRTUAL_HOSTNAMES={plbdcb02-vip}" 
+
+-- Para 19C
+./addnode.sh -silent -ignoreSysPrereqs -ignorePrereqFailure "CLUSTER_NEW_NODES={plbdcb02.banvenez.corp}" "CLUSTER_NEW_PRIVATE_NODE_NAMES={plbdcb02-priv.banvenez.corp}" "CLUSTER_NEW_VIRTUAL_HOSTNAMES={plbdcb02-vip.banvenez.corp}"
+
+
+-------------------------------------------------
+ERROR:
+
+[FATAL] [INS-32156] Installer has detected that there are non-readable files in oracle home.
+   CAUSE: Following files are non-readable, due to insufficient permission
+.config
+   ACTION: Ensure the above files are readable by grid.
+[FATAL] [INS-32156] Installer has detected that there are non-readable files in oracle home.
+   CAUSE: Following files are non-readable, due to insufficient permission
+.config
+   ACTION: Ensure the above files are readable by grid.
+
+SOLUCIÓN:
+
+drwx------   3  root     root         4096 May 25 12:48 ./app/product/19c/grid/.config
+
+Este archivo no tenia la permisologia correcta!
+
+cd /oracle/app/product/19c/grid/
+ls -la
+chown -R root:oinstall .config
+chmod -R 755 .config
+
+
+
+-------------------------------------------------
+
+
+5.-Ejecutar el orainstRoot.sh en el nuevo nodo.
+/oracle/app/oraInventory/orainstRoot.sh
+/oracle/app/product/19c/grid/root.sh
+
+
+
+6.-Verificar la integridad del cluster posterior a agregar el nuevo nodo desde el nodo master (nodo1)
+
+cluvfy stage -post nodeadd -n node3 [-verbose]
+
+
+
+7.-Posterior a la agregar el nodo validar 
+
+crsctl stat res -t
+crsctl check cluster -all
+
+
+8.-SI todo termina con exito realizar reboot del server 
+
+reboot
+
+
+
+
+
+
+
+*************************************************************************************************
+                    AGREGAR UN NODO DEL CLUSTER A NIVEL DE ORACLE DATABASE (ORACLE_HOME)
+*************************************************************************************************
+
+1.- Desde el nodo plbdcb01 
+
+Conectarte con oracle
+
+cd $ORACLE_HOME/addnode
+ksh 
+./addnode.sh -silent -ignoreSysPrereqs -ignorePrereqFailure "CLUSTER_NEW_NODES={plbdcb02.banvenez.corp}"
+
+
+-------------------------------------------------
+ERROR:
+
+INFO:  [Jul 12, 2023 9:36:03 AM] Copying /oracle/app/oracle/product/19c/db1 to remote nodes failed.
+SEVERE:  [Jul 12, 2023 9:36:03 AM] [FATAL] [INS-10111] Installer encountered errors while copying /oracle/app/oracle/product/19c/db1 to nodes [plbdcb02.banvenez.corp].
+   ACTION: Review the log file /oracle/app/oraInventory/logs/addNodeActions2023-07-12_09-33-51AM.log for further details on failure.
+   SUMMARY:
+       - plbdcb02.banvenez.corp : No ECDSA host key is known for plbdcb02.banvenez.corp and you have requested strict checking.Host key verification failed. .
+Refer associated stacktrace #oracle.install.commons.util.exception.AbstractErrorAdvisor:1753
+
+SOLICION:
+
+Validar que en la relacion de confianza tambien esta establecido el hostname con el dominio en todos los nodos 
+
+ssh plbdcb01.banvenez.corp
+ssh plbdcb02.banvenez.corp
+ssh plbdcb03.banvenez.corp
+
+-------------------------------------------------
+
+Con root en el nodo plbdcb02 (nodo nuevo)
+
+/oracle/app/oracle/product/19c/db1/root.sh
+
+
+8.-Validar que la db esté agregado
+
+srvctl start instance -d INTTEGP -i INTTEGP2
+
+
+
+9.-Asegurarce de copiar los archivos de la wallet en caso de tener configurada
+
+cd /oracle/app/oracle/admin/INTTEGP
+scp -r wallet/ oracle19@plbdcb02:/oracle/app/oracle/admin/INTTEGP/
+scp -r xdb_wallet/ oracle19@plbdcb02:/oracle/app/oracle/admin/INTTEGP/
+
+cd /oracle/app/oracle/product/19c/db1/network/admin/
+scp tnsnames.ora oracle19@plbdcb02:/oracle/app/oracle/product/19c/db1/network/admin/
+
+
+
+
+---------------------------------------------------------------------------------------------------
+
+FUENTE:
+	https://infraxpertzz.com/steps-to-add-a-node-in-oracle-rac-19c/
+	https://docs.oracle.com/en/database/oracle/oracle-database/19/cwadd/adding-and-deleting-cluster-nodes.html#GUID-929C0CD9-9B67-45D6-B864-5ED3B47FE458
+	https://www.modb.pro/db/239860
+	
+---END

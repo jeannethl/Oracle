@@ -1,0 +1,6 @@
+registrar base de datos en RMAN
+
+rman target / catalog rmanq/rmanexport@RMAN19
+
+RMAN> register database;
+

@@ -1,0 +1,8 @@
+Bajar instancias:
+
+SQL> show parameter name;
+db_unique_name
+
+ srvctl status instance -d INTTEGQ -i INTTEGQ2
+ srvctl stop instance -d INTTEGQ -i INTTEGQ2
+ srvctl status instance -d INTTEGQ -i INTTEGQ2

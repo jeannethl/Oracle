@@ -1,0 +1,1 @@
+ps -fea | grep "LOCAL=NO" | grep $ORACLE_SID | awk '{printf "kill -9 %s\n",$2}' | sh

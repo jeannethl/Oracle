@@ -1,0 +1,13 @@
+--- Verificar si los tablespasce son AUTOEXTEN
+set line 240
+col TABLESPACE_NAME format a20
+col FILE_NAME format a60
+
+select TABLESPACE_NAME
+      ,FILE_NAME
+      ,FILE_ID
+      ,AUTOEXTENSIBLE
+      ,INCREMENT_BY
+      ,MAXBYTES/1024/1024/1024 size_ts
+  from dba_Data_files;
+---where TABLESPACE_NAME like 'RADIX_EVENTLOG';

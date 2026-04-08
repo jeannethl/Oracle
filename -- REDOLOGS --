@@ -1,0 +1,68 @@
+-- REDOLOGS --
+--------------
+SET LINESIZE 600
+COL MEMBER FORMAT A60
+SELECT GROUP# "GROUP", STATUS, MEMBER
+--       , TYPE
+--       ,IS_RECOVERY_DEST_FILE 
+FROM SYS.V$LOGFILE
+--WHERE GROUP# IN (1,2,3,4,5,6)
+--AND TYPE <> 'STANDBY'
+ORDER BY 1, 2;
+
+-------------------------
+-- AGREGAR UN NUEVO GRUPO
+-----------------------------------------------------------------------------
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 4 ('+DG_REDO1_CCENLNH','+DG_REDO2_CCENLNH') SIZE 500M;
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 5 ('+DG_REDO1_CCENLNH','+DG_REDO2_CCENLNH') SIZE 500M;
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 6 ('+DG_REDO1_CCENLNH','+DG_REDO2_CCENLNH') SIZE 500M;
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------
+-- BORRAR GRUPO
+-----------------------------------------------------------------------------
+ALTER DATABASE CLEAR LOGFILE GROUP 1;
+ALTER DATABASE DROP LOGFILE GROUP 1;
+
+ALTER DATABASE CLEAR LOGFILE GROUP 2;
+ALTER DATABASE DROP LOGFILE GROUP 2;
+
+ALTER DATABASE CLEAR LOGFILE GROUP 4;
+ALTER DATABASE DROP LOGFILE GROUP 4;
+
+-----------------------------------------------------------------------------
+
+
+
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 1 ('+DG_REDO1_CCENLNH','+DG_REDO2_CCENLNH') SIZE 2048M;
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 2 ('+DG_REDO1_CCENLNH','+DG_REDO2_CCENLNH') SIZE 2048M; 
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 3 ('+DG_REDO1_CCENLNH','+DG_REDO2_CCENLNH') SIZE 2048M; 
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 4 ('+DG_REDO1_CCENLNH','+DG_REDO2_CCENLNH') SIZE 2048M; 
+
+------------------------------------------------------------------------------------------
+
+
+
+
+ALTER DATABASE CLEAR LOGFILE GROUP 5;
+ALTER DATABASE DROP LOGFILE GROUP 5;
+
+ALTER DATABASE CLEAR LOGFILE GROUP 6;
+ALTER DATABASE DROP LOGFILE GROUP 6;
+
+
+---------------------------------------------------------------------------------------
+ALTER SYSTEM SWITCH LOGFILE;
+ALTER SYSTEM SWITCH LOGFILE;
+ALTER SYSTEM SWITCH LOGFILE;
+ALTER SYSTEM CHECKPOINT;
+-----------------------------------------------------------------------------
+-- IR CONSULTANDO CON:
+----------------------
+SELECT * FROM V$LOG;
+-----------------------------------------------------------------------------

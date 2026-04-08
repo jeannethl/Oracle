@@ -1,0 +1,1342 @@
+# VERIFICAR LA ARQUITECTURA #
+
+uname -a
+hostnamectl
+
+NOTA: Para el sistema operativo OL-RHEL 8.X, el kernel compatible con ASM es el 4.18
+
+# COMPROBAR LOS NUCLEOS 
+
+sudo rpm -qa kernel*
+sudo ls -l /boot/vmlinuz*
+
+RESULTADOS
+
+kernel-modules-4.18.0-425.3.1.el8.x86_64
+kernel-uek-modules-5.15.0-3.60.5.1.el8uek.x86_64
+kernel-core-4.18.0-425.19.2.el8_7.x86_64
+kernel-tools-libs-4.18.0-425.19.2.el8_7.x86_64
+kernel-core-4.18.0-425.3.1.el8.x86_64
+kernel-uek-core-5.15.0-3.60.5.1.el8uek.x86_64
+kernel-headers-4.18.0-425.19.2.el8_7.x86_64
+kernel-uek-devel-5.4.17-2136.319.1.2.el8uek.x86_64
+kernel-4.18.0-425.3.1.el8.x86_64
+kernel-modules-4.18.0-425.19.2.el8_7.x86_64
+kernel-tools-4.18.0-425.19.2.el8_7.x86_64
+kernel-4.18.0-425.19.2.el8_7.x86_64
+kernel-uek-5.15.0-3.60.5.1.el8uek.x86_64
+
+/boot/vmlinuz-0-rescue-9bacf1d652f746e2b572e817889f5dae
+/boot/vmlinuz-4.18.0-425.19.2.el8_7.x86_64
+/boot/vmlinuz-4.18.0-425.3.1.el8.x86_64
+/boot/vmlinuz-5.15.0-3.60.5.1.el8uek.x86_64
+
+# IDENTIDICAR UN NUCLEO DE KERNEL ESPECIFICO #
+
+sudo grubby --info /boot/vmlinuz-4.18.0*
+sudo grubby --info=ALL
+
+# VERIFICAR EL KERNEL QUE SE ESTA EJECUTANDO EN LA MAQUINA #
+
+sudo uname -r
+
+grubby --set-default /boot/vmlinuz-4.18.0-425.19.2.el8_7.x86_64
+
+# VERIFICAR Y CAMBIAR EL NUCLEO PREDETERMINADO # 
+
+VERIFICAR
+sudo grubby --default-kernel
+
+CAMBIAR 
+
+ grubby --set-default /boot/vmlinuz-4.18.0-425.19.2.el8_7.x86_64
+
+# DESACTIVAR EL SELINUX #
+
+cp /etc/selinux/config /etc/selinux/config.original
+vi /etc/selinux/config
+
+SELINUX=permissive
+
+restorecon -Rv /
+touch /.autorelabel
+Reiniciar el servidor
+
+# ASEGURARSE QUE EL SSH ESTE FUNCIONANDO #
+
+systemctl start sshd.service
+systemctl enable sshd.service
+rpm -qa | grep ssh
+
+# MODIFICAR EL SCP #
+
+cp -p /usr/bin/scp /usr/bin/scp-original
+echo "/usr/bin/scp-original -T \$*" > /usr/bin/scp
+chmod 555 /usr/bin/scp
+cat /usr/bin/scp
+
+# VALIDAR QUE EL PERL ESTE INSTALADO #
+
+which perl
+perl -v
+
+Si no está instalado:
+yum -y install perl
+
+# INSTALAR PRE-REQUISITOS DEL BINARIO DE ORACLE #
+
+yum -y install perl
+yum install -y libaio-devel
+yum install -y ksh
+yum install -y elfutils-libelf-devel
+yum -y install device-mapper-multipath
+yum install binutils -y
+yum install gcc -y
+yum install gcc-c++ -y
+yum install glibc -y
+yum install glibc-devel -y
+yum install libgcc -y
+yum install libstdc++ -y
+yum install libstdc++-devel -y
+yum install libaio -y
+yum install libaio-devel -y
+yum install libXext -y
+yum install libXtst -y
+yum install libX11 -y
+yum install libXau -y
+yum install libxcb -y
+yum install libXi -y
+yum install make -y
+yum install sysstat -y
+yum install unixODBC -y
+yum install unixODBC-devel -y
+yum install zlib-devel -y
+yum install elfutils-libelf-devel -y
+yum install numactl -y
+yum install -y bc
+yum install -y net-tools
+yum install -y nfs-utils
+yum install -y smartmontools
+yum install -y xorg-x11-utils
+yum install -y xorg-x11-xauth
+yum install rng-tools -y
+yum -y install oracleasm
+yum -y install kernel-uek-devel
+yum -y install kmod-oracleasm
+dnf install -y libnsl
+dnf install -y libnsl.i686
+dnf install -y libnsl2
+dnf install -y libnsl2.i686
+
+Nota: Las versiones para RHEL 8.9 son:
+Kernel: 4.18.0-513.5.1.el8_9.x86_64
+kmod-redhat-oracleasm-2.0.8-18.el8.x86_64
+oracleasm-support-2.1.12-1.el8.x86_64
+oracleasmlib-2.0.17-1.el8.x86_64
+
+Las versiones para RHEL 8.8 son:
+Kernel: 4.18.0-477.27.1.el8_8.x86_64
+kmod-redhat-oracleasm-2.0.8-17.el8.x86_64
+oracleasm-support-2.1.12-1.el8.x86_64
+oracleasmlib-2.0.17-1.el8.x86_64
+
+Las versiones para RHEL 8.7 son:
+Kernel: 4.18.0-425.3.1.el8.x86_64
+kmod-redhat-oracleasm-2.0.8-15.el8.x86_64
+oracleasm-support-2.1.12-1.el8.x86_64
+oracleasmlib-2.0.17-1.el8.x86_64
+
+Las versiones para RHEL 8.6 son:
+Kernel: 4.18.0-372.9.1.el8.x86_64
+kmod-redhat-oracleasm-2.0.8-12.el8.x86_64
+oracleasm-support-2.1.12-1.el8.x86_64
+oracleasmlib-2.0.17-1.el8.x86_6
+
+# INSTALAR PAQUETES RPM # -----------
+
+rpm -Uvh compat-libstdc++-33-3.2.3-72.el7.x86_64.rpm
+rpm -Uvh compat-libcap1-1.10-7.el7.x86_64.rpm
+rpm -Uvh oracle-database-preinstall-19c-1.0-3.el7.x86_64.rpm 
+rpm -Uvh oracle-database-preinstall-19c-1.0-2.el7.x86_64.rpm (si no funciona la anterior)
+
+
+
+Fuentes:
+https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/compat-libstdc++-33-3.2.3-72.el7.x86_64.rpm
+https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/compat-libcap1-1.10-7.el7.x86_64.rpm
+https://yum.oracle.com/repo/OracleLinux/OL7/latest/x86_64/getPackage/oracle-database-preinstall-19c-1.0-3.el7.x86_64.rpm
+
+Configurar el KSplice para update de sistema operativo sin downtime
+
+Descargar de: https://www.ksplice.com/yum/uptrack/ol/ksplice-uptrack-release.noarch.rpm
+wget https://www.ksplice.com/yum/uptrack/ol/8/x86_64/ksplice-uptrack-release-1-5.noarch.rpm
+
+rpm -Uvh ksplice-uptrack-release.noarch.rpm
+yum -y install uptrack
+
+# INSTALAR PAQUETE ORACLEASMLIB Y ORACLEASM-SUPPORT #
+
+Se debe bajar el paquete de oracleasmlib para Oracle Linux 8
+https://www.oracle.com/linux/downloads/linux-asmlib-v8-downloads.html
+
+rpm -Uvh oracleasmlib-2.0.12-1.el7.x86_64.rpm
+
+Se debe bajar el paquete de oracleasm-support para Oracle Linux 8
+
+https://public-yum.oracle.com/repo/OracleLinux/OL8/addons/x86_64/getPackage/oracleasm-support-2.1.12-1.el8.x86_64.rpm
+rpm -Uvh oracleasm-support-2.1.12-1.el8.x86_64.rpm
+
+/sbin/sysctl -p
+
+# CREAR LOS LIMITS DE GRID O ORACLE (BDV SERIA ORACEL19)
+
+cd /etc/security/limits.d
+cat oracle-database-preinstall-19c.conf | sed 's/oracle /grid /g' > oracle-grid-user-preinstall-19c.conf
+cat oracle-database-preinstall-19c.conf | sed 's/oracle /oracle19 /g' > oracle19-grid-user-preinstall-19c.conf
+
+# VALIDAR MEMORIA SWAP,RAM Y FS /tmp
+
+grep SwapTotal /proc/meminfo
+
+free -h
+
+Debe de tener minimo de SWAP 16 GB
+
+grep MemTotal /proc/meminfo
+
+EL FS /TMP TIENE QUE TENER MINIMO 20GB Y NO TENER NOEXECT 
+
+mount |grep -i /tmp -> PARA VALIDAR
+
+# VALIDAR NTP Y CHRONY (SI NO TIENE NTP SE USA EL CHRONY)
+
+Validar el status del servicio:
+systemctl status ntpd
+Validar el pool de conexiones del ntp
+systemctl status ntpd
+ntpq -p
+
+Con chrony
+systemctl status chronyd
+chronyc sources
+
+# CONFIGURAR RGND #
+
+cd /usr/lib/systemd/system
+cp -p rngd.service rngd.service.original
+vi rngd.service
+
+[Service]
+#ExecStart=/usr/sbin/rngd -f $RNGD_ARGS ---> Este parametro debe estar comentado
+ExecStart=/sbin/rngd -f -r /dev/urandom ---------> Agregar al archivo
+
+systemctl daemon-reload
+systemctl start rngd
+systemctl status rngd
+
+# VERIFICAR HOSTNAME #
+
+1.-Consultar el hostname de los nodos con el siguiente comando: 
+
+hostname
+ping $(hostname)
+
+2.-Si se desea cambiar el hostname, ejecutar lo siguiente:
+
+cp -p /etc/sysconfig/network /etc/sysconfig/network.original
+vi /etc/sysconfig/network
+HOSTNAME=<nombre_del_nodo> 
+
+
+# VERIFICAR IP Y TARJETAS DE RED #
+
+ifconfig -a
+
+# DESCATIVAR FIREWALL #
+
+systemctl stop firewalld
+systemctl disable firewalld
+
+# DETENER LOS IPTABLES # 
+
+iptables -L
+
+Si hay entradas de iptables, borrarlas todas con:
+
+iptables -F
+
+# VERIFICAR EL DNS #
+
+nslookup $(hostname)
+Debe resolver por su IP Pública
+
+# VERIFICAR EL  /etc/hosts #
+
+cat /etc/hosts
+Nota: No debe existir el hostname apuntando a la dirección de loopback, sea la 127.0.0.1 o la ::1
+
+Se deben agregar los hostnames con las ip correspondientes al archivo hosts
+
+Ejemplo:
+
+vi /etc/hosts
+
+
+172.27.88.41 plbdprafor01.banvenez.corp plbdprafor01.banvenez.corp
+
+127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4 
+::1 localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+192.168.20.122 saturnov1 saturnov1.suiche7b.com
+
+# VERIFICAR EL X11 #
+
+Verificar que esté configurado el parámetro x11forwarding yes
+
+En el archivo /etc/ssh/sshd_config
+
+Nota: De no estar descomentado dicho parámetro, descomentarlo y reiniciar el servicio sshd.
+
+systemctl restart sshd
+
+# ELIMINAR EL TIMEOUT PARA EL SSH #
+
+cp -p /etc/ssh/sshd_config /etc/ssh/sshd_config.original
+
+vi /etc/ssh/sshd_config 
+
+DEBE DE ESTAR ASI > LoginGraceTime 0
+
+systemctl restart sshd
+
+# VALIDAR LOS USUARIOS EXISTENTES #
+
+id -a oracle
+id -a grid
+grep oracle /etc/group
+grep grid /etc/group
+
+# ELIMINAR USUARIOS CREADOS (MEJORES PRACTICAS) #
+
+userdel -r oracle19
+userdel -r grid
+userdel -r oracle
+
+groupdel asmadmin
+groupdel asmdba
+groupdel asmoper
+#groupdel dba revisar si tiene el id correcto , si no lo tiene eliminar tambien
+groupdel oper
+groupdel backupdba
+groupdel dgdba
+groupdel kmdba
+groupdel racdba
+groupdel oinstall
+
+# CREAR GRUPOS #
+
+groupadd -g 54321 oinstall
+#groupadd -g 54322 dba
+groupadd -g 54323 oper
+groupadd -g 54324 backupdba
+groupadd -g 54325 dgdba
+groupadd -g 54326 kmdba
+groupadd -g 54327 asmdba
+groupadd -g 54328 asmoper
+groupadd -g 54329 asmadmin
+groupadd -g 54330 racdba
+
+# CREAR USUARIOS #
+
+useradd -u 54321 -g oinstall -G dba,asmdba,backupdba,dgdba,kmdba,racdba,oper,asmoper,asmadmin oracle
+useradd -u 54322 -g oinstall -G asmadmin,asmdba,asmoper,racdba,dba grid
+
+EN BDV ORACLE 19
+
+useradd -u 54321 -g oinstall -G dba,asmdba,backupdba,dgdba,kmdba,racdba,oper,asmoper,asmadmin oracle19
+useradd -u 54323 -g oinstall -G oinstall oracle (SE CREA ASI PORQ NO SE USARA SOLO EL 19 )
+
+# CREAR PASSWORD DE USUARIOS #
+
+passwd oracle19
+oracle1
+
+passwd oracle
+oracle1
+
+passwd grid
+oracle1
+
+# CREAR ESTRUCTURA DE DIRECTORIOS #
+
+
+mkdir -p /oracle/app/oraInventory
+mkdir -p /oracle/app/grid
+mkdir -p /oracle/app/product/19c/grid
+mkdir -p /oracle/app/oracle/product/19c/db1
+
+# ASIGNAR DUEÑOS Y PERMIOS A DIRECTORIOS #
+
+chown -R grid:oinstall /oracle/
+chown -R oracle19:oinstall /oracle/app/oracle
+chmod -R 775 /oracle/
+
+# CONFIGURAR ORACLEASM #
+
+/usr/sbin/oracleasm init
+/usr/sbin/oracleasm configure -i
+
+Se deben ingresar las siguientes opciones solicitadas de forma secuencial:
+
+grid
+asmadmin
+y
+y
+
+# PARTICIONAR LOS DISCOS # 
+
+Ver los discos presentes
+
+lsblk -fm
+
+Para consultar por rango de discos
+Ejemplo del rango sdc al sdm
+
+lsblk -fm `ls -1 /dev/sd[c-m]` | sort -k1
+
+Particionar disco de forma manual, para este ejemplo, se hará con el disco sdb. Hacer 
+este paso para todos los discos a particionar.
+fdisk /dev/sdc
+1.-p
+2.-n
+3.-p
+4.-1
+5.-número de primer cilindro
+6.-número de último cilindro
+7.-w
+
+Si se desea particionar de forma automática, para este caso del sdc al sdm
+
+for i in `ls -1 /dev/sd[c-m]`
+do
+ echo -e "o\nn\np\n1\n\n\nw" | fdisk $i
+done	
+
+# CREAR LOS DISCOS DE ASM #
+
+/usr/sbin/oracleasm createdisk DISK_DATA01 /dev/sdc1
+/usr/sbin/oracleasm createdisk DISK_DATA02 /dev/sdd1
+/usr/sbin/oracleasm createdisk DISK_DATA03 /dev/sde1
+/usr/sbin/oracleasm createdisk DISK_DATA04 /dev/sdf1
+/usr/sbin/oracleasm createdisk DISK_DATA05 /dev/sdg1
+/usr/sbin/oracleasm createdisk DISK_REDO01_001 /dev/sdh1
+/usr/sbin/oracleasm createdisk DISK_REDO01_002 /dev/sdi1
+/usr/sbin/oracleasm createdisk DISK_REDO02_001 /dev/sdj1
+/usr/sbin/oracleasm createdisk DISK_REDO02_002 /dev/sdk1
+/usr/sbin/oracleasm createdisk DISK_FRA01 /dev/sdl1
+/usr/sbin/oracleasm createdisk DISK_FRA02 /dev/sdm1
+
+Script de creación de discos ASM automaticamente
+
+para una instalación desde cero desde las particiones sdc1 al sdm1
+
+ls -1 /dev/sd[b-g]1 | awk '{ i++ } { printf ("oracleasm createdisk DISK_ASM%03d %s\n", i, 
+$1)}' | sh
+
+Listar discos de ASM
+
+/usr/sbin/oracleasm scandisks
+/usr/sbin/oracleasm listdisks
+
+# EDITAR PROFILE USUARIO ORACLE (CONECTARSE AL USUARIO ORACLE19) #
+
+Se debe establecer los ulimits y evitar que se cancele la ejecución de una instrucción usando CTRL+ C
+
+cd
+cp -p .bash_profile .bash_profile.original
+
+cat <<EOT >>.bash_profile
+umask 022
+ulimit -t unlimited
+ulimit -f unlimited
+ulimit -d unlimited
+#ulimit -s unlimited
+ulimit -v unlimited
+if [ -t 0 ]; then
+ stty intr ^C
+fi
+export CV_ASSUME_DISTID=OL7
+export SRVM_DISABLE_MTTRANS=true
+export HISTTIMEFORMAT="%G-%m-%dT%T "
+EOT
+
+source .bash_profile
+
+# EDITAR PROFILE USUARIO GRID (CONECTARSE AL USUARIO GRID) #
+
+Se debe establecer los ulimits y evitar que se cancele la ejecución de una instrucción usando CTRL+ C
+
+cd
+cp -p .bash_profile .bash_profile.original
+
+cat <<EOT >>.bash_profile
+umask 022
+ulimit -t unlimited
+ulimit -f unlimited
+ulimit -d unlimited
+#ulimit -s unlimited
+ulimit -v unlimited
+if [ -t 0 ]; then
+ stty intr ^C
+fi
+export CV_ASSUME_DISTID=OL7
+export SRVM_DISABLE_MTTRANS=true
+export HISTTIMEFORMAT="%G-%m-%dT%T "
+EOT
+
+source .bash_profile
+
+# EDITAR PROFILE USUARIO ROOT (CONECTARSE AL USUARIO ROOT) #
+
+Se debe establecer los ulimits y evitar que se cancele la ejecución de una instrucción usando CTRL+ C
+
+cd
+cp -p .bash_profile .bash_profile.original
+
+cat <<EOT >>.bash_profile
+umask 022
+ulimit -t unlimited
+ulimit -f unlimited
+ulimit -d unlimited
+#ulimit -s unlimited
+ulimit -v unlimited
+if [ -t 0 ]; then
+ stty intr ^C
+fi
+export CV_ASSUME_DISTID=OL7
+export SRVM_DISABLE_MTTRANS=true
+export HISTTIMEFORMAT="%G-%m-%dT%T "
+EOT
+
+source .bash_profile
+
+# VALIDAR LOS LIMITS #
+
+Con los usuarios oracle y grid
+
+ulimit -a
+
+# DESCOMPRIMIR LOS BINARIOS DE GRID Y ORACLE #
+
+Usuario grid
+
+cd /oracle/app/product/19c/grid
+unzip -q <ubicación_de_instalador>
+unzip -q /oracle/instaladores/V982068-01-grid.zip
+
+Usuario oracle
+
+cd /oracle/app/oracle/product/19c/db1
+unzip -q <ubicación_de_instalador>
+unzip -q /oracle/instaladores/V982063-01-oracle.zip
+
+# COMPROBAR EL ESTADO DE LOS PREREQUISITOS CON EL CLUVFY #
+
+Usuario grid
+
+cd /oracle/app/product/19c/grid
+./runcluvfy.sh stage -pre hacfg
+
+ERROR:
+
+Verifying Run Level ...FAILED
+plbdprafor01: PRVF-7565 : Could not perform the runlevel verification check on
+              node "plbdprafor01"
+
+SOLUCION:
+
+con root 
+
+systemctl set-default multi-user.target
+reboot
+
+
+Si todos los prerrequisitos se han aprobado, proceder a instalar los binarios de Grid y Oracle
+
+# INSTALAR EL CVUDISK #
+
+Con root
+
+cd /oracle/app/product/19c/grid/cv/rpm
+rpm -ivh cvuqdisk-1.0.10-1.rpm
+
+# EMPEZAR LA INSTACLACION CON EL USUARIO GRID #
+
+cd /oracle/app/product/19c/grid
+./gridSetup.sh
+
+Seleccionar la opción “Configure Oracle Grid Infraestructure For A Standalone Server”
+Seleccionar los discos destinados a DATA 
+
+/dev/oracleasm/disks
+
+Redundancia: Externa 
+Allocation Unit: 4MB
+
+Establecer el password para el ASM 
+
+Para este caso: oracle1
+
+Seleccionar yes para continuar
+
+Dejar en blanco la opción de registrar con cloud control
+Dejar los grupos que aparecen por defecto
+
+Establecer el Oracle base de grid
+
+/oracle/app/grid
+Establecer el directorio del oraInventory
+
+/oracle/app/oraInventory
+
+Dejar en blanco el check de correr scripts de configuración 
+Chequear detalladamente el resumen de la instalación
+Guardar el archivo de “response” y proceder a instalar.
+Ejecutar los scripts de configuración como lo indica la ventana emergente de grid
+Cerrar la ventana una vez instalado Grid 19C
+Ir al home de grid y establecer las variables de entorno 
+
+Usuario grid
+
+cd
+vi .bash_profile
+
+Debajo de las variables ya establecidas
+
+ORACLE_BASE=/oracle/app/grid
+ORACLE_HOME=/oracle/app/product/19c/grid 
+ORACLE_SID=+ASM
+LD_LIBRARY_PATH=$ORACLE_HOME/lib
+PATH=$PATH:/usr/local/bin:/usr/sbin:/usr/bin:/usr/openwin/bin:/usr/ucb:$ORACLE_HOME/bin
+TEMP=/tmp
+TMPDIR=/tmp
+
+export ORACLE_BASE ORACLE_HOME ORACLE_SID LD_LIBRARY_PATH PATH TEMP TMPDIR
+export EDITOR=vi
+
+source .bash_profile
+
+NOTA: El ORACLE_SID debe corresponder al número de instancia de ASM de cada nodo.
+
+# CONFIGURAR DISCOS ASM CON GRID # 
+
+Acceder con el usuario grid y ejecutar el asmca
+asmca
+
+Ir a disk groups y hacer clic sobre él.
+
+Crear el diskgroup +FRA, +REDO01, +REDO02
+
+Hacer clic sobre el botón “create”
+
+Seleccionar los discos destinados a +FRA
+Redundancia: externa
+Allocation unit: 4MB
+
+Hacer clic en show advanced options y establecer la compatibilidad de la base de datos en 19.0.0.0 y hacer clic en ok
+
+Hacer los mismos pasos con los demás diskgroups, asignándoles sus respectivos discos.
+
+# INSTALACION ORACLE DATABASE 19 CON ORACLE #
+
+ cd /oracle/app/oracle/product/19c/db1
+./runInstaller
+
+Seleccionar “Set up software only”
+Seleccionar “single instance database installation”
+Seleccionar “Enterprise Edition”
+Establecer el oracle base /oracle/app/oracle
+Dejar los grupos que aparecen por defecto
+Dejar desmarcado los scripts de configuración automática
+Revisar detalladamente el resumen de la instalación y guardar el archivo de “response”
+Ejecutar el script de configuración que aparece en la ventana emergente
+Al finalizar la instalación, hacer clic en close
+
+Ir al home de oracle y establecer las variables de entorno
+
+cd
+vi .bash_profile
+
+Debajo de las variables ya establecidas
+
+ORACLE_BASE=/oracle/app/oracle
+ORACLE_HOME=/oracle/app/oracle/product/19c/db1
+#ORACLE_SID=
+LD_LIBRARY_PATH=$ORACLE_HOME/lib
+PATH=$PATH:/usr/local/bin:/usr/sbin:/usr/bin:/usr/openwin/bin:/usr/ucb:$ORACLE_HOME/bin
+TEMP=/tmp
+TMPDIR=/tmp
+export ORACLE_BASE ORACLE_HOME ORACLE_SID LD_LIBRARY_PATH PATH TEMP TMPDIR
+export EDITOR=vi
+
+source .bash_profile
+
+Dejar comentado el parámetro ORACLE_SID hasta que se haya creado la base de 
+datos. Una vez creada la base de datos, descomentar el parámetro y ejecutar el 
+comando source .bash_profile.
+
+# APLICACION DE PARCHES PSU y OJVM #
+
+Luego de la instalación del motor de base de datos, es recomendable parchar el software de Oracle y Grid a la última o penúltima versión disponible.
+Cada parche se aplica de forma diferente, por lo cual es necesario leer detenidamente el README del parche
+
+Respaldar el directorio raíz de los productos de Oracle
+En caso de no contar con medios virtualizados y no poder tomar un snapshoot, es necesario respaldar el directorio raíz de los binarios, para este caso /Oracle
+
+Primero se debe aplicar el OPatch en los binarios de grid y oracle
+
+subir estos archivos
+
+p6880880_190000_Linux-x86-64.zip
+p35742441_190000_Linux-x86-64.zip
+p36155925_1921000DBRU_Linux-x86-64.zip
+p36155938_1921000DBRU_Linux-x86-64.zip
+
+# OPatch en Oracle #
+
+$ORACLE_HOME/OPatch/opatch version -> para validar la version actual 
+OPatch Version: 12.2.0.1.17
+OPatch succeeded.
+
+
+cd $ORACLE_HOME
+mv OPatch OPatch_old
+unzip -d $ORACLE_HOME /oracle/instaladores/parches/p6880880_190000_Linux-x86-64.zip
+
+$ORACLE_HOME/OPatch/opatch version -> para validar la version nueva
+OPatch Version: 12.2.0.1.40
+OPatch succeeded.
+
+# OPatch en GRID #
+
+Conectarse como grid
+echo $ORACLE_HOME
+#Output
+/oracle/app/product/19c/grid
+
+$ORACLE_HOME/OPatch/opatch version -> para validar la version actual 
+OPatch Version: 12.2.0.1.17
+OPatch succeeded.
+
+Conectarse como root a ir a la ruta anterior que te arrojo el echo anterior 
+
+cd /oracle/app/product/19c/grid/
+cd ..
+ls -ltr
+chown grid grid/
+
+Como usuario grid nuevamente
+
+cd $ORACLE_HOME
+mv OPatch OPatch_old
+unzip -d $ORACLE_HOME /oracle/instaladores/parches/p6880880_190000_Linux-x86-64.zip
+
+
+Devolver los cambios hecho como root
+
+cd /oracle/app/product/19c/grid/
+cd ..
+ls -ltr
+chown root grid/
+
+$ORACLE_HOME/OPatch/opatch version -> para validar la version NUEVA
+OPatch Version: 12.2.0.1.40
+OPatch succeeded.
+
+## BACKUP DE BINARIOS SOLO APLICA SI HAY UNA BD INSTALADA # 
+
+Backup
+
+Ejecutar como usuario root
+
+cd /exportdb/backup_binarios
+tar -cvlpzf binarios_grid_$(date +%Y%m%d_%H%M%S).tar.gz  /oracle/app/product/19c/grid/
+tar -cvlpzf binarios_oracle_$(date +%Y%m%d_%H%M%S).tar.gz  /oracle/app/oracle/product/19c/db1
+
+
+tar -pcvzf /exportdb/backup_binarios/oracle_base_$(date +%Y%m%d_%H%M%S).tar.gz /oracle/app/oracle
+
+tar -pcvzf /exportdb/backup_binarios/grid_base_$(date +%Y%m%d_%H%M%S).tar.gz /oracle/app/grid
+
+tar -pcvzf /exportdb/backup_binarios/grid_home_$(date +%Y%m%d_%H%M%S).tar.gz /oracle/app/product/19c/
+
+tar -pcvzf /exportdb/backup_binarios/oraInventory_$(date +%Y%m%d_%H%M%S).tar.gz /oracle/app/oraInventory
+
+Restore
+
+tar -xzvf binarios_oracle_$(date +%Y%m%d_%H%M%S).tar.gz /u01/app/oracle/product/19c/db_1
+
+# VALIDACION DE PREREQUISITOS #
+
+Como usuario grid
+
+Descomprimir el parche p35742441_190000_Linux-x86-64.zip
+
+cd /oracle/instaladores/parches/
+unzip -q p35742441_190000_Linux-x86-64.zip
+chmod -R 777 35742441/
+export UNZIPPED_PATCH_LOCATION=/oracle/instaladores/parches/35742441
+export PATH=$PATH:$ORACLE_HOME/OPatch:.
+
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35643107
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35655527
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35652062
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35553096
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/33575402
+
+# COMO USUARIO ORACLE #
+
+export UNZIPPED_PATCH_LOCATION=/oracle/instaladores/parches/35742441
+
+Si no tiene el opatch en el $PATH agregarlo
+
+export PATH=$PATH:$ORACLE_HOME/OPatch:.
+
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35643107
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -phBaseDir $UNZIPPED_PATCH_LOCATION/35642822/35655527
+
+# CON EL USUARIO GRID #
+
+# Create file /tmp/patch_list_gihome.txt with the following content
+
+export UNZIPPED_PATCH_LOCATION=/oracle/instaladores/parches/35742441
+
+cat <<EOF > /tmp/patch_list_gihome.txt
+$UNZIPPED_PATCH_LOCATION/35642822/35643107
+$UNZIPPED_PATCH_LOCATION/35642822/35655527
+$UNZIPPED_PATCH_LOCATION/35642822/35652062
+$UNZIPPED_PATCH_LOCATION/35642822/35553096
+$UNZIPPED_PATCH_LOCATION/35642822/33575402
+EOF
+
+# Run the OPatch command to check if enough free space is available in the Grid Infrastructure home
+
+$ORACLE_HOME/OPatch/opatch prereq CheckSystemSpace -phBaseFile /tmp/patch_list_gihome.txt
+
+# CON EL USUAIO ORACLE 
+
+### Create file /tmp/patch_list_dbhome.txt with the following content
+
+export UNZIPPED_PATCH_LOCATION=/oracle/instaladores/parches/35742441
+
+cat <<EOF > /tmp/patch_list_dbhome.txt
+$UNZIPPED_PATCH_LOCATION/35642822/35643107
+$UNZIPPED_PATCH_LOCATION/35642822/35655527
+EOF
+
+# Run OPatch command to check if enough free space is available in the Oracle home
+
+$ORACLE_HOME/OPatch/opatch prereq CheckSystemSpace -phBaseFile /tmp/patch_list_dbhome.txt
+
+# INSTALACION DE RU GRID # 
+
+# INSTALAR RU GRID
+
+Como usuario **root**
+
+su - root
+export CV_ASSUME_DISTID=OL7 ## Para oracle linux 8
+export UNZIPPED_PATCH_LOCATION=/oracle/instaladores/parches/35742441
+export PATH=$PATH:/oracle/app/product/19c/grid/OPatch ->home de grid
+
+cd /tmp
+opatchauto apply $UNZIPPED_PATCH_LOCATION/35642822  
+
+# INSTALAR RU ORACLE
+
+NO HACERLO EN LA MISMA VENTANA QUE SE HIZO EL DE GRID
+
+su - root
+export CV_ASSUME_DISTID=OL7 ## Para oracle linux 8
+export UNZIPPED_PATCH_LOCATION=/oracle/instaladores/parches/35742441
+export PATH=$PATH:/oracle/app/oracle/product/19c/db1/OPatch
+
+cd /tmp
+opatchauto apply $UNZIPPED_PATCH_LOCATION/35642822 -oh /oracle/app/oracle/product/19c/db1 
+
+# INSTALAR OJVM
+
+CON ORACLE, se debe bajar la BD, si existe
+
+sqlplus / as sysdba
+shutdown immediate
+
+export PATCH_TOP_DIR=/oracle/instaladores/parches/35742441
+export PATH=$PATH:/oracle/app/oracle/product/19c/db1/OPatch
+export PATH=$PATH:$ORACLE_HOME/perl/bin
+export PERL5LIB=$ORACLE_HOME/perl/lib
+
+cd $PATCH_TOP_DIR/35648110
+opatch prereq CheckConflictAgainstOHWithDetail -ph ./
+
+opatch lsinventory
+opatch lspatches
+
+cd $PATCH_TOP_DIR/35648110
+opatch apply
+
+# Error presentado, si no se realiza la exportación de las variables `$PERL5LIB` y agregar el bin de perl en el `$PATH`:
+
+OUI-67200:Make failed to invoke "/usr/bin/make -f ins_rdbms.mk javavm_refresh ORACLE_HOME=/oracle/app/oracle/product/19c/db1 OPATCH_SESSION=apply"....'make: perl: Command not found'
+make: *** [ins_rdbms.mk:573: javavm_refresh] Error 127
+
+Solution:
+
+export PATH=$ORACLE_HOME/perl/bin:$PATH
+export PERL5LIB=$ORACLE_HOME/perl/lib
+
+Patching fails during relink , with error code 102 :: Fatal error: Command failed for target `javavm_refresh' (Doc ID 2002334.1)
+
+# Correr datapatch #
+
+Este paso aplica si exite una BD creada, sino **omitir**
+
+cd $ORACLE_HOME/OPatch
+./datapatch -verbose
+
+# Patch 36155925 DATABASE MRP 19.21.0.0.240116 #
+
+echo $ORACLE_HOME
+
+CON ROOT
+
+# CLUSTER
+
+/oracle/app/product/19c/grid/bin/crsctl stop crs
+
+# SINGLE
+
+/oracle/app/product/19c/grid/bin/crsctl stop has --> con grid bajar antes el listener con oracle 
+
+si da el siguiente error :
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dlbdprafor01)(PORT=1521)))
+TNS-01190: The user is not authorized to execute the requested listener command
+CRS-2675: Stop of 'ora.LISTENER.lsnr' on 'dlbdprafor01' failed
+CRS-2677: Stop of 'ora.asm' on 'dlbdprafor01' succeeded
+CRS-2673: Attempting to stop 'ora.cssd' on 'dlbdprafor01'
+CRS-2677: Stop of 'ora.cssd' on 'dlbdprafor01' succeeded
+CRS-2799: Failed to shut down resource 'ora.LISTENER.lsnr' on 'dlbdprafor01'
+CRS-2795: Shutdown of Oracle High Availability Services-managed resources on 'dlbdprafor01' has failed
+CRS-4687: Shutdown command has completed with errors.
+CRS-4000: Command Stop failed, or completed with errors.
+
+Solucion:
+
+/oracle/app/product/19c/grid/bin/crsctl stop has
+/oracle/app/product/19c/grid/bin/crsctl stat res -t -> verificar que este abajo el servicio
+/oracle/app/product/19c/grid/bin/crsctl start has 
+/oracle/app/product/19c/grid/bin/crsctl stat res -t -> verificar que este todo arriba 
+/oracle/app/product/19c/grid/bin/crsctl stop has  
+
+# Descomprimir el parche 36155925 #
+
+con ROOT
+
+chmod 775 /oracle/instaladores/parches
+
+CON ORACLE
+
+export PATCH_TOP_DIR=/oracle/instaladores/parches
+cd $PATCH_TOP_DIR
+mv PatchSearch.xml PatchSearch.xml_35742441
+
+unzip -q p36155925_1921000DBRU_Linux-x86-64.zip
+chmod -R 777 36155925
+
+export PATCH_TOP_DIR=/oracle/instaladores/parches
+cd $PATCH_TOP_DIR/
+
+$ORACLE_HOME/OPatch/opatch prereq CheckConflictAgainstOHWithDetail -ph ./36155925
+
+$ORACLE_HOME/OPatch/opatch napply ./36155925 -verbose
+
+#Start in CLUSTER
+
+CON ROOT
+
+/oracle/app/product/19c/grid/bin/crsctl start crs
+
+### start in SINGLE
+
+Con grid
+
+crsctl start has
+
+# Patch 36155938 - GI MRP 19.21.0.0.240116 #
+
+#Descomprimir el parche 36155938
+
+CON GRID
+
+export PATCH_TOP_DIR=/oracle/instaladores/parches
+
+cd $PATCH_TOP_DIR
+mv PatchSearch.xml PatchSearch.xml_36155925
+
+unzip -q p36155938_1921000DBRU_Linux-x86-64.zip
+chmod -R 777 36155938/
+
+### Ejecutar el parche 36155938
+
+CON ROOT
+
+export PATCH_TOP_DIR=/oracle/instaladores/parches
+export PATH=$PATH:/oracle/app/product/19c/grid/OPatch
+cd $PATCH_TOP_DIR/
+
+opatchauto apply ./36155938 -analyze
+
+opatchauto apply ./36155938
+
+
+## Evidencias
+
+Con oracle y grid
+
+$ORACLE_HOME/OPatch/opatch lsinventory
+$ORACLE_HOME/OPatch/opatch lspatches
+
+### VERIFICAR EL REGISTRY
+
+sql
+set timi on 
+set time on
+set line 380
+set pagesize 50
+col comp_name format a50
+col status format a10
+select comp_name, version, VERSION_FULL, status from dba_registry;
+sql
+SELECT patch_id,
+version,
+status,
+bundle_id,
+-- bundle_series
+FROM dba_registry_sqlpatch;
+
+## VALIDAR OBJETOS INVALIDOS
+
+sql
+select OWNER
+      ,OBJECT_NAME
+      ,OBJECT_TYPE
+      ,STATus  
+  from dba_objects
+where status = 'INVALID';
+
+## VALIDAR EL HISTORICO DE PARCHES
+
+sql
+col action_time for a40
+col action for a12
+col namespace for a10
+col version for a22
+col comments for a80
+SELECT TO_CHAR(action_time, 'YYYY-MM-DD HH24:MI') AS FECHA
+      ,action
+      ,namespace
+      ,version
+      ,comments
+--    ,bundle_series
+  FROM sys.registry$history
+ ORDER by action_time;
+
+## Rollback
+
+[grid@clbdvnet01 35642822]$ crsctl start has
+CRS-6706: Oracle Clusterware Release patch level ('3293466898') does not match Software patch level ('724960844'). Oracle Clusterware cannot be started.
+CRS-4000: Command Start failed, or completed with errors.
+
+# Cluster
+/oracle/app/product/19c/grid/crs/install/rootcrs.sh -prepatch
+/oracle/app/product/19c/grid/crs/install/rootcrs.sh -postpatch
+
+# Standalone
+/oracle/app/product/19c/grid/crs/install/roothas.sh -unlock
+/oracle/app/product/19c/grid/crs/install/roothas.sh -prepatch
+/oracle/app/product/19c/grid/crs/install/roothas.sh -postpatch
+
+opatchauto rollback /oracle/instaladores/parches/35642822 -oh /oracle/app/product/19c/grid
+opatchauto rollback /oracle/instaladores/parches/35742441/35642822 -oh /oracle/app/product/19c/grid
+
+/oracle/app/oracle/product/19c/db1/OPatch/opatchauto rollback /oracle/instaladores/parches/35742441/35642822 -oh /oracle/app/oracle/product/19c/db1/
+
+/oracle/app/oracle/product/19c/db1/OPatch/opatchauto rollback /oracle/instaladores/parches/35742441/35642822 -oh /oracle/app/product/19c/grid
+
+
+# CREACION DE BD #
+
+CON ORACLE
+
+dbca
+
+Seleccionar “create database”
+Seleccionar la configuración avanzada
+Seleccionar la opción de base de datos de propósito general
+
+Como buena práctica, el nombre debe ir en mayúsculas y ser el mismo tanto en el global_name como en el SID
+Desmarcar la opción de crear la base de datos como contenedo
+
+Seleccionar las opciones del storage de la base de datos
+● Use following for the database storage attributes
+● Database files storage type: ASM
+● Database files location: +DATA
+● Use Oracle Managed files (OMF)
+● MULTIPLEXAR LOS REDO +REDO01 +REDO02
+
+
+Verificar file location variables
+Establecer las opciones de fast recovery
+● Especificar el fast recovery area en ASM
+● Ubicar el diskgroup +FRA
+● Establecer el espacio disponible del +FRA, en la ventana “Fast Recovery Area Size” 
+● Habilitar el archive si es requerido
+
+Configurar el listener de la base de datos
+En caso de ser necesario configurar un nuevo listener, hacer clic en la opción “Create a new listener” y establecer los parámetros correspondientes. De lo contrario, dejar el listener por defecto
+
+Dejar las opciones de Oracle data vault desmarcadas
+Especificar el SGA y el PGA
+Especificar el número de proceses
+
+Establecer el character set
+● AL32UTF8
+● National character set: AL16UTF16
+● Default languaje: American
+● Default territory: United States
+
+Establecer el connection mode
+Dedicated server mode
+
+Opciones de instalación de esquemas de ejemplo
+No marcar la creación de esquemas de ejemplo en la base de datos para un ambiente productivo.
+
+Configurar el Enterprise manager, el puerto por defecto: 5500
+
+Establecer el password de sys y system
+Seleccionar usar el mismo password para todas las cuentas: oracle1
+
+Seleccionar las opciones de creación de base de datos
+1.-Seleccionar “Create database”
+2.-Seleccionar “Save as database template”
+3.-Seleccionar “Generate database creation scripts”
+4.-Seleccionar “All initialization parameters”
+En initialization parameters, seleccionar “show advanced parameters” y luego hacer clic sobre name para ordenar alfabeticamente.
+
+Parámetros 
+db_4k_cache_size: 512
+db_files: 1024
+nls_lenght_semantics: BYTE
+open_cursors: 4096
+Hacer clic en close 
+
+5.-Seleccionar “Customize Storage Locations”
+
+Maximum Datafiles: 1024
+Opcional: Si se desea dejar los grupos de redologs de la instalación, (solo para fines prácticos), se debe establecer el tamaño deseado de los mismos.
+
+Nota: Para esta instalación, se eliminarán los grupos de redo por defecto y se crearán grupos de redo apuntando a +REDO01 y +REDO02, por lo tanto, no es necesario configurar el tamaño de los REDO.
+Hacer clic en apply y luego en OK 
+
+guardar el response file
+
+# PASOS POST INSTALACION Y CREACION DE BD # 
+
+# CREAR LOS REDOLOG
+
+set line 240
+set pagesize 300
+col member format a80 
+SELECT a.group#,
+       b.THREAD#,
+       b.STATUS,
+       a.MEMBER,
+       b.BYTES/1024/1024 "Size (Mb)"
+     FROM gv$logfile a,
+                 gv$log b
+   WHERE a.group# = b.group#;
+
+alter database add logfile group 101 ('+REDO01', '+REDO02') size 1024M;
+alter database add logfile group 102 ('+REDO01', '+REDO02') size 1024M;
+alter database add logfile group 103 ('+REDO01', '+REDO02') size 1024M;
+alter database add logfile group 104 ('+REDO01', '+REDO02') size 1024M;
+alter database add logfile group 105 ('+REDO01', '+REDO02') size 1024M;
+
+# ELIMINAR LOS VIEJOS
+
+Hacer switch de los redo y asegurarse de que los grupos a borrar no estén current y forzar un checkpoint.
+
+alter system switch logfile;
+alter system checkpoint;
+
+Borrar los grupos de redo deseados “Siempre y cuando estén en INACTIVE”
+
+alter database drop logfile group 3;
+alter database drop logfile group 1;
+alter database drop logfile group 2;
+
+Verificar el estado de los redos, realizando la consulta.
+
+# ACTIVAR MODO ARCHIVE #
+
+1.-Verificar si esta activado el archive log y la direccion con: archive log list;
+2.-shutdown immediate;
+3.-startup mount;
+4.-alter database archivelog;
+5.-alter database open;
+6.-archive log list;
+7.-configurar el destination principal y secundario
+
+alter system set log_archive_dest_1='LOCATION=USE_DB_RECOVERY_FILE_DEST 
+valid_for=(ALL_LOGFILES,ALL_ROLES) MAX_FAILURE=1 REOPEN=5 
+DB_UNIQUE_NAME=PRAFORCAD ALTERNATE=LOG_ARCHIVE_DEST_10';
+
+alter system set log_archive_dest_10='location=+DATA
+valid_for=(ALL_LOGFILES,ALL_ROLES) DB_UNIQUE_NAME=PRAFORCAD
+ALTERNATE=LOG_ARCHIVE_DEST_1';
+
+alter system set log_archive_dest_state_1='ENABLE';
+alter system set log_archive_dest_state_10='ALTERNATE';
+
+# ACTIVAR FLASHBACK #
+
+# VERIFICAR 
+
+show parameter flashback;
+select flashback_on from v$database
+
+#ACTIVAR 
+
+alter system set db_flashback_retention_target=1440;
+alter database flashback on;
+
+# Configurar el AWR
+
+Retención:
+execute dbms_workload_repository.modify_snapshot_settings (interval => 15,retention => 11520);
+
+Statistics level:
+ALTER SYSTEM SET statistics_level=all;
+
+# Consultar el DBA_REGISTRY para validar que los parches estén correctamente en la BD
+
+set timi on 
+set time on
+set line 380
+set pagesize 50
+col comp_name format a50
+col status format a10
+select comp_name, version, VERSION_FULL, status from dba_registry;
+
+Verificar que los components de Oracle estén válidos
+
+# Configurar ubicación de los REDO por default
+
+alter system set db_create_online_log_dest_1='+REDO01';
+alter system set db_create_online_log_dest_2='+REDO02';
+show parameter online
+
+# Configurar el fast_start_mttr_target
+
+show parameter fast_start_mttr_target;
+alter system set fast_start_mttr_target=300 Comment='Recomendation AHF' scope=both;
+
+# Establecer el db_block_checking y db_lost_write_protect 
+
+alter system set db_block_checking=MEDIUM;
+alter system set db_lost_write_protect=TYPICAL;
+show parameter DB_BLOCK_CHECKING;
+show parameter DB_LOST_WRITE_PROTECT;
+
+# Verificar los parámetros de configuración de RMAN 
+
+rman target /
+show all;
+
+Los parámetros deben ser similares a los siguientes:
+
+CONFIGURE RETENTION POLICY TO REDUNDANCY 1; # default 
+CONFIGURE BACKUP OPTIMIZATION OFF; # default 
+CONFIGURE DEFAULT DEVICE TYPE TO DISK; # default 
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '%F'; # default 
+CONFIGURE DEVICE TYPE DISK PARALLELISM 1 BACKUP TYPE TO BACKUPSET; # default 
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default 
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default 
+CONFIGURE MAXSETSIZE TO UNLIMITED; # default 
+CONFIGURE ENCRYPTION FOR DATABASE OFF; # default 
+CONFIGURE ENCRYPTION ALGORITHM 'AES128'; # default 
+CONFIGURE COMPRESSION ALGORITHM 'BASIC' AS OF RELEASE 'DEFAULT' OPTIMIZE FOR LOAD TRUE ; # default 
+CONFIGURE RMAN OUTPUT TO KEEP FOR 7 DAYS; # default 
+CONFIGURE ARCHIVELOG DELETION POLICY TO NONE; # default 
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '+FRA/snapcf_PRAFORCAD.f';
+
+Para configurar un parámetro:
+
+Ejemplo de configurar el snapshot controlfile:
+
+CONFIGURE BACKUP OPTIMIZATION ON;
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '+FRA/snapcf_PRAFORCA.f';
+
+# INSTALAR EL AHF #
+
+# CON ORACLE
+
+Ir al directorio donde está descargado el AHF y descomprimir
+
+unzip -q /oracle/instaladores/AHF-LINUX_v24.3.0.zip
+
+2.-Instalar
+
+CON ROOT
+
+cd /oracle/instaladores/
+./ahf_setup -ahf_loc /opt -data_dir /opt/oracle.ahf
+
+3.-Validar status
+
+tfactl status
+cd /opt/oracle.ahf/bin
+
+ls -ltr
+
+4.-Configurar el scheduler
+
+CON ROOT 
+
+orachk -id autostart_client_oratier1 -set "AUTORUN_SCHEDULE=3 2 1 * *" 
+orachk -id autostart_client_oratier1 -set "AUTORUN_FLAGS=-usediscovery -profile oratier1 -dball -showpass -tag autostart_client_oratier1 -readenvconfig"
+orachk -id autostart_client_oratier1 -set "COLLECTION_RETENTION=7"
+orachk -id autostart_client -set "AUTORUN_SCHEDULE=3 3 1 * *"
+orachk -id autostart_client -set "AUTORUN_FLAGS=-usediscovery -tag autostart_client -readenvconfig"
+orachk -id autostart_client -set "COLLECTION_RETENTION=7"
+orachk -autostatus
+
+5.-Descargar el cvupack y descomprimirlo en: /opt/oracle.ahf/common/cvu
+
+cd /opt/oracle.ahf/common/cvu
+unzip -q /oracle/instaladores/cvupack_linux_ol7_x86_64.zip
+
+Ejecutar el orachk
+
+cd /opt/oracle.ahf/bin
+./orachk -nodaemon
+
+Realizar las recomendaciones arrojadas por el orachk y llevar el servidor al mayor puntaje de sanidad posible
+
+
+
+
+

@@ -1,0 +1,56 @@
+/////////////////////////////////////////////////
+///  VER FRAGMENTACION DE TABLA
+//    ADMINISTRACION DE ORACLE
+//        ADSI DBA-TEAM
+//  YOSDUAR RANGEL-ALIUSKA PEÑA-ADRIAN AGUILERA
+////////////////////////////////////////////////    
+
+
+----------- VER TABLAS FRAGMENTADAS
+col owner format a7
+col TABLE_NAME format a10
+select * 
+from (
+select 
+owner
+,table_name
+,round((blocks*8),2)/1024 "size (MB)" 
+,round((num_rows*avg_row_len/1024),2)/1024 "actual_data (MB)"
+,(round((blocks*8),2) - round((num_rows*avg_row_len/1024),2))/1024 "wasted_space (MB)"
+, ((round((blocks * 8), 2) - round((num_rows * avg_row_len / 1024), 2)) / round((blocks * 8), 2)) * 100 - 10 "reclaimable space % "
+,(round(((blocks*8/1024)-(num_rows*avg_row_len/1024/1024)),2)/round(((blocks*8/1024)),2))*100 "percentage fragmented"
+from dba_tables
+WHERE 
+OWNER = 'SYS'
+and (round((blocks*8),2) > round((num_rows*avg_row_len/1024),2))
+and TABLE_NAME='WRH$_LATCH_CHILDREN'
+order by "wasted_space (MB)" desc 
+)
+/
+
+
+
+
+------OTRA CONSULTA------------
+
+set pages 50000 lines 32767
+select 
+owner
+,table_name
+,round((blocks*8),2)||'kb' "Tamanio fragmentado"
+,round((num_rows*avg_row_len/1024),2)||'kb' "Tamanio Actual"
+,round((blocks*8),2)-round((num_rows*avg_row_len/1024),2)||'kb' "Espacio reclamable"
+,((round((blocks*8),2)-round((num_rows*avg_row_len/1024),2))/round((blocks*8),2))*100 -10 "espacio reclamable % " 
+from dba_tables 
+WHERE OWNER = 'BDVNET'
+and blocks <> 0
+order by 3
+/
+
+
+
+
+
+
+
+

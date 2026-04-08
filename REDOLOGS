@@ -1,0 +1,33 @@
+-- REDOLOGS --
+--------------
+SET LINESIZE 600
+COL MEMBER FORMAT A60
+SELECT GROUP# "GROUP", STATUS, MEMBER
+       , TYPE
+       ,IS_RECOVERY_DEST_FILE 
+FROM SYS.V$LOGFILE
+--WHERE GROUP# IN (1,2,3,4,5,6)
+--AND TYPE <> 'STANDBY'
+ORDER BY 1, 2;
+
+-------------------------
+-- AGREGAR UN NUEVO GRUPO
+-----------------------------------------------------------------------------
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 1 ('+REDO01_STOKEN','+REDO02_STOKEN') SIZE 2048M;
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 2 ('+REDO01_STOKEN','+REDO02_STOKEN') SIZE 2048M;
+ALTER DATABASE ADD LOGFILE THREAD 1 GROUP 3 ('+REDO01_STOKEN','+REDO02_STOKEN') SIZE 2048M; 
+-----------------------------------------------------------------------------
+-- BORRAR GRUPO
+-----------------------------------------------------------------------------
+ALTER DATABASE CLEAR LOGFILE GROUP 6;
+ALTER DATABASE DROP LOGFILE GROUP 6;
+-----------------------------------------------------------------------------
+ALTER SYSTEM SWITCH LOGFILE;
+ALTER SYSTEM SWITCH LOGFILE;
+ALTER SYSTEM SWITCH LOGFILE;
+ALTER SYSTEM CHECKPOINT;
+-----------------------------------------------------------------------------
+-- IR CONSULTANDO CON:
+----------------------
+SELECT * FROM V$LOG;
+-----------------------------------------------------------------------------

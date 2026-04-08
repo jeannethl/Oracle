@@ -1,0 +1,65 @@
+//////////////////////////////////////////////////////
+//    AUMENTAR TAMAÑOS DE LOS TABLESPACES
+//                  ORACLE
+//              ADSI DBA-TEAM
+//       YOSDUAR RANGEL-ALIUSKA PEÑA
+/////////////////////////////////////////////////////
+
+
+
+------VER LOS DATAFILES DE LOS TABLESPACES DISPONIBLES-------------
+
+col TABLESPACE_NAME format a20
+col FILE_NAME format a60
+select TABLESPACE_NAME
+,FILE_NAME
+from dba_data_files where TABLESPACE_NAME='<nombre_tablespace>';
+
+Ó
+
+set line 380
+col file_name format a60
+set pagesize 200
+select file_name 
+,tablespace_name
+,round((BYTES/1024)/1024,2) "Size (MB)"
+from dba_data_files 
+where tablespace_name=nvl('&1',tablespace_name);
+
+---Crear un tablespaces con varios datafiles autoextends
+CREATE TABLESPACE TBS_DBA 
+         DATAFILE '+DATA' size 10M,
+                  '+DATA' size 10M,
+                  '+DATA' size 10M,
+                  '+DATA' size 10M
+       AUTOEXTEND ON NEXT 10M MAXSIZE 100M;
+       
+
+--- Agregar datafile para aumentar el tamaño de un tablespace, autoextendible con un maximo de 32GB
+ALTER TABLESPACE RADIX_EVENTLOG ADD DATAFILE '+DATA' SIZE 10G AUTOEXTEND ON NEXT 1G MAXSIZE 32767M;
+
+--- Agregar mas de un datafile a un tablespaces 
+ALTER TABLESPACE TBS_DBA 
+    ADD DATAFILE '+DATA' SIZE 10M,
+                 '+DATA' SIZE 10M
+    AUTOEXTEND ON NEXT 10M MAXSIZE 100M;
+
+
+--- Aumentar el tamaño del datafile
+alter database datafile '+DATA/TRZS/DATAFILE/rbs_tran.321.1096715307' resize 569M; 
+
+
+
+---- EDITAR PROPIEDAD DEL DATAFILE
+ALTER DATABASE DATAFILE 'D:\DBDATA\TESTPTIX02.ORA' AUTOEXTEND ON MAXSIZE 3840M;
+
+
+
+--- Aumentar tamaño del tablespaces especifico 
+col tablespaces_name format a20
+select TABLESPACE_NAME, 'alter database datafile ''' || FILE_NAME || ''' resize 4046M;' 
+  from dba_Data_files
+ where TABLESPACE_NAME in ('RBS','RADIX');
+
+
+

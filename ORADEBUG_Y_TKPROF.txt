@@ -1,0 +1,126 @@
+/////////////////////////////////////////////
+//    USO DEL ORADBUG Y TKPROF
+//             ORACLE
+//          ADSI DBA-TEAM
+////////////////////////////////////////////////
+
+
+
+1.-SE IDENTIFICÓ EL MACHINE DESDE DONDE VENIA LA CONSULTA, CON EL QUERY DE ORO
+
+
+alter session set nls_DatE_format='dd-mon-rrrr hh24:mi:ss';
+col username format a10
+col module format a30
+col SQL_TEXT format a300
+
+select  s.username
+      --, cast(substr(q.SQL_FULLTEXT,1,4000) as varchar2(4000)) sql_text
+      ,q.SQL_TEXT
+       ,s.sid
+       ,s.serial#
+       ,s.inst_id
+       ,q.SQL_ID
+       ,q.PLAN_HASH_VALUE
+       ,q.module
+       ,q.action
+       ,q.LAST_ACTIVE_TIME
+       ,c.LAST_SQL_ACTIVE_TIME
+       ,s.MACHINE
+       ,s.TERMINAL
+       ,s.SQL_EXEC_START
+       ,s.PREV_EXEC_START
+       ,s.LOGON_TIME
+from    gv$session s
+       ,gv$open_cursor c
+       ,gv$sql q
+where s.SADDR = c.SADDR 
+  and s.inst_id = c.inst_id
+  and q.SQL_ID = c.SQL_ID 
+  and q.inst_id = c.inst_id
+  and s.machine='F01_MZ1_JANN7'
+  and q.module='JDBC Thin Client'
+  and trunc(s.logon_time)=trunc(sysdate)
+;
+
+
+
+2.-SE IDENTIFICÓ EL PID DE S.O CON EL QUERY CHORIZO FILTRANDO LA MAQUINA Y LA SESION ACTIVA EJECUTANDO APLICACIONES Y CAPTURANDO EN TIEMPO REAL EL EVENTO
+
+
+set lin 4000
+set timi on 
+set time on 
+col machine format a30
+col object format a32
+col x format a80 
+col owner format a8
+col WAIT_CLASS format a15
+col USERNAME format a10
+col MODULE format a90
+col CLIENT_INFO format a30
+col action  format a70
+
+col type format a10
+col OSUSER format a10
+
+select distinct  
+b.SECONDS_IN_WAIT,b.LOGON_TIME,WAIT_CLASS,
+--'alter system kill session '''||b.sid||','||b.serial#||''' immediate;' x,
+p.spid psid_local, b.process  psid_remote
+,
+b.serial#
+--,a.*
+, b.machine, b.osuser, b.username, b.program, status, b.process, b.module, b.CLIENT_INFO, b.action,b.sid
+,b.sql_id
+from gv$access a,gv$session b , gv$process p
+where a.sid=b.sid and p.addr=b.paddr
+and a.inst_id=b.inst_id and b.inst_id=p.inst_id and a.inst_id=p.inst_id
+--and b.sid in (4881)
+--and b.sql_id in ('dnn5u7fmrkmtb')
+and b.machine='F01_MZ1_JANN7'
+and b.status = 'ACTIVE';
+
+
+
+SECONDS_IN_WAIT LOGON_TIM WAIT_CLASS      PSID_LOCAL               PSID_REMOTE                 SERIAL# MACHINE                        OSUSER     USERNAME   PROGRAM                                          STATUS   PROCESS                  MODULE                                                                                     CLIENT_INFO                    ACTION                                                                        SID SQL_ID
+--------------- --------- --------------- ------------------------ ------------------------ ---------- ------------------------------ ---------- ---------- ------------------------------------------------ -------- ------------------------ ------------------------------------------------------------------------------------------ ------------------------------ ---------------------------------------------------------------------- ---------- -------------
+              0 24-JAN-24 Other           131976                   1234                          23223 F01_MZ1_JANN7                  CT24519    PCP        JDBC Thin Client                                 ACTIVE   1234                     JDBC Thin Client    
+
+
+
+
+DE INTERES
+
+PSID_LOCAL
+131976
+
+
+3.-SE EJECUTÓ EL ORADEBUG AL PID DE S.O
+
+oradebug setospid 131976;
+oradebug unlimit;
+oradebug event 10046 trace name context forever, level 12;
+oradebug tracefile_name;
+
+
+
+SE ESPERA A QUE TERMINE EL EVENTO Y SE PROCEDE A APAGAR LA TRAZA
+
+
+
+oradebug setospid 131976;
+oradebug unlimit;
+oradebug event 10046 trace name context off;
+
+
+
+
+4.-SE RESPALDA EL .trc DE SALIDA Y SE EJECUTA EL TKPROF
+
+oracle12@sun2317p:/oracle12$ tail -1000f /oracle/app/oracle12/diag/rdbms/pcp/PCP/trace/PCP_ora_131976.trc
+cp -p /oracle/app/oracle12/diag/rdbms/pcp/PCP/trace/PCP_ora_131976.trc /oracle/app/oracle12/diag/rdbms/pcp/PCP/trace/PCP_ora_131976.trc.pv.20240124
+tkprof /oracle/app/oracle12/diag/rdbms/pcp/PCP/trace/PCP_ora_131976.trc /oracle/app/oracle12/diag/rdbms/pcp/PCP/trace/PCP_ora_131976.trc.lst
+
+
+5.-SE ANALIZA LA SALIDA DEL TKPROF

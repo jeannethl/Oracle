@@ -1,0 +1,89 @@
+///////////////////////////////////////////////////////////////
+//    CAPTURA DE MAQUINAS, SESIONES (QUERY DE ORO)
+//                  ORACLE
+//              ADSI DBA-TEAM
+//   YOSDUAR RANGEL-ALIUSKA PEÑA-ADRIAN AGUILERA
+//////////////////////////////////////////////////////////////
+
+
+ESTE QUERY SE USA GENERALMENTE PARA IDENTIFICAR LA SESION, EJECUCION DE QUERY, LAS SESIONES ACTIVAS
+LA MÁQUINA, EL TERMINAL Y EL MODULO DE UNA SESIÓN ACTIVA.
+
+
+
+
+------------------- Captura de sql y sesiones (query de oro)-------------------
+
+alter session set nls_DatE_format='dd-mon-rrrr hh24:mi:ss';
+col username format a10
+col module format a30
+col SQL_TEXT format a300
+
+select  s.username
+      --, cast(substr(q.SQL_FULLTEXT,1,4000) as varchar2(4000)) sql_text
+      ,q.SQL_TEXT
+       ,s.sid
+       ,s.serial#
+       ,s.inst_id
+       ,q.SQL_ID
+       ,q.PLAN_HASH_VALUE
+       ,q.module
+       ,q.action
+       ,q.LAST_ACTIVE_TIME
+       ,c.LAST_SQL_ACTIVE_TIME
+       ,s.MACHINE
+       ,s.TERMINAL
+       ,s.SQL_EXEC_START
+       ,s.PREV_EXEC_START
+       ,s.LOGON_TIME
+from    gv$session s
+       ,gv$open_cursor c
+       ,gv$sql q
+where s.SADDR = c.SADDR 
+  and s.inst_id = c.inst_id
+  and q.SQL_ID = c.SQL_ID 
+  and q.inst_id = c.inst_id
+  and upper(q.sql_text) like '%TRAN TR%RDX_UNIT%TR.ORIGINATORUNITID%';
+
+
+
+
+
+-------USANDO SQLID
+
+
+
+alter session set nls_DatE_format='dd-mon-rrrr hh24:mi:ss';
+col username format a10
+col module format a30
+col SQL_TEXT format a300
+
+select  s.username
+      --, cast(substr(q.SQL_FULLTEXT,1,4000) as varchar2(4000)) sql_text
+      ,q.SQL_TEXT
+       ,s.sid
+       ,s.serial#
+       ,s.inst_id
+       ,q.SQL_ID
+       ,q.PLAN_HASH_VALUE
+       ,q.module
+       ,q.action
+       ,q.LAST_ACTIVE_TIME
+       ,c.LAST_SQL_ACTIVE_TIME
+       ,s.MACHINE
+       ,s.TERMINAL
+       ,s.SQL_EXEC_START
+       ,s.PREV_EXEC_START
+       ,s.LOGON_TIME
+from    gv$session s
+       ,gv$open_cursor c
+       ,gv$sql q
+where s.SADDR = c.SADDR 
+  and s.inst_id = c.inst_id
+  and q.SQL_ID = c.SQL_ID 
+  and q.inst_id = c.inst_id
+  and q.sql_id = '7n7z6w9w8v0wn';
+
+
+
+  

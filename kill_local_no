@@ -1,0 +1,1 @@
+ps -fea | grep "LOCAL=NO" | grep CCENLND | awk '{print $2}' | xargs -i kill -9 {} /;
