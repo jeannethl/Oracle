@@ -1,0 +1,61 @@
+*** Agregar espacio a TABLESPACE ***
+
+****Agregar disco si es necesario.
+	con usuario grid
+	================
+
+    sqlplus / as sysasm
+
+    ALTER DISKGROUP DATA ADD DISK '/dev/rdsk/c1d28s6' rebalance power 20;
+
+			
+			Consultar proceso de rebalance 
+			==============================
+			select * from v$asm_operation;
+
+
+con usuario oracle 
+==================
+
+sqlplus / as sysdba
+
+ALTER TABLESPACE RBS ADD DATAFILE '+DATA' SIZE 30G AUTOEXTEND OFF;
+ALTER TABLESPACE DATA ADD DATAFILE '+DG_DATA_DCSP' SIZE 30G AUTOEXTEND OFF;
+
+
+*******Ver espacio en tablespaces
+
+SET PAGES 999
+COL TABLESPACE_NAME FORMAT A40
+COL "SIZE MB" FORMAT 999,999,999
+COL "FREE MB" FORMAT 99,999,999
+COL "% USED" FORMAT 999
+SELECT     TSU.TABLESPACE_NAME, CEIL(TSU.USED_MB) "SIZE MB"
+,    DECODE(CEIL(TSF.FREE_MB), NULL,0,CEIL(TSF.FREE_MB)) "FREE MB"
+,    DECODE(100 - CEIL(TSF.FREE_MB/TSU.USED_MB*100), NULL, 100,
+               100 - CEIL(TSF.FREE_MB/TSU.USED_MB*100)) "% USED"
+FROM    (SELECT TABLESPACE_NAME, SUM(BYTES)/1024/1024 USED_MB
+    FROM     DBA_DATA_FILES GROUP BY TABLESPACE_NAME UNION ALL
+    SELECT     TABLESPACE_NAME || '  **TEMP**'
+    ,    SUM(BYTES)/1024/1024 USED_MB
+    FROM     DBA_TEMP_FILES GROUP BY TABLESPACE_NAME) TSU
+,    (SELECT TABLESPACE_NAME, SUM(BYTES)/1024/1024 FREE_MB
+    FROM     DBA_FREE_SPACE GROUP BY TABLESPACE_NAME) TSF
+WHERE    TSU.TABLESPACE_NAME = TSF.TABLESPACE_NAME (+)
+--and TSU.TABLESPACE_NAME = 'DATA_IDENTITY_LOG'
+ORDER    BY 4
+/
+
+
+******Ver datafiles
+
+set linesize 4000
+set pages 999
+col FILE_NAME format a70
+col FILE_ID format 999,990
+col TABLESPACE_NAME format a35
+col RELATIVE_FNO format 9999
+select FILE_NAME,FILE_ID,TABLESPACE_NAME, bytes/1024/1024 MB, RELATIVE_FNO,AUTOEXTENSIBLE, status 
+from dba_data_files
+where TABLESPACE_NAME in ('RBS')
+/
