@@ -1,0 +1,59 @@
+Agregar string de conexion en el servidor destino.
+
+SWATCHDB =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = sun2208d)(PORT = 1560))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = SWATCHDB.BANVENDES.CORP)
+    )
+  )
+
+
+
+[oracle19@dlingmbd01 admin]$ tnsping SWATCHDB
+
+TNS Ping Utility for Linux: Version 19.0.0.0.0 - Production on 30-OCT-2024 14:43:33
+
+Copyright (c) 1997, 2023, Oracle.  All rights reserved.
+
+Used parameter files:
+
+
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = sun2208d)(PORT = 1560)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = SWATCHDB.BANVENDES.CORP)))
+OK (0 msec)
+
+
+
+CREATE OR REPLACE DIRECTORY PRUEBA AS '/exportdb';
+GRANT READ,WRITE ON DIRECTORY PRUEBA TO SYSTEM;
+
+
+
+
+
+
+select name from v$database;
+
+
+
+
+create database link prb_nl connect to SYSTEM identified by bqsmt7aral8 using 'SWATCHDB';
+
+CREATE PUBLIC DATABASE LINK PRUEBA_1 CONNECT TO SYSTEM IDENTIFIED BY bqsmt7aral8 USING 'SWATCHDB';
+
+select count(1) from SWSERVER.TGOODGUYS@PRB_NL;
+
+
+SELECT * FROM dual@PRUEBA;
+
+
+
+
+
+Prueba de network_link
+
+nohup impdp system/bqsmt7aral8 directory=PRUEBA SCHEMAS=SWSERVER  logfile=export_SEPA.log &
+
+nohup impdp system/bqsmt7aral8 directory=PRUEBA SCHEMAS=SWSERVER logfile=prueba_1.log network_link=PRUEBA &

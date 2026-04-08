@@ -1,0 +1,70 @@
+Oracle srvctl Basics – Listener and Database Commands
+
+SRVCTL
+You can use SRVCTL commands to 
+add, 
+remove, 
+start, 
+stop, 
+modify, 
+enable, 
+and disable a number of 
+entities, 
+such as databases, 
+instances, 
+listeners, 
+SCAN listeners, 
+services, 
+grid naming service (GNS), and 
+Oracle ASM.”
+
+Once you are in a RAC configuration, you should be using only SRVCTL to start and stop the database and SCAN listener.
+
+SRVCTL Command Reference
+object names
+Database
+instance
+listener
+service names
+
+srvctl command object [options]
+DB_UNIQUE_NAME and INSTANCE_NAME
+
+***The database has a name for the whole: parameter DB_UNIQUE_NAME
+SQL> show parameter db_unique_name
+
+***Each instance has its own name: parameter INSTANCE_NAME
+SQL> show parameter instance_name
+
+SCAN Listener
+The Single Client Access Name (SCAN) provides a single name for clients to access any client database running the Cluster. The SCAN listener is a separate process that runs on the database server computer. It receives incoming client connection requests and manages the traffic of these requests to the database server. In other words, for a remote connection to be made to the database, the listener must be running.
+
+Checking the Status of a Listener
+To check the status, use the following command and you will get the following result. With no options specified, the status of the default listener is returned.
+
+srvname:oracle:db1> srvctl status listener
+Listener LISTENER is enabled
+Listener LISTENER is running on node(s): oraclerac1,oraclerac2
+Starting a Listener
+Start the default listener by executing the command below. With no options specified, the status of the default listener is returned. The command does not return any feedback. Check the listener status to verify.
+
+srvname:oracle:db1> srvctl start listener
+Stopping a Listener
+Start the default listener by executing the command below. With no options specified, the status of the default listener is returned. The command does not return any feedback. Check the listener status to verify.
+
+srvname:oracle:db1> srvctl stop listener
+Starting and Stopping the Database
+Checking the Status of a Database
+To check the status, use the following command and you will get the following result. The -d parameter is required and is the unique name for the database.
+
+srvname:oracle:db1> srvctl status database -d mydb
+Instance mydb1 is running on node oraclerac1
+Instance mydb2 is running on node oraclerac2
+Starting the Database
+Start the database by executing the command below. The -d parameter is required and is the DB_UNIQUE_NAME for the database. The command does not return any feedback. Check the database status to verify. The -o option is the same as the regular options for startup: nomount, mount, or open.
+
+srvname:oracle:db1> srvctl start database -d mydb -o open
+Stopping the Database
+Start the database by executing the command below. The -d parameter is required and is the DB_UNIQUE_NAME for the database. The command does not return any feedback. Check the database status to verify. The -o option is the same as the usual options for shutdown: immediate, abort, transactional or normal.
+
+srvname:oracle:db1> srvctl stop database -d mydb -o immediate

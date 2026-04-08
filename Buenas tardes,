@@ -1,0 +1,11 @@
+Buenas tardes,
+
+La presente es para solicitar los siguientes requerimientos en el servidor clbdprafor01
+
+1) La creación de Un FS /oracle de 200GB
+2) agrega 5 disco de 100GB  para la creación del diskgroup DATA
+3) agregar 4 discos de 5 GB para la creación de los diskgroup REDO01 y REDO02
+4) agregar 2 disco de 25 GB para la creación del diskgroup FRA
+.5) agregar el servidor al DNS.
+
+Saludos

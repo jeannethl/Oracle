@@ -1,0 +1,133 @@
+/////////////////////////////////////////////
+//    INSTALAR EL CLIENTE DE ORACLE 19C
+//              UBUNTU
+//          ADSI DBA-TEAM
+//     YOSDUAR RANGEL-ALIUSKA PEÑA
+////////////////////////////////////////////
+
+Nota: El procedimiento es válido para RHEL y derivados realizando sus adaptaciones correspondientes
+
+Fuentes: 
+https://manjaro.site/how-to-install-sqlplus-utility-on-ubuntu-18-04-and-ubuntu-18-10/
+https://www.balioglu.net/linux/how-to-install-sql-loader-on-linux/
+
+
+Se instalará:
+All files required to run OCI, OCCI, and JDBC-OCI applications
+The SQL*Plus command line tool for SQL and PL/SQL queries
+Data Pump, SQL*Loader and Workload Replay Client
+
+
+Requiere tener glibc 2.14 o superior 
+apt-get install elfutils
+apt-get install libaio1
+apt-get install libaio-dev
+apt-get install libstdc++6-4.4-dev
+apt-get install glob
+apt-get install numactl
+apt-get install pdksh
+apt-get install sysstat
+apt-get install unixODBC-dev
+apt-get install unixODBC
+apt-get install build-essential
+apt-get install libaio1
+apt-get install gawk
+apt-get install libmotif3
+apt-get install libtool
+apt install unzip
+apt install make
+
+Necesario:
+
+instantclient-basic-linux.x64-19.15.0.0.0dbru.zip
+instantclient-sqlplus-linux.x64-19.15.0.0.0dbru.zip
+instantclient-tools-linux.x64-19.15.0.0.0dbru-2.zip
+
+Descargar de: https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html
+
+
+
+Para este ejemplo los binarios fueron alojados en /home/ubuntu
+
+
+1.-Crear el directorio oracle
+
+$ cd /opt
+$ sudo mkdir oracle
+$ chown <usuario>:<grupo> oracle/
+
+
+
+2.-Instalar el paquete libaio1 y validar el paquete glibc que sea superior a la versión 2.14
+
+$ sudo apt install libaio1
+$ sudo apt list | grep glibc
+
+
+
+3.-Descomprimir el instantclient y el sqlplus
+
+$ cd /opt/oracle
+$ unzip -q /home/ubuntu/INSTANT_CLIENT/instantclient-basic-linux.x64-19.15.0.0.0dbru.zip
+$ unzip -q /home/ubuntu/INSTANT_CLIENT/instantclient-sqlplus-linux.x64-19.15.0.0.0dbru.zip
+$ unzip -q /home/ubuntu/INSTANT_CLIENT/instantclient-tools-linux.x64-19.15.0.0.0dbru-2.zip
+
+
+
+
+4.-Ir al directorio de los archivos descomprimidos y validar los links simbolicos
+
+cd /opt/oracle/instantclient_19_15
+ls -ltr 
+
+Deben aparecer:
+libclntsh.so -> libclntsh.so.19.1
+libocci.so -> libocci.so.19.1
+
+
+
+
+
+5.-Ir a la carpeta network y crear el tnsnames.ora
+
+Ejemplo:
+
+$ cd /opt/oracle/instantclient_19_15/network/admin
+$ vi tnsnames.ora
+
+
+TRZS =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.56.120)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = TRZS)
+    )
+  )
+
+
+
+
+
+6.-Establecer las variables de entorno en el .profile del usuario a usar el cliente 
+
+$ cd
+$ vi .profile
+    export PATH="$PATH:/opt/oracle/instantclient_19_15"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/oracle/instantclient_19_15"
+$ source ~/.profile
+
+
+
+
+7.-Ejecutar el sqlplus 
+
+Ejemplos:
+
+$ sqlplus sys@192.168.56.120:1521/TRZS as sysdba
+$ sqlplus sys@TRZS as sysdba
+
+
+
+    export PATH="$PATH:/oracle/instantclient_19_23"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/oracle/instantclient_19_23"

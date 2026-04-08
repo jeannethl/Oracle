@@ -1,0 +1,84 @@
+ASM Disk Groups
+ASM Disk I/O stats
+ASM Diskgroup Attributes
+ASM disk partnership imbalance
+ASM diskgroup attributes
+ASM diskgroup usable free space
+ASM initialization parameters
+Active sessions load balance for STOKENQ database
+Archived Destination Status for STOKENQ database
+Cluster Interconnect Config for STOKENQ database
+Database Archive Destinations for STOKENQ database
+Database Files for STOKENQ database
+Database Instance Settings for STOKENQ database
+Database Properties for STOKENQ database
+Database Registry for STOKENQ database
+Database Sequences for STOKENQ database
+Database Undocumented Parameters for STOKENQ database
+Database Undocumented Parameters for STOKENQ database
+Database Workload Services for STOKENQ database
+Dataguard Status for STOKENQ database
+Files not opened by ASM
+Log Sequence Numbers for STOKENQ database
+Percentage of asm disk  Imbalance
+Process for shipping Redo to standby for STOKENQ database
+Redo Log information for STOKENQ database
+Standby redo log creation status before switchover for STOKENQ database
+Database Parameters for STOKENQ database
+/proc/cmdline
+/proc/modules
+CPU Information
+CRS active version
+CRS oifcfg
+CRS software version
+CSS Reboot time
+Cluster interconnect (clusterware)
+Clusterware OCR healthcheck
+Clusterware Resource Status
+Disk I/O Scheduler on Linux
+DiskFree Information
+DiskMount Information
+Huge pages configuration
+Interconnect network card speed
+Kernel parameters
+Linux module config.
+Maximum number of semaphore sets on system
+Maximum number of semaphores on system
+Maximum number of semaphores per semaphore set
+Memory Information
+Monthly recommended patches for Grid Infrastructure
+NUMA Configuration
+Network Interface Configuration
+Network Performance
+Network Service Switch
+OS Packages
+OS version
+Operating system release information and kernel version
+Oracle executable attributes
+Patches for Grid Infrastructure
+Patches for RDBMS Home
+Patches xml for Grid Infrastructure
+Patches xml for RDBMS Home
+RDBMS and GRID software owner UID across cluster
+RDBMS patch inventory
+Shared memory segments
+Table of file system defaults
+Voting disks (clusterware)
+number of semaphore operations per semop system call
+CRS Opatch version
+CRS user time zone check
+Clusterware patch inventory
+Custom rc init scripts (rc.local)
+Disk Information
+Grid Infastructure user shell limits configuration
+Interconnect interface config
+Linux system service and RAC process configuration
+Network interface stats
+Root user limits
+Verify ORAchk scheduler configuration
+Verify TCP Selective Acknowledgement is enabled
+Verify no database server kernel out of memory errors
+Verify the vm.min_free_kbytes configuration
+root time zone check
+slabinfo
+umask setting for GI owner

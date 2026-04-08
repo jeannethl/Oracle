@@ -1,0 +1,713 @@
+------------------------------------
+------------------------------------
+♥
+------------------------------------
+------------------------------------
+
+Instalacion Stoken / Pentaho
+SERVIDOR CLPENBD01 calidad linux pentaho bd 01
+ip serv 180.183.171.191
+
++--------------------------------Para subir los archivos--------------------------------+
+|     SFTP con usuario administrator													|
+|	-verificar la ruta donde se subiran los archivos									|
+|		instaladores 																	|
+|			Parches																		|
+|			Binarios																	|
+|			rpm 																		|
+|     SSH ol-root																		|
+|	-verificar donde estan subidos los Instaladores 									|
+|	-mover al directorio donde se quieran trabajar /exportdb u /oracle 					|
+|	-cambiar owner y permisos 															|
+|																						|
+|	 ♥/home/oracle/Instaladores 														|
+|	 [root@clpenbd01 Instaladores]# pwd 												|
+|	 /oracle/Instaladores 																|
+|	 [root@clpenbd01 Instaladores]# ls -la 												|
+|	 total 626472   																	|
+|	 drwxr-xrwx. 5 grid oinstall      4096 Jul 23 11:45 . 								|
+|	 drwxrwxr-x. 4 grid oinstall      4096 Jul 23 11:59 ..   							|
+|	 -rwxrwxrwx. 1 grid oinstall 405806059 Jul 23 11:45 AHF-LINUX_v23.11.0.zip 			|
+|	 drwxrwxrwx. 2 grid oinstall      4096 Jul 23 11:44 Binarios						|
+|	 -rwxrwxrwx. 1 grid oinstall 235671884 Jul 23 11:45 cvupack_linux_ol7_x86_64.zip 	|
+|	 drwxrwxrwx. 2 grid oinstall      4096 Jul 23 11:47 Parches 						|
+|	 drwxrwxrwx. 2 grid oinstall      4096 Jul 23 11:41 RPM     	                    |
++---------------------------------------------------------------------------------------+
+
+- uname -a
+Linux clpenbd01.banvenqa.com 4.18.0-425.19.2.el8_7.x86_64 #1 SMP Wed Apr 5 10:42:50 PDT 2023 x86_64 x86_64 x86_64 GNU/Linux
+
+- hostnamectl 
+  Static hostname: clpenbd01.banvenqa.com
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: edfa15b7c32c43d6827e1cced72b3c9b
+           Boot ID: 31289dc3a6294bc6a90d58bcaf1a7808
+    Virtualization: vmware
+  Operating System: Oracle Linux Server 8.7
+       CPE OS Name: cpe:/o:oracle:linux:8:7:server
+            Kernel: Linux 4.18.0-425.19.2.el8_7.x86_64
+      Architecture: x86-64
+
+- rpm -qa kernel*
+kernel-modules-4.18.0-425.3.1.el8.x86_64
+kernel-uek-modules-5.15.0-3.60.5.1.el8uek.x86_64
+kernel-core-4.18.0-425.19.2.el8_7.x86_64
+kernel-tools-libs-4.18.0-425.19.2.el8_7.x86_64
+kernel-core-4.18.0-425.3.1.el8.x86_64
+kernel-uek-core-5.15.0-3.60.5.1.el8uek.x86_64
+kernel-headers-4.18.0-425.19.2.el8_7.x86_64
+kernel-uek-devel-5.4.17-2136.319.1.2.el8uek.x86_64
+kernel-4.18.0-425.3.1.el8.x86_64
+kernel-modules-4.18.0-425.19.2.el8_7.x86_64
+kernel-tools-4.18.0-425.19.2.el8_7.x86_64
+kernel-4.18.0-425.19.2.el8_7.x86_64
+kernel-uek-5.15.0-3.60.5.1.el8uek.x86_64
+
+- ls -l /boot/vmlinuz*
+-rwxr-xr-x. 1 root root 13287760 Jul 16 16:08 /boot/vmlinuz-0-rescue-edfa15b7c32c43d6827e1cced72b3c9b
+-rwxr-xr-x. 1 root root 10744352 Apr  5  2023 /boot/vmlinuz-4.18.0-425.19.2.el8_7.x86_64
+-rwxr-xr-x. 1 root root 10744352 Nov  8  2022 /boot/vmlinuz-4.18.0-425.3.1.el8.x86_64
+-rwxr-xr-x. 1 root root 13287760 Oct 19  2022 /boot/vmlinuz-5.15.0-3.60.5.1.el8uek.x86_64
+
+- grubby --info /boot/vmlinuz-4.18.0*
+index=1
+kernel="/boot/vmlinuz-4.18.0-425.19.2.el8_7.x86_64"
+args="ro resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet numa=off transparent_hugepage=never $tuned_params"
+root="/dev/mapper/ol-root"
+initrd="/boot/initramfs-4.18.0-425.19.2.el8_7.x86_64.img $tuned_initrd"
+title="Oracle Linux Server (4.18.0-425.19.2.el8_7.x86_64) 8.7"
+id="edfa15b7c32c43d6827e1cced72b3c9b-4.18.0-425.19.2.el8_7.x86_64"
+
+- grubby --info=ALL
+index=0
+kernel="/boot/vmlinuz-5.15.0-3.60.5.1.el8uek.x86_64"
+args="ro resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet numa=off transparent_hugepage=never $tuned_params"
+root="/dev/mapper/ol-root"
+initrd="/boot/initramfs-5.15.0-3.60.5.1.el8uek.x86_64.img $tuned_initrd"
+title="Oracle Linux Server 8 (5.15.0-3.60.5.1.el8uek.x86_64) "
+id="edfa15b7c32c43d6827e1cced72b3c9b-5.15.0-3.60.5.1.el8uek.x86_64"
+index=1
+kernel="/boot/vmlinuz-4.18.0-425.19.2.el8_7.x86_64"
+args="ro resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet numa=off transparent_hugepage=never $tuned_params"
+root="/dev/mapper/ol-root"
+initrd="/boot/initramfs-4.18.0-425.19.2.el8_7.x86_64.img $tuned_initrd"
+title="Oracle Linux Server (4.18.0-425.19.2.el8_7.x86_64) 8.7"
+id="edfa15b7c32c43d6827e1cced72b3c9b-4.18.0-425.19.2.el8_7.x86_64"
+index=2
+kernel="/boot/vmlinuz-4.18.0-425.3.1.el8.x86_64"
+args="ro resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet numa=off transparent_hugepage=never $tuned_params"
+root="/dev/mapper/ol-root"
+initrd="/boot/initramfs-4.18.0-425.3.1.el8.x86_64.img $tuned_initrd"
+title="Oracle Linux Server (4.18.0-425.3.1.el8.x86_64) 8.7"
+id="edfa15b7c32c43d6827e1cced72b3c9b-4.18.0-425.3.1.el8.x86_64"
+index=3
+kernel="/boot/vmlinuz-0-rescue-edfa15b7c32c43d6827e1cced72b3c9b"
+args="ro resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet numa=off transparent_hugepage=never $tuned_params"
+root="/dev/mapper/ol-root"
+initrd="/boot/initramfs-0-rescue-edfa15b7c32c43d6827e1cced72b3c9b.img $tuned_initrd"
+title="Oracle Linux Server 8 (0-rescue-edfa15b7c32c43d6827e1cced72b3c9b) "
+id="edfa15b7c32c43d6827e1cced72b3c9b-0-rescue"
+
+- grubby --default-kernel
+/boot/vmlinuz-4.18.0-425.19.2.el8_7.x86_64
+
+- uname -r
+4.18.0-425.19.2.el8_7.x86_64
+
+- Desactivar Selinux
+cp /etc/selinux/config /etc/selinux/config.original
+	vi /etc/selinux/config
+
+modificar SELINUX=PERMISSIVE
+	sestatus
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          permissive
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Memory protection checking:     actual (secure)
+Max kernel policy version:      33
+
+	restorecon -Rv /
+	touch /.autorelabel
+	reboot
+
+- Validar Paquetes Instalados
+rpm -q binutils compat-libstdc++-33 gcc glibc libaio libgcc libstdc++ make libaio-devel glibc-common ksh glibc-devel glibc-headers elfutils-libelf libstdc++-devel gcc-c++ libtool-ltdl ncurses readline unixODBC
+
+- Instalar Prerrequisitos 
+
+yum install -y libaio-devel
+yum install -y ksh
+yum install -y elfutils-libelf-devel
+yum install oracle-database-preinstall-19c -y
+yum -y install device-mapper-multipath
+yum install binutils -y
+yum install gcc -y
+yum install gcc-c++ -y
+yum install glibc -y
+yum install glibc-devel -y
+yum install libgcc -y
+yum install libstdc++ -y
+yum install libstdc++-devel -y
+yum install libaio -y
+yum install libaio-devel -y
+yum install libXext -y
+yum install libXtst -y
+yum install libX11 -y
+yum install libXau -y
+yum install libxcb -y
+yum install libXi -y
+yum install make -y
+yum install sysstat -y
+yum install unixODBC -y
+yum install unixODBC-devel -y
+yum install zlib-devel -y
+yum install elfutils-libelf-devel -y
+yum -y install oracleasm
+yum -y install kernel-uek-devel
+yum -y install kmod-oracleasm
+
+dnf install -y libnsl
+dnf install -y libnsl.i686
+dnf install -y libnsl2
+dnf install -y libnsl2.i686
+
+♥Los RPM hay que subirlos e instalarlos desde la carpeta.
+rpm -Uvh compat-libstdc++-33-3.2.3-72.el7.x86_64.rpm
+rpm -Uvh compat-libcap1-1.10-7.el7.x86_64.rpm
+rpm -Uvh oracle-database-preinstall-19c-1.0-3.el7.x86_64.rpm
+rpm -Uvh  ksplice-uptrack-release-1-5.noarch.rpm
+yum -y install uptrack
+rpm -Uvh oracleasmlib-2.0.17-1.el8.x86_64.rpm
+rpm -Uvh oracleasm-support-2.1.12-1.el8.x86_64.rpm
+
+- Validar memoria swap
+grep SwapTotal /proc/meminfo
+SwapTotal:      33554428 kB
+
+
+- Ver Memoria RAM total
+grep MemTotal/proc/meminfo
+MemTotal:       32916036 kB
+
+- Verificar espacio en disco y area tmp
+df -h
+Filesystem               Size  Used Avail Use% Mounted on
+devtmpfs                  16G     0   16G   0% /dev
+tmpfs                     16G     0   16G   0% /dev/shm
+tmpfs                     16G  736K   16G   1% /run
+tmpfs                     16G     0   16G   0% /sys/fs/cgroup
+/dev/mapper/ol-root       20G  2.9G   16G  16% /
+/dev/mapper/ol-tmp        20G   84K   19G   1% /tmp
+/dev/sda2                974M  246M  661M  28% /boot
+/dev/mapper/ol-home       20G  180K   19G   1% /home
+/dev/mapper/ol-oracle     98G  9.7G   84G  11% /oracle
+/dev/mapper/ol-var_log    15G  240M   14G   2% /var/log
+/dev/mapper/ol-exportdb   98G   24K   93G   1% /exportdb
+tmpfs                    3.2G     0  3.2G   0% /run/user/685609325
+
+df -h /tmp
+Filesystem          Size  Used Avail Use% Mounted on
+/dev/mapper/ol-tmp   20G   84K   19G   1% /tmp
+
+-- Validar a nivel de redes
+
+-Verificar hostname
+
+hostname
+clpenbd01.banvenqa.com
+
+ping $(hostname)
+
+-Verificar tarjetas de red
+
+ifconfig -a
+ens160: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 180.183.171.191  netmask 255.255.254.0  broadcast 180.183.171.255
+        ether 00:50:56:9c:98:c8  txqueuelen 1000  (Ethernet)
+        RX packets 857853  bytes 10498113774 (9.7 GiB)
+        RX errors 0  dropped 249  overruns 0  frame 0
+        TX packets 742042  bytes 56414104 (53.8 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+ens192: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.27.65.146  netmask 255.255.254.0  broadcast 172.27.65.255
+        ether 00:50:56:9c:69:57  txqueuelen 1000  (Ethernet)
+        RX packets 21769  bytes 14969357 (14.2 MiB)
+        RX errors 0  dropped 268  overruns 0  frame 0
+        TX packets 804  bytes 71711 (70.0 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+ens224: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.27.75.79  netmask 255.255.255.0  broadcast 172.27.75.255
+        ether 00:50:56:9c:0f:21  txqueuelen 1000  (Ethernet)
+        RX packets 385  bytes 42391 (41.3 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 15  bytes 630 (630.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 10  bytes 660 (660.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 10  bytes 660 (660.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+
+-Desactivar Firewall
+
+systemctl stop firewalld
+systemctl disable firewalld
+
+*************Lee despues
+***     [root@clpenbd01 RPM]# systemctl status firewalld
+***     ● firewalld.service - firewalld - dynamic firewall daemon
+***        Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+***        Active: active (running) since Tue 2024-07-23 10:50:15 -04; 1h 50min ago
+***          Docs: man:firewalld(1)
+***      Main PID: 1333 (firewalld)
+***         Tasks: 2 (limit: 205490)
+***        Memory: 39.7M
+***        CGroup: /system.slice/firewalld.service
+***                └─1333 /usr/libexec/platform-python -s /usr/sbin/firewalld --nofork --nopid
+***     
+***     Jul 23 10:50:14 clpenbd01.banvenqa.com systemd[1]: Starting firewalld - dynamic firewall daemon...
+***     Jul 23 10:50:15 clpenbd01.banvenqa.com systemd[1]: Started firewalld - dynamic firewall daemon.
+***     Jul 23 10:50:15 clpenbd01.banvenqa.com firewalld[1333]: WARNING: AllowZoneDrifting is enabled. This is considered an insecure >
+***     [root@clpenbd01 RPM]#
+***     [root@clpenbd01 RPM]#
+***     [root@clpenbd01 RPM]# systemctl stop firewalld
+***     [root@clpenbd01 RPM]# systemctl status firewalld
+***     ● firewalld.service - firewalld - dynamic firewall daemon
+***        Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+***        Active: inactive (dead) since Tue 2024-07-23 12:40:43 -04; 1s ago
+***          Docs: man:firewalld(1)
+***       Process: 1333 ExecStart=/usr/sbin/firewalld --nofork --nopid $FIREWALLD_ARGS (code=exited, status=0/SUCCESS)
+***      Main PID: 1333 (code=exited, status=0/SUCCESS)
+***     
+***     Jul 23 10:50:14 clpenbd01.banvenqa.com systemd[1]: Starting firewalld - dynamic firewall daemon...
+***     Jul 23 10:50:15 clpenbd01.banvenqa.com systemd[1]: Started firewalld - dynamic firewall daemon.
+***     Jul 23 10:50:15 clpenbd01.banvenqa.com firewalld[1333]: WARNING: AllowZoneDrifting is enabled. This is considered an insecure >
+***     Jul 23 12:40:42 clpenbd01.banvenqa.com systemd[1]: Stopping firewalld - dynamic firewall daemon...
+***     Jul 23 12:40:43 clpenbd01.banvenqa.com systemd[1]: firewalld.service: Succeeded.
+***     Jul 23 12:40:43 clpenbd01.banvenqa.com systemd[1]: Stopped firewalld - dynamic firewall daemon.
+***     ...skipping...
+***     ● firewalld.service - firewalld - dynamic firewall daemon
+***        Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+***        Active: inactive (dead) since Tue 2024-07-23 12:40:43 -04; 1s ago
+***          Docs: man:firewalld(1)
+***       Process: 1333 ExecStart=/usr/sbin/firewalld --nofork --nopid $FIREWALLD_ARGS (code=exited, status=0/SUCCESS)
+***      Main PID: 1333 (code=exited, status=0/SUCCESS)
+***     
+***     Jul 23 10:50:14 clpenbd01.banvenqa.com systemd[1]: Starting firewalld - dynamic firewall daemon...
+***     Jul 23 10:50:15 clpenbd01.banvenqa.com systemd[1]: Started firewalld - dynamic firewall daemon.
+***     Jul 23 10:50:15 clpenbd01.banvenqa.com firewalld[1333]: WARNING: AllowZoneDrifting is enabled. This is considered an insecure >
+***     Jul 23 12:40:42 clpenbd01.banvenqa.com systemd[1]: Stopping firewalld - dynamic firewall daemon...
+***     Jul 23 12:40:43 clpenbd01.banvenqa.com systemd[1]: firewalld.service: Succeeded.
+***     Jul 23 12:40:43 clpenbd01.banvenqa.com systemd[1]: Stopped firewalld - dynamic firewall daemon.
+***     [root@clpenbd01 RPM]# systemctl disable firewalld
+***     Removed /etc/systemd/system/multi-user.target.wants/firewalld.service.
+***     Removed /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
+***     [root@clpenbd01 RPM]# systemctl status firewalld
+***     ● firewalld.service - firewalld - dynamic firewall daemon
+***        Loaded: loaded (/usr/lib/systemd/system/firewalld.service; disabled; vendor preset: enabled)
+***        Active: inactive (dead)
+***          Docs: man:firewalld(1)
+***     
+***     Jul 23 10:50:14 clpenbd01.banvenqa.com systemd[1]: Starting firewalld - dynamic firewall daemon...
+***     Jul 23 10:50:15 clpenbd01.banvenqa.com systemd[1]: Started firewalld - dynamic firewall daemon.
+***     Jul 23 10:50:15 clpenbd01.banvenqa.com firewalld[1333]: WARNING: AllowZoneDrifting is enabled. This is considered an insecure >
+***     Jul 23 12:40:42 clpenbd01.banvenqa.com systemd[1]: Stopping firewalld - dynamic firewall daemon...
+***     Jul 23 12:40:43 clpenbd01.banvenqa.com systemd[1]: firewalld.service: Succeeded.
+***     Jul 23 12:40:43 clpenbd01.banvenqa.com systemd[1]: Stopped firewalld - dynamic firewall daemon.
+***     
+**********     
+**********
+
+- Detener los iptables
+iptables -L
+iptables -F
+
+- Verificar la resolucion de nombre DNS
+nslookup $(hostname)
+
+Server:         180.183.199.15
+Address:        180.183.199.15#53
+
+Name:   clpenbd01.banvenqa.com
+Address: 180.183.171.191
+
+-♥- Configurar Archivo hosts
+
+cp -p /etc/hosts /etc/hosts.original
+
+vi /etc/hosts
+
+*Agregar la siguiente linea:
+180.183.171.191 clpenbd01.banvenqa.com clpenbd01
+
+#rman19
+172.27.53.206 sun1122p_b sun1122p_b.banvenez.corp
+
+- Verificar que este configurado X11
+	vi /etc/ssh/sshd_config
+		descomentar x11forwarding y modificar el valor a yes
+
+	systemctl restart sshd
+
+- Eliminar timeout SSH
+	vi /etc/ssh/sshd_config
+		LoginGraceTime 0
+
+	systemctl restart sshd
+
+- Modificar scp
+Con usuario root
+
+	cp -p /usr/bin/scp /usr/bin/scp-original
+	echo "/usr/bin/scp-original -T \$*" > /usr/bin/scp
+	chmod 555 /usr/bin/scp
+	cat /usr/bin/scp
+
+- Validar usuarios 
+id -a oracle
+id -a grid
+
+-Validar grupos
+grep oracle /etc/group
+	oinstall:x:54321:oracle
+	dba:x:54322:oracle,oracle19
+	oper:x:54323:oracle,oracle19
+	backupdba:x:54324:oracle,oracle19
+	dgdba:x:54325:oracle,oracle19
+	kmdba:x:54326:oracle,oracle19
+	racdba:x:54330:oracle
+	asmdba:x:54327:oracle19,grid
+	asmoper:x:54328:oracle19,grid
+	asmadmin:x:54329:oracle19,grid
+
+grep grid /etc/group
+	asmdba:x:54327:oracle19,grid
+	asmoper:x:54328:oracle19,grid
+	asmadmin:x:54329:oracle19,grid
+
+-Borrar usuarios
+userdel -r oracle19
+userdel -r grid
+
+-Borrar grupos
+*No borrar el grupo dba / en caso de hacerlo modificar el archivo /etc/group
+groupdel asmadmin
+groupdel asmdba
+groupdel asmoper
+#groupdel dba
+groupdel oper
+groupdel backupdba
+groupdel dgdba
+groupdel kmdba
+groupdel racdba
+groupdel oinstall
+
+-Agregar grupos
+groupadd -g 54321 oinstall
+#groupadd -g 54322 dba
+groupadd -g 54323 oper
+groupadd -g 54324 backupdba
+groupadd -g 54325 dgdba
+groupadd -g 54326 kmdba
+groupadd -g 54327 asmdba
+groupadd -g 54328 asmoper
+groupadd -g 54329 asmadmin
+groupadd -g 54330 racdba
+
+
+-Agregar grupos al usuario
+useradd -u 54321 -g oinstall -G dba,asmdba,backupdba,dgdba,kmdba,racdba,oper,asmoper,asmadmin oracle19
+
+useradd -u 54322 -g oinstall -G asmadmin,asmdba,asmoper,racdba,dba grid
+
+>>>>>>>>>>>>
+>>>>[root@clpenbd01 ~]# grep oracle /etc/group
+asmadmin:x:54329:grid,oracle19
+dba:x:54322:grid,oracle19
+oper:x:54323:oracle19
+backupdba:x:54324:oracle19
+dgdba:x:54325:oracle19
+kmdba:x:54326:oracle19
+asmdba:x:54327:grid,oracle19
+asmoper:x:54328:grid,oracle19
+racdba:x:54330:grid,oracle19
+
+
+>>>>>>>>>>>>
+>>>>[root@clpenbd01 ~]# grep grid /etc/group
+asmadmin:x:54329:grid,oracle19
+dba:x:54322:grid,oracle19
+asmdba:x:54327:grid,oracle19
+asmoper:x:54328:grid,oracle19
+racdba:x:54330:grid,oracle19
+
+-Setear Contraseñas
+passwd oracle19
+oracle1
+
+passwd grid	
+oracle1
+
+------Solicitar los Discos para configurar las etiquetas de discos ASM
+
+-Configurar oracle asm
+
+/usr/sbin/oracleasm init
+/usr/sbin/oracleasm configure -i
+
+Llenar las opciones de la siguiente manera
+
+grid
+asmadmin
+y
+y
+
+-Particionar los discos
+lsblk -fm
+fdisk /dev/sdc
+
+	Particionar disco (ingresar la siguiente secuencia)
+	p
+	n
+	p
+	1
+	primero numero
+	ultimo numero
+	w
+
+	-Repetir por cada disco-
+
+fdisk /dev/sdd
+fdisk /dev/sde
+fdisk /dev/sdf
+fdisk /dev/sdg
+fdisk /dev/sdh
+fdisk /dev/sdi
+fdisk /dev/sdj
+fdisk /dev/sdk
+fdisk /dev/sdl
+fdisk /dev/sdm
+fdisk /dev/sdn
+fdisk /dev/sdo
+fdisk /dev/sdp
+fdisk /dev/sdq
+fdisk /dev/sdr
+
+-Crear discos ASM
+
+/usr/sbin/oracleasm createdisk DISK_ASM001 /dev/sdc1
+/usr/sbin/oracleasm createdisk DISK_ASM002 /dev/sdd1
+/usr/sbin/oracleasm createdisk DISK_ASM003 /dev/sde1
+/usr/sbin/oracleasm createdisk DISK_ASM004 /dev/sdf1
+/usr/sbin/oracleasm createdisk DISK_ASM005 /dev/sdg1
+/usr/sbin/oracleasm createdisk DISK_ASM006 /dev/sdh1
+/usr/sbin/oracleasm createdisk DISK_ASM007 /dev/sdi1
+/usr/sbin/oracleasm createdisk DISK_ASM008 /dev/sdj1
+/usr/sbin/oracleasm createdisk DISK_ASM009 /dev/sdk1
+/usr/sbin/oracleasm createdisk DISK_ASM010 /dev/sdl1
+/usr/sbin/oracleasm createdisk DISK_ASM011 /dev/sdm1
+/usr/sbin/oracleasm createdisk DISK_ASM012 /dev/sdn1
+/usr/sbin/oracleasm createdisk DISK_ASM013 /dev/sdo1
+/usr/sbin/oracleasm createdisk DISK_ASM014 /dev/sdp1
+/usr/sbin/oracleasm createdisk DISK_ASM015 /dev/sdq1
+/usr/sbin/oracleasm createdisk DISK_ASM016 /dev/sdr1
+
+***********oracleasm createdisk ASM-DATA_STK_001 /dev/sdc1
+oracleasm createdisk ASM-DATA_STK_002 /dev/sdd1
+oracleasm createdisk ASM-REDO01_STK_001 /dev/sdk1
+oracleasm createdisk ASM-REDO01_STK_002 /dev/sdl1
+oracleasm createdisk ASM-REDO02_STK_001 /dev/sdm1
+oracleasm createdisk ASM-REDO02_STK_002 /dev/sdn1
+oracleasm createdisk ASM-FRA-STK-001 /dev/sdg1
+oracleasm createdisk ASM-FRA-STK-002 /dev/sdh1
+
+
+
+
+/usr/sbin/oracleasm scandisks
+
+-listas discos ASM
+/usr/sbin/oracleasm listdisks
+
+************
+
+-Acciones previas a la instalacion
+
+-Estabalecer las variables de entorno (root, grid, oracle19)
+
+ROOT:
+cd
+cp -p .bash_profile .bash_profile.original
+vi .bash_profile
+
+umask 022
+ulimit -t unlimited
+ulimit -f unlimited
+ulimit -d unlimited
+#ulimit -s unlimited
+ulimit -v unlimited
+
+if [ -t 0 ]; then
+  stty intr ^C
+fi
+
+export CV_ASSUME_DISTID=OL7
+export SRVM_DISABLE_MTTRANS=true
+
+source .bash_profile
+
+ORACLE:
+umask 022
+ulimit -t unlimited
+ulimit -f unlimited
+ulimit -d unlimited
+#ulimit -s unlimited
+ulimit -v unlimited
+
+if [ -t 0 ]; then
+  stty intr ^C
+fi
+
+export CV_ASSUME_DISTID=OL7
+export SRVM_DISABLE_MTTRANS=true
+
+source .bash_profile
+
+GRID:
+umask 022
+ulimit -t unlimited
+ulimit -f unlimited
+ulimit -d unlimited
+#ulimit -s unlimited
+ulimit -v unlimited
+
+if [ -t 0 ]; then
+  stty intr ^C
+fi
+
+export CV_ASSUME_DISTID=OL7
+export SRVM_DISABLE_MTTRANS=true
+
+source .bash_profile
+
+
+-Validar los limits
+con los usuarios oracle19 y grid
+
+ulimit -Sa
+ulimit -Ha
+
+-Crear los directorios de Oracle y Grid
+Con usuario root
+
+mkdir -p /oracle/app/oraInventory
+mkdir -p /oracle/app/grid
+mkdir -p /oracle/app/product/19c/grid
+mkdir -p /oracle/app/oracle19/product/19c/db1
+
+-Cambiar dueño y permisos
+
+chown -R grid:oinstall /oracle/
+chown -R oracle19:oinstall /oracle/app/oracle19
+chmod -R 775 /oracle/
+
+-Descomprimir los binarios
+
+Con grid
+cd /oracle/app/product/19c/grid
+unzip -q /oracle/Instaladores/Binarios/V982068-01-grid.zip
+
+Con oracle19
+cd /oracle/app/oracle19/product/19c/db1
+unzip -q /oracle/Instaladores/Binarios/V982063-01-oracle.zip
+
+-instalar el cvudisk
+
+Con root
+cd /oracle/app/product/19c/grid/cv/rpm
+rpm -Uvh cvuqdisk-1.0.10-1.rpm
+
+-Comprobar prerrequesitos
+Con grid
+cd /oracle/app/product/19c/grid
+./runcluvfy.sh stage -pre hacfg
+
+--
+Instalacion GRID infrastructure 19c   -----------Ingresar directamente con el usuario Grid
+--
+cd /oracle/app/product/19c/grid
+./gridSetup.sh
+
+Modificar variables de entorno
+ORACLE_BASE=/oracle/app/grid
+ORACLE_HOME=/oracle/app/product/19c/grid 
+ORACLE_SID=+ASM
+LD_LIBRARY_PATH=$ORACLE_HOME/lib
+PATH=$PATH:/usr/local/bin:/usr/sbin:/usr/bin:/usr/openwin/bin:/usr/ucb:$ORACLE_HOME/bin
+TEMP=/tmp
+TMPDIR=/tmp
+export ORACLE_BASE ORACLE_HOME ORACLE_SID LD_LIBRARY_PATH PATH TEMP TMPDIR
+export EDITOR=vi
+
+source .bash_profile
+
+--
+Configurar los discos ASM
+
+asmca
+
+--
+Modificar variables de entorno
+
+ORACLE_BASE=/oracle/app/oracle19
+ORACLE_HOME=/oracle/app/oracle19/product/19c/db1
+#ORACLE_SID= PENTAHO
+LD_LIBRARY_PATH=$ORACLE_HOME/lib
+PATH=$PATH:/usr/local/bin:/usr/sbin:/usr/bin:/usr/openwin/bin:/usr/ucb:$ORACLE_HOME/bin
+TEMP=/tmp
+TMPDIR=/tmp
+
+export ORACLE_BASE ORACLE_HOME ORACLE_SID LD_LIBRARY_PATH PATH TEMP TMPDIR
+export EDITOR=vi
+
+---
+Instalar Oracle         -----------------------Ingresar directamente con el usuario ORACLE19
+--- 
+
+cd /oracle/app/oracle19/product/19c/db1
+./runInstaller
+
+
+
+----
+Realizar Parchado
+----
+
+----
+Crear Listener19
+----
+NETCA
+LISTENER19
+1560
+
+
+----
+
+A
+
+
+
+
